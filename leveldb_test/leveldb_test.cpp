@@ -47,25 +47,26 @@ int main() {
   assert(s.ok());
 
   // 读取数据
-  std::string key_ = "gonev";
-  std::string val_ = "";
-  mydb->Get(leveldb::ReadOptions(), key_, &val_);
-  std::cout << key_ << ": " << val_ << std::endl;
+  // std::string key_ = "gonev";
+  // std::string val_ = "";
+  // mydb->Get(leveldb::ReadOptions(), key_, &val_);
+  // std::cout << key_ << ": " << val_ << std::endl;
   
   
   // 遍历levelDB中的所有数据
-  /*leveldb::Iterator* it = mydb->NewIterator(leveldb::ReadOptions());
+ /* leveldb::Iterator* it = mydb->NewIterator(leveldb::ReadOptions());
   for (it->SeekToFirst(); it->Valid(); it->Next()) {
     std::cout << it->key().ToString() << ": " << it->value().ToString()
               << std::endl;
   }*/
 
+
   // 范围查询
-/*  leveldb::Iterator* it = mydb->NewIterator(leveldb::ReadOptions());
+  leveldb::Iterator* it = mydb->NewIterator(leveldb::ReadOptions());
   std::string start = "1";
   std::string limit = "123";
   for (it->Seek(start); it->Valid() && it->key().ToString() < limit;
        it->Next()) {
     std::cout << it->key().ToString() << ": " << it->value().ToString() << std::endl;
-  }*/
+  }
 }
