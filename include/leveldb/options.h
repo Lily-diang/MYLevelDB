@@ -26,8 +26,7 @@ enum CompressionType {
   // NOTE: do not change the values of existing entries, as these are
   // part of the persistent format on disk.
   kNoCompression = 0x0,
-  kSnappyCompression = 0x1,
-  kZstdCompression = 0x2,
+  kSnappyCompression = 0x1
 };
 
 // Options to control the behavior of a database (passed to DB::Open)
@@ -103,7 +102,7 @@ struct LEVELDB_EXPORT Options {
   // Number of keys between restart points for delta encoding of keys.
   // This parameter can be changed dynamically.  Most clients should
   // leave this parameter alone.
-  int block_restart_interval = 16;
+  int block_restart_interval = 16; // 代表每当存储了16个键值对后需要一个新的重启点
 
   // Leveldb will write up to this amount of bytes to a file before
   // switching to a new one.
@@ -171,7 +170,7 @@ struct LEVELDB_EXPORT WriteOptions {
   //
   // If this flag is false, and the machine crashes, some recent
   // writes may be lost.  Note that if it is just the process that
-  // crashes (i.e., the machine does not reboot), no writes will be
+  // crashes (i.e., the machine does not reboot // 重新启动), no writes will be
   // lost even if sync==false.
   //
   // In other words, a DB write with sync==false has similar

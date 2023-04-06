@@ -13,30 +13,43 @@ namespace leveldb {
 
 namespace {
 
+// 回调函数
 typedef Iterator* (*BlockFunction)(void*, const ReadOptions&, const Slice&);
 
 class TwoLevelIterator : public Iterator {
  public:
+  //构造。对于SSTable来说：
+  //1、index_iter是指向index block的迭代器；
+  //2、block_function是Table::BlockReader,即读取一个block;
+  //3、arg是指向一个SSTable;
+  //4、options 读选项。
   TwoLevelIterator(Iterator* index_iter, BlockFunction block_function,
                    void* arg, const ReadOptions& options);
 
   ~TwoLevelIterator() override;
-
+  // 以下三个函数都是针对一级迭代器的函数
+  // 这里就是seek到index block对应元素位置
   void Seek(const Slice& target) override;
   void SeekToFirst() override;
   void SeekToLast() override;
+  // 以下函数都是针对二级迭代器的函数
+  // DataBlock中的下一个Entry
   void Next() override;
+  // DataBlock中的前一个Entry
   void Prev() override;
-
+  //指向DataBlock的迭代器是否有效
   bool Valid() const override { return data_iter_.Valid(); }
+  //DataBlock中的一个Entry的Key
   Slice key() const override {
     assert(Valid());
     return data_iter_.key();
   }
+  //DataBlock中的一个Entry的Value
   Slice value() const override {
     assert(Valid());
     return data_iter_.value();
   }
+  // DataBlock中的一个Entry的Value
   Status status() const override {
     // It'd be nice if status() returned a const Status& instead of a Status
     if (!index_iter_.status().ok()) {
@@ -49,22 +62,29 @@ class TwoLevelIterator : public Iterator {
   }
 
  private:
+  //保存错误状态，如果最近一次状态是非ok状态，
+  //则不保存
   void SaveError(const Status& s) {
     if (status_.ok() && !s.ok()) status_ = s;
   }
+  //跳过当前空的DataBlock,转到下一个DataBlock
   void SkipEmptyDataBlocksForward();
+  //跳过当前空的DataBlock,转到前一个DataBlock
   void SkipEmptyDataBlocksBackward();
+  //设置二级迭代器data_iter
   void SetDataIterator(Iterator* data_iter);
+  //初始化DataBlock的二级迭代器
   void InitDataBlock();
 
   BlockFunction block_function_;
   void* arg_;
   const ReadOptions options_;
   Status status_;
-  IteratorWrapper index_iter_;
-  IteratorWrapper data_iter_;  // May be nullptr
+  IteratorWrapper index_iter_;  //一级迭代器，对于SSTable来说就是指向index block
+  IteratorWrapper data_iter_;  // May be nullptr，二级迭代器，对于SSTable来说就是指向DataBlock
   // If data_iter_ is non-null, then "data_block_handle_" holds the
   // "index_value" passed to block_function_ to create the data_iter_.
+  //对于SSTable来说,保存index block中的offset+size。
   std::string data_block_handle_;
 };
 
@@ -79,6 +99,9 @@ TwoLevelIterator::TwoLevelIterator(Iterator* index_iter,
 
 TwoLevelIterator::~TwoLevelIterator() = default;
 
+//1、seek到target对应的一级迭代器位置;
+//2、初始化二级迭代器;
+//3、跳过当前空的DataBlock。
 void TwoLevelIterator::Seek(const Slice& target) {
   index_iter_.Seek(target);
   InitDataBlock();
@@ -111,7 +134,9 @@ void TwoLevelIterator::Prev() {
   data_iter_.Prev();
   SkipEmptyDataBlocksBackward();
 }
-
+//针对二级迭代器。
+//如果当前二级迭代器指向为空或者非法;
+//那就向后跳到下一个非空的DataBlock。
 void TwoLevelIterator::SkipEmptyDataBlocksForward() {
   while (data_iter_.iter() == nullptr || !data_iter_.Valid()) {
     // Move to next block
@@ -143,6 +168,8 @@ void TwoLevelIterator::SetDataIterator(Iterator* data_iter) {
   data_iter_.Set(data_iter);
 }
 
+//初始化二级迭代器指向。
+//对SSTable来说就是获取DataBlock的迭代器赋值给二级迭代器。
 void TwoLevelIterator::InitDataBlock() {
   if (!index_iter_.Valid()) {
     SetDataIterator(nullptr);
@@ -154,7 +181,7 @@ void TwoLevelIterator::InitDataBlock() {
       // no need to change anything
     } else {
       Iterator* iter = (*block_function_)(arg_, options_, handle);
-      data_block_handle_.assign(handle.data(), handle.size());
+      data_block_handle_.assign(handle.data(), handle.size()); // assign先将原字符串清空，然后赋予新的值作替换。
       SetDataIterator(iter);
     }
   }

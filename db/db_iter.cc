@@ -36,6 +36,11 @@ namespace {
 // combines multiple entries for the same userkey found in the DB
 // representation into a single entry while accounting for sequence
 // numbers, deletion markers, overwrites, etc.
+
+// Leveldb数据库的MemTable和sstable文件的存储格式都是InternalKey(userkey, seq, type) => uservalue。
+// DBIter把同一个userkey在DB中的多条记录合并为一条，综合考虑了userkey的序号、删除标记、和写覆盖等等因素。
+// DBIter只会把userkey最新（seq最大的就是最新的，相同userkey的老记录（seq较小的）不会让上层看到）的一条记录展现给用户，
+// 另外如果这条最新的记录是删除类型，则会跳过该记录，否则，遍历时会把已删除的key列举出来。
 class DBIter : public Iterator {
  public:
   // Which direction is the iterator currently moving?
@@ -88,10 +93,13 @@ class DBIter : public Iterator {
   void FindPrevUserEntry();
   bool ParseKey(ParsedInternalKey* key);
 
+
+  // 用于临时缓存k
   inline void SaveKey(const Slice& k, std::string* dst) {
     dst->assign(k.data(), k.size());
   }
 
+  // 清除saved_value_的内容
   inline void ClearSavedValue() {
     if (saved_value_.capacity() > 1048576) {
       std::string empty;
@@ -102,14 +110,15 @@ class DBIter : public Iterator {
   }
 
   // Picks the number of bytes that can be read until a compaction is scheduled.
+  // 选取在计划压缩之前可以读取的字节数。
   size_t RandomCompactionPeriod() {
     return rnd_.Uniform(2 * config::kReadBytesPeriod);
   }
 
   DBImpl* db_;
-  const Comparator* const user_comparator_;
-  Iterator* const iter_;
-  SequenceNumber const sequence_;
+  const Comparator* const user_comparator_; // 比较器
+  Iterator* const iter_; //是一个MergingIterator
+  SequenceNumber const sequence_; //DBIter只能访问到比sequence_小的kv对，这就方便了老版本（快照）数据库的遍历
   Status status_;
   std::string saved_key_;    // == current key when direction_==kReverse
   std::string saved_value_;  // == current raw value when direction_==kReverse
@@ -119,6 +128,7 @@ class DBIter : public Iterator {
   size_t bytes_until_read_sampling_;
 };
 
+// 解析key，从iter_中解析出key值，然后将该key值保存到ikey中
 inline bool DBIter::ParseKey(ParsedInternalKey* ikey) {
   Slice k = iter_->key();
 
@@ -146,6 +156,8 @@ void DBIter::Next() {
     // iter_ is pointing just before the entries for this->key(),
     // so advance into the range of entries for this->key() and then
     // use the normal skipping code below.
+    // iter_刚好在this->key()的所有entry之前，所以先跳转到this->key()  
+    // 的entries范围之内，然后再做常规的skip
     if (!iter_->Valid()) {
       iter_->SeekToFirst();
     } else {
@@ -170,21 +182,28 @@ void DBIter::Next() {
       return;
     }
   }
-
+  // 找到下一个有效的记录，作为当前指针
   FindNextUserEntry(true, &saved_key_);
 }
 
+/**
+ * @brief 循环跳过下一个delete的记录，直到遇到kValueType的记录。，如果遇到了下一个有效的记录，则iter_就保存了其对应的迭代器，且valid_为真，否则valid_为假
+ * @param {bool} skipping 
+ * @param {string*} skip
+ * @return {*}
+ */
 void DBIter::FindNextUserEntry(bool skipping, std::string* skip) {
   // Loop until we hit an acceptable entry to yield
   assert(iter_->Valid());
   assert(direction_ == kForward);
   do {
     ParsedInternalKey ikey;
-    if (ParseKey(&ikey) && ikey.sequence <= sequence_) {
+    if (ParseKey(&ikey) && ikey.sequence <= sequence_) { // 从iter_中解析出一个内部键放入ikey，且必须保证ikey的序列号小于或等于当前序列号
       switch (ikey.type) {
         case kTypeDeletion:
           // Arrange to skip all upcoming entries for this key since
           // they are hidden by this deletion.
+          // 如果遇到iter userkey的删除操作，则说明后面该userkey都是无效的，因此需要跳过
           SaveKey(ikey.user_key, skip);
           skipping = true;
           break;
@@ -205,6 +224,7 @@ void DBIter::FindNextUserEntry(bool skipping, std::string* skip) {
   saved_key_.clear();
   valid_ = false;
 }
+
 
 void DBIter::Prev() {
   assert(valid_);
@@ -232,7 +252,10 @@ void DBIter::Prev() {
 
   FindPrevUserEntry();
 }
-
+/**
+ * @brief 循环跳过上一个delete的记录，直到遇到kValueType的记录。 该函数旨在找到一个entry，它并未被删除，且它的前一个符合sequence_要求，但此时iter_的位置并不是真正entry的位置，真正的值保存在save key/value中
+ * @return {*}
+ */
 void DBIter::FindPrevUserEntry() {
   assert(direction_ == kReverse);
 
@@ -243,9 +266,13 @@ void DBIter::FindPrevUserEntry() {
       if (ParseKey(&ikey) && ikey.sequence <= sequence_) {
         if ((value_type != kTypeDeletion) &&
             user_comparator_->Compare(ikey.user_key, saved_key_) < 0) {
+            // 我们遇到了前一个key的一个未被删除的entry，跳出循环  
+            // 此时Key()将返回saved_key，saved key非空；
           // We encountered a non-deleted value in entries for previous keys,
           break;
         }
+        // 根据类型，如果是Deletion则清空saved key和saved value  
+        // 否则，把iter_的user key和value赋给saved key和saved value
         value_type = ikey.type;
         if (value_type == kTypeDeletion) {
           saved_key_.clear();
@@ -264,8 +291,8 @@ void DBIter::FindPrevUserEntry() {
     } while (iter_->Valid());
   }
 
-  if (value_type == kTypeDeletion) {
-    // End
+  if (value_type == kTypeDeletion) {// 表明遍历结束了，将direction设置为kForward  
+    // End，并没有找到有效的Prev()
     valid_ = false;
     saved_key_.clear();
     ClearSavedValue();
@@ -275,14 +302,22 @@ void DBIter::FindPrevUserEntry() {
   }
 }
 
+/**
+ * @brief 查找target对应的位置，且要跳过删除了的entry 
+ * @param {Slice&} target 要查找的目标键
+ * @return {*}
+ */
 void DBIter::Seek(const Slice& target) {
   direction_ = kForward;
+  // 清空saved value和saved key，并根据target设置saved key
   ClearSavedValue();
   saved_key_.clear();
+  // 为什么时Append？？？kValueTypeForSeek(1) > kDeleteType(0)？？？
   AppendInternalKey(&saved_key_,
                     ParsedInternalKey(target, sequence_, kValueTypeForSeek));
   iter_->Seek(saved_key_);
-  if (iter_->Valid()) {
+   // 可以定位到合法的iter，还需要跳过Delete的entry 
+  if (iter_->Valid()) {// 因为不知道这个iter_是否被删除，如果被删除了需要跳过
     FindNextUserEntry(false, &saved_key_ /* temporary storage */);
   } else {
     valid_ = false;
@@ -293,7 +328,7 @@ void DBIter::SeekToFirst() {
   direction_ = kForward;
   ClearSavedValue();
   iter_->SeekToFirst();
-  if (iter_->Valid()) {
+  if (iter_->Valid()) { // 也要跳过被删除的entry
     FindNextUserEntry(false, &saved_key_ /* temporary storage */);
   } else {
     valid_ = false;

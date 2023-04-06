@@ -29,6 +29,8 @@ class LEVELDB_EXPORT Cache;
 
 // Create a new cache with a fixed size capacity.  This implementation
 // of Cache uses a least-recently-used eviction policy.
+// 创建一个具有固定大小容量的新cache。这个实现
+// 缓存使用最近最少使用的逐出策略
 LEVELDB_EXPORT Cache* NewLRUCache(size_t capacity);
 
 class LEVELDB_EXPORT Cache {
@@ -40,6 +42,7 @@ class LEVELDB_EXPORT Cache {
 
   // Destroys all existing entries by calling the "deleter"
   // function that was passed to the constructor.
+  // 通过调用“deleter”销毁所有现有entries
   virtual ~Cache();
 
   // Opaque handle to an entry stored in the cache.
@@ -54,6 +57,13 @@ class LEVELDB_EXPORT Cache {
   //
   // When the inserted entry is no longer needed, the key and
   // value will be passed to "deleter".
+  // 插入一个key->value的映射到缓存中并赋值
+  // 对总缓存容量的指定费用。
+  //
+  // 返回映射对应的句柄。当返回的mapping不再需要的时候调用者必须调用this->Release(handle)
+  //
+  // 当插入的entry不再需要时，键和
+  // 值将传递给“deleter”。
   virtual Handle* Insert(const Slice& key, void* value, size_t charge,
                          void (*deleter)(const Slice& key, void* value)) = 0;
 

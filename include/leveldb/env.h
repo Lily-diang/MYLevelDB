@@ -393,6 +393,8 @@ class LEVELDB_EXPORT EnvWrapper : public Env {
   Status NewLogger(const std::string& fname, Logger** result) override {
     return target_->NewLogger(fname, result);
   }
+  // Returns the number of micro-seconds since some fixed point in time. Onlyuseful for computing deltas of time.
+  //返回自某个固定时间点以来的微秒数。只对计算时间增量有用。
   uint64_t NowMicros() override { return target_->NowMicros(); }
   void SleepForMicroseconds(int micros) override {
     target_->SleepForMicroseconds(micros);

@@ -35,6 +35,11 @@ class TableCache {
   // underlies the returned iterator.  The returned "*tableptr" object is owned
   // by the cache and should not be deleted, and is valid for as long as the
   // returned iterator is live.
+  // 返回指定文件编号的迭代器（对应的文件长度必须恰好为“file_size”字节）。 
+  // 如果“tableptr”是非空，还设置 “*tableptr” 以指向 Table 对象
+  // 在返回的迭代器下，如果没有table对象，则为 nullptr
+  // 是返回的迭代器的基础。 返回的“*tableptr”对象缓存所有，不应删除。
+  // 并且只要返回的迭代器是live的那就是有效的
   Iterator* NewIterator(const ReadOptions& options, uint64_t file_number,
                         uint64_t file_size, Table** tableptr = nullptr);
 
@@ -48,12 +53,14 @@ class TableCache {
   void Evict(uint64_t file_number);
 
  private:
+  // 使用file_number(cache中的key)，在cache_中查找是否存在该键，如果不存在，则打开一个SSTable，
+  // 经过处理，作为值插入到cache_中
   Status FindTable(uint64_t file_number, uint64_t file_size, Cache::Handle**);
 
   Env* const env_;
   const std::string dbname_;
   const Options& options_;
-  Cache* cache_;
+  Cache* cache_;  
 };
 
 }  // namespace leveldb

@@ -17,6 +17,7 @@ class Slice;
 // used as keys in an sstable or a database.  A Comparator implementation
 // must be thread-safe since leveldb may invoke its methods concurrently
 // from multiple threads.
+// Comparator对象提供了在SSTable或数据库中用作键的slices之间的总顺序，Comparator实现必须是线程安全的，因为levelDB可以从多个线程并发调用其方法
 class LEVELDB_EXPORT Comparator {
  public:
   virtual ~Comparator();

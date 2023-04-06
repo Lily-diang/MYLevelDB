@@ -31,30 +31,47 @@ enum FileType {
 // Return the name of the log file with the specified number
 // in the db named by "dbname".  The result will be prefixed with
 // "dbname".
+// 返回具有指定编号的日志文件的名称
+// 在由“dbname”命名的数据库中。结果将以
+// “数据库名称”。
 std::string LogFileName(const std::string& dbname, uint64_t number);
 
 // Return the name of the sstable with the specified number
 // in the db named by "dbname".  The result will be prefixed with
 // "dbname".
+// 返回具有指定编号的稳定器的名称
+// 在由“dbname”命名的数据库中。结果将以
+// “数据库名称”。
 std::string TableFileName(const std::string& dbname, uint64_t number);
 
 // Return the legacy file name for an sstable with the specified number
 // in the db named by "dbname". The result will be prefixed with
 // "dbname".
+// 返回具有指定编号的稳定版的旧文件名
+// 在由“dbname”命名的数据库中。结果将以
+// “数据库名称”。
 std::string SSTTableFileName(const std::string& dbname, uint64_t number);
 
 // Return the name of the descriptor file for the db named by
 // "dbname" and the specified incarnation number.  The result will be
 // prefixed with "dbname".
+// 返回由 命名的数据库的描述符文件的名称
+// “dbname”和指定的化身编号。结果将是
+// 以“dbname”为前缀。
 std::string DescriptorFileName(const std::string& dbname, uint64_t number);
 
 // Return the name of the current file.  This file contains the name
 // of the current manifest file.  The result will be prefixed with
 // "dbname".
+// 返回当前文件的名称。此文件包含名称
+// 当前清单文件。结果将以
+// “数据库名称”。
 std::string CurrentFileName(const std::string& dbname);
 
 // Return the name of the lock file for the db named by
 // "dbname".  The result will be prefixed with "dbname".
+// 返回由 命名的数据库的锁定文件的名称
+// “数据库名称”。结果将以“dbname”为前缀。
 std::string LockFileName(const std::string& dbname);
 
 // Return the name of a temporary file owned by the db named "dbname".

@@ -27,6 +27,7 @@ class MemTable {
   MemTable& operator=(const MemTable&) = delete;
 
   // Increase reference count.
+  // 引用计数+1
   void Ref() { ++refs_; }
 
   // Drop reference count.  Delete if no more references exist.

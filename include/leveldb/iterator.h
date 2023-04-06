@@ -83,6 +83,8 @@ class LEVELDB_EXPORT Iterator {
  private:
   // Cleanup functions are stored in a single-linked list.
   // The list's head node is inlined in the iterator.
+  // 清理函数存储在单链表中。
+  // 列表的头节点内联在迭代器中。
   struct CleanupNode {
     // True if the node is not used. Only head nodes might be unused.
     bool IsEmpty() const { return function == nullptr; }

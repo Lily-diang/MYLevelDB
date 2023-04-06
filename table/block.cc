@@ -77,9 +77,9 @@ static inline const char* DecodeEntry(const char* p, const char* limit,
 class Block::Iter : public Iterator {
  private:
   const Comparator* const comparator_;
-  const char* const data_;       // underlying block contents
+  const char* const data_;       // 块得内容
   uint32_t const restarts_;      // Offset of restart array (list of fixed32)
-  uint32_t const num_restarts_;  // Number of uint32_t entries in restart array
+  uint32_t const num_restarts_;  // 重启点个数
 
   // current_ is offset in data_ of current entry.  >= restarts_ if !Valid
   uint32_t current_;
@@ -183,19 +183,20 @@ class Block::Iter : public Iterator {
         return;
       }
     }
-
+    // 对重启点进行二分查找
     while (left < right) {
       uint32_t mid = (left + right + 1) / 2;
-      uint32_t region_offset = GetRestartPoint(mid);
+      // GetRestartPoint 查找到mid这个重启点的值
+      uint32_t region_offset = GetRestartPoint(mid); //region_offset表示mid这个重启点在块中的偏移量
       uint32_t shared, non_shared, value_length;
-      const char* key_ptr =
-          DecodeEntry(data_ + region_offset, data_ + restarts_, &shared,
-                      &non_shared, &value_length);
-      if (key_ptr == nullptr || (shared != 0)) {
+      const char* key_ptr =     // key_ptr指向了非共享部分
+          DecodeEntry(data_ + region_offset, data_ + restarts_, &shared,  // DecodeEntry在该重启点数据中读取第一组键值对，shared表示键共享部分长度，non_shared表示非共享
+                      &non_shared, &value_length);                        // 部分长度，value_length表示值得长度.
+      if (key_ptr == nullptr || (shared != 0)) {  // 重启点开始位置得键得共享部分长度肯定为0，否则错误
         CorruptionError();
         return;
       }
-      Slice mid_key(key_ptr, non_shared);
+      Slice mid_key(key_ptr, non_shared);  // mid_key表示mid这个重启点指向键值对得第一个键，因为shared肯定为0，所以将non_shared长度得部分赋值给mid_key即可
       if (Compare(mid_key, target) < 0) {
         // Key at "mid" is smaller than "target".  Therefore all
         // blocks before "mid" are uninteresting.
@@ -213,6 +214,8 @@ class Block::Iter : public Iterator {
     assert(current_key_compare == 0 || Valid());
     bool skip_seek = left == restart_index_ && current_key_compare < 0;
     if (!skip_seek) {
+      // 通过二分查找，找到了一个重启点（该重启点定位到得数据内容中有可能包含待查找得键），接着在该数据内容中遍历查找
+      // 找到第一个大于等于target得键，并将该键的位置放到Iter类中的key_和value_中
       SeekToRestartPoint(left);
     }
     // Linear search (within restart block) for first key >= target

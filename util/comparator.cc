@@ -28,6 +28,10 @@ class BytewiseComparatorImpl : public Comparator {
     return a.compare(b);
   }
 
+  /**
+   * @description: 对数据索引区域的block中构造每一个键值对中的值
+   * @return {*}
+   */
   void FindShortestSeparator(std::string* start,
                              const Slice& limit) const override {
     // Find length of common prefix

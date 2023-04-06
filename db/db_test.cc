@@ -1722,14 +1722,8 @@ TEST_F(DBTest, DestroyEmptyDir) {
   ASSERT_TRUE(env.FileExists(dbname));
   std::vector<std::string> children;
   ASSERT_LEVELDB_OK(env.GetChildren(dbname, &children));
-#if defined(LEVELDB_PLATFORM_CHROMIUM)
-  // TODO(https://crbug.com/1428746): Chromium's file system abstraction always
-  // filters out '.' and '..'.
-  ASSERT_EQ(0, children.size());
-#else
   // The stock Env's do not filter out '.' and '..' special files.
   ASSERT_EQ(2, children.size());
-#endif  // defined(LEVELDB_PLATFORM_CHROMIUM)
   ASSERT_LEVELDB_OK(DestroyDB(dbname, opts));
   ASSERT_TRUE(!env.FileExists(dbname));
 
@@ -2120,11 +2114,13 @@ class ModelDB : public DB {
   Status Delete(const WriteOptions& o, const Slice& key) override {
     return DB::Delete(o, key);
   }
+
   Status Get(const ReadOptions& options, const Slice& key,
              std::string* value) override {
     assert(false);  // Not implemented
     return Status::NotFound(key);
   }
+  
   Iterator* NewIterator(const ReadOptions& options) override {
     if (options.snapshot == nullptr) {
       KVMap* saved = new KVMap;
@@ -2136,6 +2132,7 @@ class ModelDB : public DB {
       return new ModelIter(snapshot_state, false);
     }
   }
+  // 获取当前数据库DB的一个快照备份
   const Snapshot* GetSnapshot() override {
     ModelSnapshot* snapshot = new ModelSnapshot;
     snapshot->map_ = map_;

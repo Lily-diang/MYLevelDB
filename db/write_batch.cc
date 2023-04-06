@@ -95,10 +95,20 @@ void WriteBatchInternal::SetSequence(WriteBatch* b, SequenceNumber seq) {
   EncodeFixed64(&b->rep_[0], seq);
 }
 
+/**
+ * @brief 将key、value写入writebatch，之后，这个WriteBatch会被封装成Writer对象，Writer对象还会封装mutex，条件变量等用来实现等待通知。
+ * 
+ * @param key key
+ * @param value value
+ */
 void WriteBatch::Put(const Slice& key, const Slice& value) {
+  // 写入数+1
   WriteBatchInternal::SetCount(this, WriteBatchInternal::Count(this) + 1);
+  // 写入type信息
   rep_.push_back(static_cast<char>(kTypeValue));
+  // key加入前缀信息key.size()
   PutLengthPrefixedSlice(&rep_, key);
+  // 加入value.size()
   PutLengthPrefixedSlice(&rep_, value);
 }
 
@@ -128,11 +138,17 @@ class MemTableInserter : public WriteBatch::Handler {
   }
 };
 }  // namespace
-
+/**
+ * @brief 数据写入则是会构建一个MemTableInserter，这个类会将每个key都调用memtable.Add方法添加至memtable表中。 
+ * @param {WriteBatch*} b
+ * @param {MemTable*} memtable
+ * @return {*}
+ */
 Status WriteBatchInternal::InsertInto(const WriteBatch* b, MemTable* memtable) {
   MemTableInserter inserter;
   inserter.sequence_ = WriteBatchInternal::Sequence(b);
   inserter.mem_ = memtable;
+  //这个迭代器会调用inserter的Put方法，把每个key都调用memtable.Add方法添加至表中
   return b->Iterate(&inserter);
 }
 

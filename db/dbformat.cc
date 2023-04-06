@@ -113,21 +113,30 @@ void InternalFilterPolicy::CreateFilter(const Slice* keys, int n,
 bool InternalFilterPolicy::KeyMayMatch(const Slice& key, const Slice& f) const {
   return user_policy_->KeyMayMatch(ExtractUserKey(key), f);
 }
-
+/**
+ * @brief 将序列号信息s封装到user_key后面
+ * 
+ * @param user_key key
+ * @param s 序列号信息
+ */
 LookupKey::LookupKey(const Slice& user_key, SequenceNumber s) {
   size_t usize = user_key.size();
   size_t needed = usize + 13;  // A conservative estimate
   char* dst;
+  //空间够用
   if (needed <= sizeof(space_)) {
     dst = space_;
   } else {
     dst = new char[needed];
   }
+  // dst = [Varint32](usize+8) + [string](user_key) + [Varint64]((s<<8)|ValueType)
   start_ = dst;
   dst = EncodeVarint32(dst, usize + 8);
   kstart_ = dst;
+  // dst = user_key
   std::memcpy(dst, user_key.data(), usize);
   dst += usize;
+  //(s<<8)|ValueType
   EncodeFixed64(dst, PackSequenceAndType(s, kValueTypeForSeek));
   dst += 8;
   end_ = dst;

@@ -220,6 +220,10 @@ inline void SkipList<Key, Comparator>::Iterator::Prev() {
 
 template <typename Key, class Comparator>
 inline void SkipList<Key, Comparator>::Iterator::Seek(const Key& target) {
+  // 具体实现查询操作的是 FindGreaterOrEqual 函数，返回值是一个指针，指向第一个大于等于 key 的结点（如果不存大于等于 key 的结点，则是 nullptr）。
+  //在 MemTable 中，同一个 userkey 的多个版本是按照 sequence number 降序排序的，
+  //也就说“sequence number 小的在排序中比较大，sequence number 大的在排序中比较小”。
+  // 所以，如果使用一个旧的 snapshot，只能查到比这个 snapshot 旧（或一样旧）的数据。
   node_ = list_->FindGreaterOrEqual(target, nullptr);
 }
 
@@ -240,7 +244,9 @@ template <typename Key, class Comparator>
 int SkipList<Key, Comparator>::RandomHeight() {
   // Increase height with probability 1 in kBranching
   static const unsigned int kBranching = 4;
+  // 初始层高为1
   int height = 1;
+  // rnd_.OneIn 为了产生一个随机数，将该随机数对4取余，如果余数等于0且层高小于12则height加1
   while (height < kMaxHeight && rnd_.OneIn(kBranching)) {
     height++;
   }
@@ -259,15 +265,20 @@ template <typename Key, class Comparator>
 typename SkipList<Key, Comparator>::Node*
 SkipList<Key, Comparator>::FindGreaterOrEqual(const Key& key,
                                               Node** prev) const {
+  // 从头结点开始找
   Node* x = head_;
+  // 
   int level = GetMaxHeight() - 1;
   while (true) {
+    // 找到对应的Node
     Node* next = x->Next(level);
     if (KeyIsAfterNode(key, next)) {
       // Keep searching in this list
       x = next;
     } else {
-      if (prev != nullptr) prev[level] = x;
+      if (prev != nullptr) prev[level] = x;  // 这个不为空是什么个情况？？？
+      // 如果node中的值大于或等于key，则降低层数，到下一层去查找。
+      // 如果已经查到最底层，则返回该节点
       if (level == 0) {
         return next;
       } else {

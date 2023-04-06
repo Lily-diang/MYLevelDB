@@ -100,10 +100,13 @@ void MemTable::Add(SequenceNumber s, ValueType type, const Slice& key,
 }
 
 bool MemTable::Get(const LookupKey& key, std::string* value, Status* s) {
+  // 取出key
   Slice memkey = key.memtable_key();
   Table::Iterator iter(&table_);
-  iter.Seek(memkey.data());
-  if (iter.Valid()) {
+  //memtable 搜寻key，这里其实是跳表的查找过程
+  iter.Seek(memkey.data());  // 用迭代器进行查找第一个target（可用于范围查找）
+  if (iter.Valid()) { // 该值有效，但这只针对点查询呀，那范围查询不是要next吗？？？
+    //找到了，格式中反解析出key的value，赋值给value
     // entry format is:
     //    klength  varint32
     //    userkey  char[klength]
@@ -117,16 +120,16 @@ bool MemTable::Get(const LookupKey& key, std::string* value, Status* s) {
     uint32_t key_length;
     const char* key_ptr = GetVarint32Ptr(entry, entry + 5, &key_length);
     if (comparator_.comparator.user_comparator()->Compare(
-            Slice(key_ptr, key_length - 8), key.user_key()) == 0) {
+            Slice(key_ptr, key_length - 8), key.user_key()) == 0) {  // 这里主要是因为，seek（）找到的可能不是key值，所以需要再次检查
       // Correct user key
       const uint64_t tag = DecodeFixed64(key_ptr + key_length - 8);
       switch (static_cast<ValueType>(tag & 0xff)) {
-        case kTypeValue: {
+        case kTypeValue: {  // 如果ValueType为增加一个键-值对，则取出值并且返回true
           Slice v = GetLengthPrefixedSlice(key_ptr + key_length);
           value->assign(v.data(), v.size());
           return true;
         }
-        case kTypeDeletion:
+        case kTypeDeletion:  // 如果为删除一个键值对，则将状态赋值为NotFound
           *s = Status::NotFound(Slice());
           return true;
       }

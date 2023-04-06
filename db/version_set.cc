@@ -1,3 +1,11 @@
+/*
+ * @Author: Lidiang 787695954@qq.com
+ * @Date: 2023-03-04 21:27:02
+ * @LastEditors: Li_diang 787695954@qq.com
+ * @LastEditTime: 2023-04-05 18:42:30
+ * @FilePath: \leveldb\db\version_set.cc
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
@@ -160,6 +168,10 @@ bool SomeFileOverlapsRange(const InternalKeyComparator& icmp,
 // is the largest key that occurs in the file, and value() is an
 // 16-byte value containing the file number and file size, both
 // encoded using EncodeFixed64.
+// 一个内部迭代器。 对于给定的version/level对，产生有关level中文件的信息。 对于给定的entry，key（）
+// 是文件中出现的最大键，value（） 是一个
+// 包含文件编号和文件大小的 16 字节值，两者
+// 使用 EncodeFixed64 进行编码。
 class Version::LevelFileNumIterator : public Iterator {
  public:
   LevelFileNumIterator(const InternalKeyComparator& icmp,
@@ -219,6 +231,13 @@ static Iterator* GetFileIterator(void* arg, const ReadOptions& options,
   }
 }
 
+
+/**
+ * @brief 这个迭代器可以对某一层（除了level 0）的SSTable进行迭代。第一层是一个Level File Num Iterator，可以返回这一层的SSTable文件信息，而第二层则是SSTable Iterator，使用GetFileIterator可以获取第二层的SSTable Iterator。这样就可以对这一层的所有SSTable里的键从小到大迭代。 
+ * @param {ReadOptions} options 选项参数
+ * @param {int} level 层数
+ * @return {*}
+ */
 Iterator* Version::NewConcatenatingIterator(const ReadOptions& options,
                                             int level) const {
   return NewTwoLevelIterator(
@@ -229,6 +248,7 @@ Iterator* Version::NewConcatenatingIterator(const ReadOptions& options,
 void Version::AddIterators(const ReadOptions& options,
                            std::vector<Iterator*>* iters) {
   // Merge all level zero files together since they may overlap
+  // 合并L0中的所有files。因为他们可能会有重叠
   for (size_t i = 0; i < files_[0].size(); i++) {
     iters->push_back(vset_->table_cache_->NewIterator(
         options, files_[0][i]->number, files_[0][i]->file_size));
@@ -237,6 +257,7 @@ void Version::AddIterators(const ReadOptions& options,
   // For levels > 0, we can use a concatenating iterator that sequentially
   // walks through the non-overlapping files in the level, opening them
   // lazily.
+  // 对于级别 > 0，我们可以使用按顺序连接的迭代器遍历此level中的非重叠文件，打开它们
   for (int level = 1; level < config::kNumLevels; level++) {
     if (!files_[level].empty()) {
       iters->push_back(NewConcatenatingIterator(options, level));
@@ -278,23 +299,32 @@ static bool NewestFirst(FileMetaData* a, FileMetaData* b) {
   return a->number > b->number;
 }
 
+/**
+ * @description: 查找sstable文件的具体实现逻辑
+ * @return 
+ */
 void Version::ForEachOverlapping(Slice user_key, Slice internal_key, void* arg,
                                  bool (*func)(void*, int, FileMetaData*)) {
   const Comparator* ucmp = vset_->icmp_.user_comparator();
 
   // Search level-0 in order from newest to oldest.
+  // 第0层查找
   std::vector<FileMetaData*> tmp;
   tmp.reserve(files_[0].size());
   for (uint32_t i = 0; i < files_[0].size(); i++) {
     FileMetaData* f = files_[0][i];
+    // 这里是通过FileMetaData里面存储的每一层最大key和最小key，通过对比就知道key在不在这个文件之中
     if (ucmp->Compare(user_key, f->smallest.user_key()) >= 0 &&
         ucmp->Compare(user_key, f->largest.user_key()) <= 0) {
       tmp.push_back(f);
     }
   }
+  // 比较所有符合条件的
   if (!tmp.empty()) {
+    // 这里排序的目的是找到最新的，找到就返回，后面不找了
     std::sort(tmp.begin(), tmp.end(), NewestFirst);
     for (uint32_t i = 0; i < tmp.size(); i++) {
+      // 这里调用State::Match函数，每次都会把磁盘上的SSTable打开，加载到table_cache，之后查找，搜索第0层level？？？
       if (!(*func)(arg, 0, tmp[i])) {
         return;
       }
@@ -307,12 +337,14 @@ void Version::ForEachOverlapping(Slice user_key, Slice internal_key, void* arg,
     if (num_files == 0) continue;
 
     // Binary search to find earliest index whose largest key >= internal_key.
+    // FindFile这里采用二分查找，找到符合条件范围的key
     uint32_t index = FindFile(vset_->icmp_, files_[level], internal_key);
     if (index < num_files) {
       FileMetaData* f = files_[level][index];
       if (ucmp->Compare(user_key, f->smallest.user_key()) < 0) {
         // All of "f" is past any data for user_key
       } else {
+        //查找 返回
         if (!(*func)(arg, level, f)) {
           return;
         }
@@ -321,24 +353,28 @@ void Version::ForEachOverlapping(Slice user_key, Slice internal_key, void* arg,
   }
 }
 
+/**
+ * @brief: LevelDB 中将 SSTable 的管理实现成 leveldb::Version ，同时通过 leveldb::VersionSet 实现多版本管理。 
+ * @return {*}
+ */
 Status Version::Get(const ReadOptions& options, const LookupKey& k,
                     std::string* value, GetStats* stats) {
-  stats->seek_file = nullptr;
+  stats->seek_file = nullptr;   // 初始化 stats seek_file为空 查找层级为-1
   stats->seek_file_level = -1;
 
-  struct State {
+  struct State {                
     Saver saver;
     GetStats* stats;
-    const ReadOptions* options;
+    const ReadOptions* options; // 设置选项
     Slice ikey;
-    FileMetaData* last_file_read;
+    FileMetaData* last_file_read; // 设置文件源信息
     int last_file_read_level;
 
     VersionSet* vset;
     Status s;
     bool found;
-
-    static bool Match(void* arg, int level, FileMetaData* f) {
+    // 这个函数不是特别能看懂
+    static bool Match(void* arg, int level, FileMetaData* f) {  
       State* state = reinterpret_cast<State*>(arg);
 
       if (state->stats->seek_file == nullptr &&
@@ -354,7 +390,7 @@ Status Version::Get(const ReadOptions& options, const LookupKey& k,
       state->s = state->vset->table_cache_->Get(*state->options, f->number,
                                                 f->file_size, state->ikey,
                                                 &state->saver, SaveValue);
-      if (!state->s.ok()) {
+      if (!state->s.ok()) {  //这是为什么呢？？？
         state->found = true;
         return false;
       }
@@ -393,7 +429,7 @@ Status Version::Get(const ReadOptions& options, const LookupKey& k,
   state.saver.ucmp = vset_->icmp_.user_comparator();
   state.saver.user_key = k.user_key();
   state.saver.value = value;
-
+  // 实际上是调用ForEachOverlapping来对SSTable进行查找
   ForEachOverlapping(state.saver.user_key, state.ikey, &state, &State::Match);
 
   return state.found ? state.s : Status::NotFound(Slice());

@@ -14,7 +14,6 @@
 #include "leveldb/db.h"
 #include "leveldb/env.h"
 #include "leveldb/iterator.h"
-#include "leveldb/options.h"
 #include "leveldb/table_builder.h"
 #include "table/block.h"
 #include "table/block_builder.h"
@@ -785,29 +784,15 @@ TEST(TableTest, ApproximateOffsetOfPlain) {
   ASSERT_TRUE(Between(c.ApproximateOffsetOf("xyz"), 610000, 612000));
 }
 
-static bool CompressionSupported(CompressionType type) {
+static bool SnappyCompressionSupported() {
   std::string out;
   Slice in = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-  if (type == kSnappyCompression) {
-    return port::Snappy_Compress(in.data(), in.size(), &out);
-  } else if (type == kZstdCompression) {
-    return port::Zstd_Compress(in.data(), in.size(), &out);
-  }
-  return false;
+  return port::Snappy_Compress(in.data(), in.size(), &out);
 }
 
-class CompressionTableTest
-    : public ::testing::TestWithParam<std::tuple<CompressionType>> {};
-
-INSTANTIATE_TEST_SUITE_P(CompressionTests, CompressionTableTest,
-                         ::testing::Values(kSnappyCompression,
-                                           kZstdCompression));
-
-TEST_P(CompressionTableTest, ApproximateOffsetOfCompressed) {
-  CompressionType type = ::testing::get<0>(GetParam());
-  if (!CompressionSupported(type)) {
-    GTEST_SKIP() << "skipping compression test: " << type;
-  }
+TEST(TableTest, ApproximateOffsetOfCompressed) {
+  if (!SnappyCompressionSupported())
+    GTEST_SKIP() << "skipping compression tests";
 
   Random rnd(301);
   TableConstructor c(BytewiseComparator());
@@ -820,7 +805,7 @@ TEST_P(CompressionTableTest, ApproximateOffsetOfCompressed) {
   KVMap kvmap;
   Options options;
   options.block_size = 1024;
-  options.compression = type;
+  options.compression = kSnappyCompression;
   c.Finish(options, &keys, &kvmap);
 
   // Expected upper and lower bounds of space used by compressible strings.

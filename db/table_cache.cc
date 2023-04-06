@@ -11,6 +11,7 @@
 
 namespace leveldb {
 
+// 该结构保存一个RandomAccessFile实例和Table实例
 struct TableAndFile {
   RandomAccessFile* file;
   Table* table;
@@ -43,11 +44,12 @@ Status TableCache::FindTable(uint64_t file_number, uint64_t file_size,
   Status s;
   char buf[sizeof(file_number)];
   EncodeFixed64(buf, file_number);
-  Slice key(buf, sizeof(buf));
-  *handle = cache_->Lookup(key);
-  if (*handle == nullptr) {
+  Slice key(buf, sizeof(buf));  // 使用file_number构造键
+  *handle = cache_->Lookup(key);  // 在缓存中查找key
+  if (*handle == nullptr) {  // 若没找到，则需要打开一个SSTable文件
+  // fname表示要打开的SSTable文件的文件名称
     std::string fname = TableFileName(dbname_, file_number);
-    RandomAccessFile* file = nullptr;
+    RandomAccessFile* file = nullptr;  // 随机读文件，用于读取SSTable文件
     Table* table = nullptr;
     s = env_->NewRandomAccessFile(fname, &file);
     if (!s.ok()) {
@@ -57,10 +59,12 @@ Status TableCache::FindTable(uint64_t file_number, uint64_t file_size,
       }
     }
     if (s.ok()) {
+      // 打开SSTable文件并且生成了一个Table示例保存到table变量中
       s = Table::Open(options_, file, file_size, &table);
     }
 
     if (!s.ok()) {
+      // 打开失败，进行村务处理
       assert(table == nullptr);
       delete file;
       // We do not cache error results so that if the error is transient,
@@ -69,6 +73,7 @@ Status TableCache::FindTable(uint64_t file_number, uint64_t file_size,
       TableAndFile* tf = new TableAndFile;
       tf->file = file;
       tf->table = table;
+      // 以文件序号作为键，TableAndFile实例作为值，插入缓存
       *handle = cache_->Insert(key, tf, 1, &DeleteEntry);
     }
   }
@@ -78,7 +83,7 @@ Status TableCache::FindTable(uint64_t file_number, uint64_t file_size,
 Iterator* TableCache::NewIterator(const ReadOptions& options,
                                   uint64_t file_number, uint64_t file_size,
                                   Table** tableptr) {
-  if (tableptr != nullptr) {
+  if (tableptr != nullptr) {   // 这一步有必要吗？？？
     *tableptr = nullptr;
   }
 
@@ -89,9 +94,10 @@ Iterator* TableCache::NewIterator(const ReadOptions& options,
   }
 
   Table* table = reinterpret_cast<TableAndFile*>(cache_->Value(handle))->table;
+  // 查找SSTable就需要调用table类的NewIterator来构造迭代器
   Iterator* result = table->NewIterator(options);
   result->RegisterCleanup(&UnrefEntry, cache_, handle);
-  if (tableptr != nullptr) {
+  if (tableptr != nullptr) { 
     *tableptr = table;
   }
   return result;

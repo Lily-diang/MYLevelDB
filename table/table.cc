@@ -150,8 +150,15 @@ static void ReleaseBlock(void* arg, void* h) {
 
 // Convert an index iterator value (i.e., an encoded BlockHandle)
 // into an iterator over the contents of the corresponding block.
-Iterator* Table::BlockReader(void* arg, const ReadOptions& options,
-                             const Slice& index_value) {
+/**
+ * @description: 读取SSTable中的Block，注意，因为对SSTable的读取是由两层迭代器组成地，第一次迭代器是找块，第二层迭代器是在块中读取
+ * @param arg 一个Table结构
+ * @param options 参数结构
+ * @param index_value 通过第一层迭代器读取到的值
+ * @return {*}
+ */
+Iterator* Table::BlockReader(void* arg, const ReadOptions& options, const Slice& index_value) {
+  // 转换为Table结构
   Table* table = reinterpret_cast<Table*>(arg);
   Cache* block_cache = table->rep_->options.block_cache;
   Block* block = nullptr;
@@ -159,23 +166,26 @@ Iterator* Table::BlockReader(void* arg, const ReadOptions& options,
 
   BlockHandle handle;
   Slice input = index_value;
+  // 将index_value解码到BlockHandle类型的变量handle中
   Status s = handle.DecodeFrom(&input);
   // We intentionally allow extra stuff in index_value so that we
   // can add more features in the future.
 
   if (s.ok()) {
-    BlockContents contents;
+    BlockContents contents;  // 保存一个块的内容
     if (block_cache != nullptr) {
-      char cache_key_buffer[16];
+      char cache_key_buffer[16]; // block cache的key由 cache_id + offset 组成
       EncodeFixed64(cache_key_buffer, table->rep_->cache_id);
       EncodeFixed64(cache_key_buffer + 8, handle.offset());
       Slice key(cache_key_buffer, sizeof(cache_key_buffer));
       cache_handle = block_cache->Lookup(key);
-      if (cache_handle != nullptr) {
+      if (cache_handle != nullptr) {  // cache命中
         block = reinterpret_cast<Block*>(block_cache->Value(cache_handle));
       } else {
+        // 通过handle取一个块的内容到contents中
         s = ReadBlock(table->rep_->file, options, handle, &contents);
         if (s.ok()) {
+          // 生成一个Block结构
           block = new Block(contents);
           if (contents.cachable && options.fill_cache) {
             cache_handle = block_cache->Insert(key, block, block->size(),
@@ -183,21 +193,25 @@ Iterator* Table::BlockReader(void* arg, const ReadOptions& options,
           }
         }
       }
-    } else {
+    } else { // block cache为空
       s = ReadBlock(table->rep_->file, options, handle, &contents);
       if (s.ok()) {
         block = new Block(contents);
       }
     }
   }
-
+  // 生成一个迭代器，通过迭代器来读取块中的数据
   Iterator* iter;
   if (block != nullptr) {
     iter = block->NewIterator(table->rep_->options.comparator);
+    //1、cache_handle 为null,表示block不在缓存中，在迭代器iter析构时，
+	  //   直接删除这个block。
+	  //2、cache_handle非null,表示block在缓存中，在迭代器iter析构时,
+	  //   通过ReleaseBlock，减少其一次引用计数。
     if (cache_handle == nullptr) {
-      iter->RegisterCleanup(&DeleteBlock, block, nullptr);
+      iter->RegisterCleanup(&DeleteBlock, block, nullptr);   // 为什么要删除这个block？？？
     } else {
-      iter->RegisterCleanup(&ReleaseBlock, block_cache, cache_handle);
+      iter->RegisterCleanup(&ReleaseBlock, block_cache, cache_handle);  // 为什么此处是释放block？？？
     }
   } else {
     iter = NewErrorIterator(s);
@@ -205,7 +219,14 @@ Iterator* Table::BlockReader(void* arg, const ReadOptions& options,
   return iter;
 }
 
+
+/**
+ * @description: 通过申请一个迭代器来进行查询，分为两层迭代器。
+ * @param {ReadOptions&} options
+ * @return {*}
+ */
 Iterator* Table::NewIterator(const ReadOptions& options) const {
+  // 返回一个第二层迭代器
   return NewTwoLevelIterator(
       rep_->index_block->NewIterator(rep_->options.comparator),
       &Table::BlockReader, const_cast<Table*>(this), options);

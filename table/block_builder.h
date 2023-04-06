@@ -41,12 +41,12 @@ class BlockBuilder {
   bool empty() const { return buffer_.empty(); }
 
  private:
-  const Options* options_;
-  std::string buffer_;              // Destination buffer
-  std::vector<uint32_t> restarts_;  // Restart points
-  int counter_;                     // Number of entries emitted since restart
-  bool finished_;                   // Has Finish() been called?
-  std::string last_key_;
+  const Options* options_;          
+  std::string buffer_;              // 块内容，所有的键值对都保存于此，保存格式参数《精通LevelDB》一书P143，图8-3
+  std::vector<uint32_t> restarts_;  // 每次生成新的重启店后，都会将当前buffer_的长度存到restarts_中，当前buffer_的长度就是每个重启点的偏移量
+  int counter_;                     // 开启新的重启点后加入的键值对，默认16个键值对就要开启新的重启点
+  bool finished_;                   // 是否已调用Finish()函数
+  std::string last_key_;            // 上一个保存的键，当前加入新键是，用来计算和上一个键的共同前缀部分
 };
 
 }  // namespace leveldb

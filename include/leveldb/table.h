@@ -13,7 +13,7 @@
 namespace leveldb {
 
 class Block;
-class BlockHandle;
+class BlockHandle;  // 通过BlockHandle可以指定一块数据区域
 class Footer;
 struct Options;
 class RandomAccessFile;

@@ -69,6 +69,9 @@ class DBImpl : public DB {
   // Record a sample of bytes read at the specified internal key.
   // Samples are taken approximately once every config::kReadBytesPeriod
   // bytes.
+  // 记录在指定内部键读取的字节示例。
+  // 每个配置大约采集一次样本 config::kReadBytesPeriod
+  // 字节。
   void RecordReadSample(Slice key);
 
  private:

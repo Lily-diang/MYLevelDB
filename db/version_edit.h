@@ -18,12 +18,12 @@ class VersionSet;
 struct FileMetaData {
   FileMetaData() : refs(0), allowed_seeks(1 << 30), file_size(0) {}
 
-  int refs;
-  int allowed_seeks;  // Seeks allowed until compaction
-  uint64_t number;
-  uint64_t file_size;    // File size in bytes
-  InternalKey smallest;  // Smallest internal key served by table
-  InternalKey largest;   // Largest internal key served by table
+  int refs;           // 引用次数
+  int allowed_seeks;  // 允许的最大无效查询次数
+  uint64_t number;    // 文件序列号
+  uint64_t file_size;    // 文件大小（字节）
+  InternalKey smallest;  // 该文件中的最小键
+  InternalKey largest;   // 该文件中的最大键
 };
 
 class VersionEdit {
@@ -41,14 +41,17 @@ class VersionEdit {
     has_log_number_ = true;
     log_number_ = num;
   }
+  // 兼顾旧版本（已不再使用）
   void SetPrevLogNumber(uint64_t num) {
     has_prev_log_number_ = true;
     prev_log_number_ = num;
   }
+  // 设置下一个文件序列号
   void SetNextFile(uint64_t num) {
     has_next_file_number_ = true;
     next_file_number_ = num;
   }
+  // 设置写入序列号
   void SetLastSequence(SequenceNumber seq) {
     has_last_sequence_ = true;
     last_sequence_ = seq;
@@ -60,6 +63,7 @@ class VersionEdit {
   // Add the specified file at the specified number.
   // REQUIRES: This version has not been saved (see VersionSet::SaveTo)
   // REQUIRES: "smallest" and "largest" are smallest and largest keys in file
+  // 给一个层级增加文件，将参数中的信息复制到一个FileMetaData结构变量中，送入new_files_数组
   void AddFile(int level, uint64_t file, uint64_t file_size,
                const InternalKey& smallest, const InternalKey& largest) {
     FileMetaData f;
@@ -71,13 +75,15 @@ class VersionEdit {
   }
 
   // Delete the specified "file" from the specified "level".
+  // 给一个层级删除文件，将指定的文件序列号送入deleted_files_数组
   void RemoveFile(int level, uint64_t file) {
     deleted_files_.insert(std::make_pair(level, file));
   }
-
+  // 编码
   void EncodeTo(std::string* dst) const;
+  // 解码
   Status DecodeFrom(const Slice& src);
-
+  
   std::string DebugString() const;
 
  private:
