@@ -20,6 +20,7 @@ struct ReadOptions;
 
 // BlockHandle is a pointer to the extent of a file that stores a data
 // block or a meta block.
+// 里边存放了偏移量和大小
 class BlockHandle {
  public:
   // Maximum encoding length of a BlockHandle
@@ -45,6 +46,7 @@ class BlockHandle {
 
 // Footer encapsulates the fixed information stored at the tail
 // end of every table file.
+// 尾部
 class Footer {
  public:
   // Encoded length of a Footer.  Note that the serialization of a

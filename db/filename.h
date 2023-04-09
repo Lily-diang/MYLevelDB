@@ -39,7 +39,7 @@ std::string LogFileName(const std::string& dbname, uint64_t number);
 // Return the name of the sstable with the specified number
 // in the db named by "dbname".  The result will be prefixed with
 // "dbname".
-// 返回具有指定编号的稳定器的名称
+// 返回具有指定编号的SSTable的名称
 // 在由“dbname”命名的数据库中。结果将以
 // “数据库名称”。
 std::string TableFileName(const std::string& dbname, uint64_t number);
@@ -47,7 +47,7 @@ std::string TableFileName(const std::string& dbname, uint64_t number);
 // Return the legacy file name for an sstable with the specified number
 // in the db named by "dbname". The result will be prefixed with
 // "dbname".
-// 返回具有指定编号的稳定版的旧文件名
+// 返回具有指定编号的SSTable的旧文件名
 // 在由“dbname”命名的数据库中。结果将以
 // “数据库名称”。
 std::string SSTTableFileName(const std::string& dbname, uint64_t number);
@@ -71,7 +71,7 @@ std::string CurrentFileName(const std::string& dbname);
 // Return the name of the lock file for the db named by
 // "dbname".  The result will be prefixed with "dbname".
 // 返回由 命名的数据库的锁定文件的名称
-// “数据库名称”。结果将以“dbname”为前缀。
+// “dbname”。结果将以“dbname”为前缀。
 std::string LockFileName(const std::string& dbname);
 
 // Return the name of a temporary file owned by the db named "dbname".

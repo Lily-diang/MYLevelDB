@@ -53,8 +53,12 @@ class TableCache {
   void Evict(uint64_t file_number);
 
  private:
-  // 使用file_number(cache中的key)，在cache_中查找是否存在该键，如果不存在，则打开一个SSTable，
-  // 经过处理，作为值插入到cache_中
+  /**
+   * @brief  使用file_number(cache中的key)，在cache_中查找是否存在该键，如果不存在，则打开一个SSTable，经过处理，作为值插入到cache_中
+   * @param {uint64_t} file_number 相当于cache中的key
+   * @param {uint64_t} file_size file的大小
+   * @return {*}
+   */
   Status FindTable(uint64_t file_number, uint64_t file_size, Cache::Handle**);
 
   Env* const env_;

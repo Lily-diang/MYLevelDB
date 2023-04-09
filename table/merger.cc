@@ -82,7 +82,7 @@ class MergingIterator : public Iterator {
     current_->Next();
     FindSmallest();
   }
-  // 注意：next（）永远找的都是<key（）的下一个位置,逻辑与next()类似，且调用了Prev()后，方向一定为kReveKRrse
+  // 注意：next（）永远找的都是<key（）的下一个位置,逻辑与next()类似，且调用了Prev()后，方向一定为kReverse
   void Prev() override {
     assert(Valid());
 
@@ -91,8 +91,8 @@ class MergingIterator : public Iterator {
     // true for all of the non-current_ children since current_ is
     // the largest child and key() == current_->key().  Otherwise,
     // we explicitly position the non-current_ children.
-    // Prev（）为反向移动，所以默认方向为kReveKRrse
-    if (direction_ != kReveKRrse) {
+    // Prev（）为反向移动，所以默认方向为kReverse
+    if (direction_ != kReverse) {
       for (int i = 0; i < n_; i++) {
         IteratorWrapper* child = &children_[i];
         // 对于非current_，首先要找到>=key()的位置

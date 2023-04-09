@@ -58,12 +58,20 @@ enum ValueType { kTypeDeletion = 0x0, kTypeValue = 0x1 };
 // and the value type is embedded as the low 8 bits in the sequence
 // number in internal keys, we need to use the highest-numbered
 // ValueType, not the lowest).
+// kValueTypeForSeek定义了在以下情况下应传递的值类型
+// 构造一个 ParsedInternalKey 对象以查找特定的
+// 序列号（因为我们按降序对序列号进行排序
+// 并且值类型作为序列中的低 8 位嵌入
+// 内部键中的数字，我们需要使用编号最高的
+// 值类型，不是最低值）。
 static const ValueType kValueTypeForSeek = kTypeValue;
 
 typedef uint64_t SequenceNumber;
 
 // We leave eight bits empty at the bottom so a type and sequence#
 // can be packed together into 64-bits.
+// 我们在底部留出八个位空间以至于type和sequence
+// 可以打包成 64 位。
 static const SequenceNumber kMaxSequenceNumber = ((0x1ull << 56) - 1);
 
 // leveldb中的内部键由（user_key，sequence，type）的格式组成
@@ -84,6 +92,7 @@ inline size_t InternalKeyEncodingLength(const ParsedInternalKey& key) {
 }
 
 // Append the serialization of "key" to *result.
+// 将“键”序列化后追加到 *result。
 void AppendInternalKey(std::string* result, const ParsedInternalKey& key);
 
 // Attempt to parse an internal key from "internal_key".  On success,
@@ -93,6 +102,7 @@ void AppendInternalKey(std::string* result, const ParsedInternalKey& key);
 bool ParseInternalKey(const Slice& internal_key, ParsedInternalKey* result);
 
 // Returns the user key portion of an internal key.
+// 由于db_iter中的InterKey由（user key， sequence， type）组成，该函数返回user key
 inline Slice ExtractUserKey(const Slice& internal_key) {
   assert(internal_key.size() >= 8);
   return Slice(internal_key.data(), internal_key.size() - 8);

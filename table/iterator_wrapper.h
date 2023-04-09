@@ -2,7 +2,7 @@
  * @Author: Li_diang 787695954@qq.com
  * @Date: 2023-03-04 21:27:03
  * @LastEditors: Li_diang 787695954@qq.com
- * @LastEditTime: 2023-04-06 09:49:28
+ * @LastEditTime: 2023-04-08 23:12:33
  * @FilePath: \leveldb\table\iterator_wrapper.h
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -26,6 +26,9 @@ namespace leveldb {
 // 缓存底层迭代器的 valid（） 和 key（） 结果。
 // 这有助于避免虚拟函数调用，并提供更好的
 // 缓存位置。
+// 无论是TwoLevelIterator还是MergingIterator，在使用时都反复需要获取其中iterator是否为valid或获取其value。比如在MergingIterator获取下一个key时，其需要比较所有iterator的key，但最终只会修改一个iterator的位置。
+//
+// 为了减少这一开销，LevelDB在TwoLevelIterator和MergingIterator中，通过IteratorWrapper对其组合的iterator进行了封装。IteratorWrapper会缓存iterator当前位置的valid状态和key，只有在iterator的位置改变时才会更新。这样，当访问TwoLevelIterator和MergingIterator时，不需要每次都访问到最下层的iterator，只需要访问缓存状态即可。
 class IteratorWrapper {
  public:
   IteratorWrapper() : iter_(nullptr), valid_(false) {}

@@ -78,13 +78,17 @@ class Block::Iter : public Iterator {
  private:
   const Comparator* const comparator_;
   const char* const data_;       // 块得内容
-  uint32_t const restarts_;      // Offset of restart array (list of fixed32)
-  uint32_t const num_restarts_;  // 重启点个数
+  uint32_t const restarts_;      // Offset of restart array (list of fixed32)restarts_在内存里面的超始偏移位置
+  uint32_t const num_restarts_;  // 重启点（restart_）个数
 
   // current_ is offset in data_ of current entry.  >= restarts_ if !Valid
+   // current_指向的是每个key:value pair，也就是每个record的开头
   uint32_t current_;
   uint32_t restart_index_;  // Index of restart block in which current_ falls
+  // 当前iterator指向的key, 注意这里的key是完整的，
+  // shared_key + non_shared_key一起
   std::string key_;
+  // 当前iterator指向的value
   Slice value_;
   Status status_;
 
@@ -92,7 +96,7 @@ class Block::Iter : public Iterator {
     return comparator_->Compare(a, b);
   }
 
-  // Return the offset in data_ just past the end of the current entry.
+  // Return the offset in data_ just past the end of the current entry. 返回的是相对于该block头指针（data_）的offset
   inline uint32_t NextEntryOffset() const {
     return (value_.data() + value_.size()) - data_;
   }
@@ -102,12 +106,22 @@ class Block::Iter : public Iterator {
     return DecodeFixed32(data_ + restarts_ + index * sizeof(uint32_t));
   }
 
+  /**
+   * @brief 移动到下一个point，这里指的是block中一个重启点指向的一串记录中的下一个point，该函数使得key_清空，value定位到index指向的数据的offset起始位置
+   * @param {uint32_t} index
+   * @return {*}
+   */
   void SeekToRestartPoint(uint32_t index) {
+    // 因为要移动到一个restart index.
+    // 所以旧有的key不再有用，清除掉
     key_.clear();
+    // 移动restart index
     restart_index_ = index;
     // current_ will be fixed by ParseNextKey();
-
+    // 拿到restart index对应到数据区的offset
     // ParseNextKey() starts at the end of value_, so set value_ accordingly
+    // 注意：此时value里面只是引用到了restart point
+    // 这个位置的内存，但是value的长度却是设置为0
     uint32_t offset = GetRestartPoint(index);
     value_ = Slice(data_ + offset, 0);
   }
@@ -139,13 +153,22 @@ class Block::Iter : public Iterator {
     assert(Valid());
     ParseNextKey();
   }
-
+  
+  /**
+   * @brief 寻找当前record的前一个record，如果当前record在restart的第一个位置，那么到前一个restart中寻找，否则在该restart中寻找 
+   * @return {*}
+   */
   void Prev() override {
     assert(Valid());
 
     // Scan backwards to a restart point before current_
+     // 这里拿到当前record的 offset
     const uint32_t original = current_;
     while (GetRestartPoint(restart_index_) >= original) {
+      // 如果restart_index_ == 0
+      // 本质上相当于SeekToLast();
+      // 代码可以改写成
+      // if (0 == restart_index_) return SeekToLast();
       if (restart_index_ == 0) {
         // No more entries
         current_ = restarts_;
@@ -154,13 +177,22 @@ class Block::Iter : public Iterator {
       }
       restart_index_--;
     }
-
+    // 首先定位到该restart的第一个record，然后用do-while循环遍历到第一个大于original的record
     SeekToRestartPoint(restart_index_);
     do {
       // Loop until end of current entry hits the start of original entry
     } while (ParseNextKey() && NextEntryOffset() < original);
   }
 
+  /**
+   * @brief 使用二分查找对block进行查找
+   * @param {Slice&} target 目标值
+   * @return {*}
+   */
+  // 只会利用每个restart index开头的那个record来进行二分。
+  // 每个开头位置的key都是完整的。不需要拼接。可以直接用来比较。
+  // 二分找的是restart index
+  // 找到restart index之后，移动到这个resart index。然后取出里面的record，直接record.key的值大于等于target
   void Seek(const Slice& target) override {
     // Binary search in restart array to find the last restart point
     // with a key < target
@@ -219,6 +251,7 @@ class Block::Iter : public Iterator {
       SeekToRestartPoint(left);
     }
     // Linear search (within restart block) for first key >= target
+    // 在该循环中从第left个restart中遍历，找到第一个key >= target的
     while (true) {
       if (!ParseNextKey()) {
         return;
@@ -233,12 +266,37 @@ class Block::Iter : public Iterator {
     SeekToRestartPoint(0);
     ParseNextKey();
   }
-
+/*
++----------------------------+ <--------+last restart
+|                            |
+|      Record a              |
+|                            |
++----------------------------+
+|                            |
+|      Record b              |
+|                            |
++----------------------------+
+|                            |
+|      Record c              |
+|                            |
++----------------------------+ ***
+|                            |
+|      Record d              |
+|                            |
+|                            |
++----------------------------+  <---- restarts_
+*/
+// 该函数将current_***定位到Record d的位置
   void SeekToLast() override {
+    // 首先定位到last restart
     SeekToRestartPoint(num_restarts_ - 1);
+    // 然后在最后一个重启点后遍历跳过前边的记录
     while (ParseNextKey() && NextEntryOffset() < restarts_) {
       // Keep skipping
     }
+    // 最终，NextEntryOffset()得到的值会是指向record d的尾部
+    // 这个时候也就是== restarts_
+    // 这个时候跳出循环，那么也就完成了`SeekToLast`这个目标。
   }
 
  private:
@@ -252,10 +310,14 @@ class Block::Iter : public Iterator {
 
   bool ParseNextKey() {
     current_ = NextEntryOffset();
+    // next record 的起始位置
+    // 拿到应该解析的内存起始位置。
     const char* p = data_ + current_;
     const char* limit = data_ + restarts_;  // Restarts come right after data
     if (p >= limit) {
       // No more entries to return.  Mark as invalid.
+      // 如果超出内存位置
+      // 这个内存位置就是用restarts_内存所在位置来限制的
       current_ = restarts_;
       restart_index_ = num_restarts_;
       return false;
@@ -264,12 +326,16 @@ class Block::Iter : public Iterator {
     // Decode next entry
     uint32_t shared, non_shared, value_length;
     p = DecodeEntry(p, limit, &shared, &non_shared, &value_length);
-    if (p == nullptr || key_.size() < shared) {
+    if (p == nullptr || key_.size() < shared) { // 如果key的长度小于共同前缀长度或p为空则说明没有定位到
       CorruptionError();
       return false;
     } else {
+      // 注意：这里使用resize，则会在上一个key的
+      // 基础上，把non_shared 的部分剪掉
       key_.resize(shared);
+      // 然后再追加上non shared的key部分
       key_.append(p, non_shared);
+      // 至此，整个key就是完整的，接下来去取完整的value
       value_ = Slice(p + non_shared, value_length);
       while (restart_index_ + 1 < num_restarts_ &&
              GetRestartPoint(restart_index_ + 1) < current_) {

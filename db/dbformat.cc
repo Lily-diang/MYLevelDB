@@ -12,6 +12,12 @@
 
 namespace leveldb {
 
+/**
+ * @brief 把seq（sequence）和t（type）包装在一起
+ * @param {uint64_t} seq 序列号
+ * @param {ValueType} t valuetype
+ * @return {*}
+ */
 static uint64_t PackSequenceAndType(uint64_t seq, ValueType t) {
   assert(seq <= kMaxSequenceNumber);
   assert(t <= kValueTypeForSeek);

@@ -115,6 +115,15 @@ class SkipList {
   //
   // If prev is non-null, fills prev[level] with pointer to previous
   // node at "level" for every level in [0..max_height_-1].
+
+  /**
+ * @brief 在跳表中查找不小于给 Key 的第一个值，如果没有找到，则返回 nullptr。
+ * 如果参数 prev 不为空，在查找过程中，记下待查找节点在各层中的前驱节点。
+ * 显然，如果查找操作，则指定 prev = nullptr 即可；若要插入数据，则需传入一个合适尺寸的 prev 参数。
+ * @param {key} key
+ * @param {Node **} prev
+ * @return {*}
+ */
   Node* FindGreaterOrEqual(const Key& key, Node** prev) const;
 
   // Return the latest node with a key < key.
@@ -183,7 +192,7 @@ typename SkipList<Key, Comparator>::Node* SkipList<Key, Comparator>::NewNode(
       sizeof(Node) + sizeof(std::atomic<Node*>) * (height - 1));
   return new (node_memory) Node(key);
 }
-
+// 返回给定跳表的迭代器
 template <typename Key, class Comparator>
 inline SkipList<Key, Comparator>::Iterator::Iterator(const SkipList* list) {
   list_ = list;
@@ -276,7 +285,7 @@ SkipList<Key, Comparator>::FindGreaterOrEqual(const Key& key,
       // Keep searching in this list
       x = next;
     } else {
-      if (prev != nullptr) prev[level] = x;  // 这个不为空是什么个情况？？？
+      if (prev != nullptr) prev[level] = x; 
       // 如果node中的值大于或等于key，则降低层数，到下一层去查找。
       // 如果已经查到最底层，则返回该节点
       if (level == 0) {
@@ -341,7 +350,8 @@ SkipList<Key, Comparator>::SkipList(Comparator cmp, Arena* arena)
     head_->SetNext(i, nullptr);
   }
 }
-
+// 插入 key 到跳表中.
+// 要求: 不能够插入和跳表中的节点判等的 key.
 template <typename Key, class Comparator>
 void SkipList<Key, Comparator>::Insert(const Key& key) {
   // TODO(opt): We can use a barrier-free variant of FindGreaterOrEqual()
@@ -375,7 +385,7 @@ void SkipList<Key, Comparator>::Insert(const Key& key) {
     prev[i]->SetNext(i, x);
   }
 }
-
+// 当且仅当跳表中有和给定 key 判等的节点才返回真.
 template <typename Key, class Comparator>
 bool SkipList<Key, Comparator>::Contains(const Key& key) const {
   Node* x = FindGreaterOrEqual(key, nullptr);

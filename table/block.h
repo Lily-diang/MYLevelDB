@@ -42,3 +42,34 @@ class Block {
 }  // namespace leveldb
 
 #endif  // STORAGE_LEVELDB_TABLE_BLOCK_H_
+
+/* block中record的格式
++------------------------+
+              |                        |
+              |      shared_key_length |
+              +------------------------+
+              |                        |
+              |     non_shared_key_len |
+              |                        |
+              +------------------------+
+              |                        |
+              |   value_length         |
+              |                        |
+              |                        |
+              +------------------------+
+              |                        |
+              |                        |
+              |  non_shared_key content|
+              |                        |
+              |                        |
+              +------------------------+ <-+------+ value.data()
+              |                        |   |
+              |                        |   |
+              |                        |   |
+              |  value content         |   +----> value.size
+              |                        |   |
+              |                        |   |
+              |                        |   |
+ +--------->  +------------------------+ <-+
+ next record
+ */

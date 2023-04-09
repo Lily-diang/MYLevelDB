@@ -1,3 +1,11 @@
+/*
+ * @Author: Li_diang 787695954@qq.com
+ * @Date: 2023-04-04 22:59:17
+ * @LastEditors: Li_diang 787695954@qq.com
+ * @LastEditTime: 2023-04-07 15:28:14
+ * @FilePath: \MYLevelDB\db\table_cache.cc
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
@@ -46,13 +54,13 @@ Status TableCache::FindTable(uint64_t file_number, uint64_t file_size,
   EncodeFixed64(buf, file_number);
   Slice key(buf, sizeof(buf));  // 使用file_number构造键
   *handle = cache_->Lookup(key);  // 在缓存中查找key
-  if (*handle == nullptr) {  // 若没找到，则需要打开一个SSTable文件
+  if (*handle == nullptr) {  // 若没找到，则需要从磁盘中打开一个SSTable文件
   // fname表示要打开的SSTable文件的文件名称
     std::string fname = TableFileName(dbname_, file_number);
     RandomAccessFile* file = nullptr;  // 随机读文件，用于读取SSTable文件
     Table* table = nullptr;
     s = env_->NewRandomAccessFile(fname, &file);
-    if (!s.ok()) {
+    if (!s.ok()) { // 这里为什么还要再调用一次，而且，old_fname与上文的fname不一样吗？
       std::string old_fname = SSTTableFileName(dbname_, file_number);
       if (env_->NewRandomAccessFile(old_fname, &file).ok()) {
         s = Status::OK();
@@ -64,7 +72,7 @@ Status TableCache::FindTable(uint64_t file_number, uint64_t file_size,
     }
 
     if (!s.ok()) {
-      // 打开失败，进行村务处理
+      // 打开失败，进行错误处理
       assert(table == nullptr);
       delete file;
       // We do not cache error results so that if the error is transient,
@@ -80,6 +88,10 @@ Status TableCache::FindTable(uint64_t file_number, uint64_t file_size,
   return s;
 }
 
+/**
+ * @brief 针对L0中的SST，生成一个SSTable迭代器 
+ * @return {*} 返回的实际上是Table类的迭代器
+ */
 Iterator* TableCache::NewIterator(const ReadOptions& options,
                                   uint64_t file_number, uint64_t file_size,
                                   Table** tableptr) {
@@ -88,11 +100,12 @@ Iterator* TableCache::NewIterator(const ReadOptions& options,
   }
 
   Cache::Handle* handle = nullptr;
+  // 在table cache中查找file_name对应的table，然后将handle指向它
   Status s = FindTable(file_number, file_size, &handle);
   if (!s.ok()) {
     return NewErrorIterator(s);
   }
-
+  
   Table* table = reinterpret_cast<TableAndFile*>(cache_->Value(handle))->table;
   // 查找SSTable就需要调用table类的NewIterator来构造迭代器
   Iterator* result = table->NewIterator(options);
