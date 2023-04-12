@@ -20,6 +20,8 @@
 #include "db/write_batch_internal.h"
 #include "leveldb/db.h"
 #include "util/coding.h"
+#include <iostream>
+#include <string>
 
 namespace leveldb {
 
@@ -110,6 +112,8 @@ void WriteBatch::Put(const Slice& key, const Slice& value) {
   PutLengthPrefixedSlice(&rep_, key);
   // 加入value.size()
   PutLengthPrefixedSlice(&rep_, value);
+  std::cout << to_string(kTypeValue) << " " << to_string(key) << " "
+            << to_string(value) << std::endl;
 }
 
 void WriteBatch::Delete(const Slice& key) {

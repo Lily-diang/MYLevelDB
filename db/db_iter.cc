@@ -187,7 +187,7 @@ void DBIter::Next() {
 }
 
 /**
- * @brief 循环跳过下一个delete的记录，直到遇到kValueType的记录。，如果遇到了下一个有效的记录，则iter_就保存了其对应的迭代器，且valid_为真，否则valid_为假
+ * @brief 循环跳过下一个delete的记录，直到遇到kValueType的记录。如果遇到了下一个有效的记录，则iter_就保存了其对应的迭代器，且valid_为真，否则valid_为假
  * @param {bool} skipping 
  * @param {string*} skip
  * @return 

@@ -512,11 +512,13 @@ Status DBImpl::RecoverLogFile(uint64_t log_number, bool last_log,
   return status;
 }
 
+// minor compaction 的过程，将imm_写入到L0，也就是flush操作
 Status DBImpl::WriteLevel0Table(MemTable* mem, VersionEdit* edit,
                                 Version* base) {
   mutex_.AssertHeld();
   const uint64_t start_micros = env_->NowMicros();
   FileMetaData meta;
+  // 生成sstable编号，用于构建文件名
   meta.number = versions_->NewFileNumber();
   pending_outputs_.insert(meta.number);
   Iterator* iter = mem->NewIterator();
@@ -525,6 +527,8 @@ Status DBImpl::WriteLevel0Table(MemTable* mem, VersionEdit* edit,
 
   Status s;
   {
+    // 更新memtable中的全部数据到xxx.ldb文件
+    // meta记录key range, file_size等sst信息
     mutex_.Unlock();
     s = BuildTable(dbname_, env_, options_, table_cache_, iter, &meta);
     mutex_.Lock();
@@ -543,6 +547,7 @@ Status DBImpl::WriteLevel0Table(MemTable* mem, VersionEdit* edit,
     const Slice min_user_key = meta.smallest.user_key();
     const Slice max_user_key = meta.largest.user_key();
     if (base != nullptr) {
+      // 为新生成的sstable选择合适的level(不一定总是0）
       level = base->PickLevelForMemTableOutput(min_user_key, max_user_key);
     }
     edit->AddFile(level, meta.number, meta.file_size, meta.smallest,
@@ -556,6 +561,10 @@ Status DBImpl::WriteLevel0Table(MemTable* mem, VersionEdit* edit,
   return s;
 }
 
+/**
+ * @brief 将imm_写入磁盘
+ * @return {*}
+ */
 void DBImpl::CompactMemTable() {
   mutex_.AssertHeld();
   assert(imm_ != nullptr);
@@ -677,8 +686,12 @@ void DBImpl::RecordBackgroundError(const Status& s) {
   }
 }
 
+/**
+ * @brief 开启一个背景线程，将imm_写入磁盘生成一个新的sstable；对各个level中的文件进行合并，避免某个level中的文件过多，以及删除掉一些过期或者已经被用户调用delete删除的key-value。这个函数试图启动一个新的线程，因此它不是肯定会启动一个背景线程。 
+ * @return {*}
+ */
 void DBImpl::MaybeScheduleCompaction() {
-  mutex_.AssertHeld();
+  mutex_.AssertHeld(); // 这个函数试图启动一个新的线程，因此它不是肯定会启动一个背景线程。
   if (background_compaction_scheduled_) {
     // Already scheduled
   } else if (shutting_down_.load(std::memory_order_acquire)) {
@@ -689,6 +702,7 @@ void DBImpl::MaybeScheduleCompaction() {
              !versions_->NeedsCompaction()) {
     // No work to be done
   } else {
+    // 告诉其他线程当前数据库中已经有一个背景线程在运行了，数据库只能允许一个背景线程运行
     background_compaction_scheduled_ = true;
     env_->Schedule(&DBImpl::BGWork, this);
   }
@@ -713,10 +727,17 @@ void DBImpl::BackgroundCall() {
 
   // Previous compaction may have produced too many files in a level,
   // so reschedule another compaction if needed.
+  // 因为在背景线程执行的时候，其他的用户线程可能已经向mem_写入了很多数据，
+  // 而imm_在BackgroundCompaction已经被写入磁盘变为空，所以可能此时imm又已经被写满的mem_赋值了，
+  // 所以应该尝试继续开启新的线程对imm_进行写盘。
   MaybeScheduleCompaction();
   background_work_finished_signal_.SignalAll();
 }
 
+/**
+ * @brief 后台线程进行压缩操作：1.如果当前的imm_非空，则将其写盘生成一个新的sstable；2.对各个level的文件进行合并，避免level中文件过多，以及删掉被删除的key-value(因为leveldb里面采用的是lazy delete的方法，用户调用delete时没有真正删除元素，只有在背景线程对文件进行合并时才会真的删除元素)。
+ * @return {*}
+ */
 void DBImpl::BackgroundCompaction() {
   mutex_.AssertHeld();
 
@@ -1273,6 +1294,7 @@ Status DBImpl::Write(const WriteOptions& options, WriteBatch* updates) {
     // during this phase since &w is currently responsible for logging
     // and protects against concurrent loggers and concurrent writes
     // into mem_.
+    // 目前可以释放锁，因为此时&w负责写日志和防止并发记录日志和并发写入
     {
       mutex_.Unlock();
       // 将更新记录到日志文件并且将日志文件刷新到磁盘
@@ -1308,7 +1330,7 @@ Status DBImpl::Write(const WriteOptions& options, WriteBatch* updates) {
     Writer* ready = writers_.front();
     writers_.pop_front();
 
-    if (ready != &w) {
+    if (ready != &w) { // 将除了w以外的线程的状态变更
       ready->status = status;
       ready->done = true;
       ready->cv.Signal();
@@ -1387,17 +1409,20 @@ WriteBatch* DBImpl::BuildBatchGroup(Writer** last_writer) {
 // 这个方法会检查Memtable是否有足够的空间写入，其会将内存占用过高的MemTable转换成Immutable，
 // 并构造一个新的Memtable进行写入，刚刚形成的Immutable则交由后台线程dump到level0层。
 Status DBImpl::MakeRoomForWrite(bool force) {
+  // 这几行就是确定该函数是在临界区中执行的，以及设置是否允许延迟写入的标记。
   mutex_.AssertHeld();
   assert(!writers_.empty());
   bool allow_delay = !force;
+
   Status s;
-  while (true) {
-    if (!bg_error_.ok()) {
+  while (true) {  // 循环到mem_有空间可写
+    if (!bg_error_.ok()) { //背景线程执行有错误，直接返回
       // Yield previous error
       s = bg_error_;
       break;
-    } else if (allow_delay && versions_->NumLevelFiles(0) >=
+    } else if (allow_delay && versions_->NumLevelFiles(0) >= 
                                   config::kL0_SlowdownWritesTrigger) {
+      // 当Level0的数量大于阈值，且需要延迟写时，让该线程休眠一段时间
       // We are getting close to hitting a hard limit on the number of
       // L0 files.  Rather than delaying a single write by several
       // seconds when we hit the hard limit, start delaying each
@@ -1410,20 +1435,22 @@ Status DBImpl::MakeRoomForWrite(bool force) {
       mutex_.Lock();
     } else if (!force &&
                (mem_->ApproximateMemoryUsage() <= options_.write_buffer_size)) {
-      // 有空间
+      // mem_有空间还没有达到阈值，while只有这个条件为True时才会跳出
       // There is room in current memtable
       break;
-    } else if (imm_ != nullptr) {
+    } else if (imm_ != nullptr) {  // 此时mem_空间不够，且imm_不为空，那么需要将imm_中的数据写入磁盘，试图将mem_赋值给imm_，然后重新分配一个mem_供用户写
       // We have filled up the current memtable, but the previous
       // one is still being compacted, so we wait.
+      // 但在此之前必须先检查imm_是否为空，如果它不为空的话，说明上次赋值给imm_的mem还没有被背景线程写入磁盘，那只能等待了，不然就会覆盖掉之前的mem_。
       Log(options_.info_log, "Current memtable full; waiting...\n");
       background_work_finished_signal_.Wait();
     } else if (versions_->NumLevelFiles(0) >= config::kL0_StopWritesTrigger) {
       // L0中文件太多
+      // 因为之前将imm_写盘完成后，level 0 中的sstable又增加了一个文件，我们必须判断此时level 0 中的文件数量是否太多，太多的话那就还得等一会
       // There are too many level-0 files.
       Log(options_.info_log, "Too many L0 files; waiting...\n");
       background_work_finished_signal_.Wait();
-    } else {
+    } else { //imm_为空，mem_没有空间可写
       // 构造一个新的Memtable进行写入，刚刚形成的Immutable则交由后台线程dump到level0层
       // Attempt to switch to a new memtable and trigger compaction of old
       assert(versions_->PrevLogNumber() == 0);
@@ -1438,7 +1465,7 @@ Status DBImpl::MakeRoomForWrite(bool force) {
         break;
       }
 
-      delete log_;
+      delete log_;  // 每个log对应一个mem_,因为在这之后这个mem_将不再改变，所以不再需要这个log了
 
       s = logfile_->Close();
       if (!s.ok()) {
@@ -1456,13 +1483,13 @@ Status DBImpl::MakeRoomForWrite(bool force) {
       logfile_ = lfile;
       logfile_number_ = new_log_number;
       log_ = new log::Writer(lfile);
-      imm_ = mem_;
+      imm_ = mem_;  // 后台将启动对imm_ 进行写磁盘的过程
       has_imm_.store(true, std::memory_order_release);
-      //申请新的memtable
+      // 申请新的memtable
       mem_ = new MemTable(internal_comparator_);
       mem_->Ref();
       force = false;  // Do not force another compaction if have room
-      //触发合并操作
+      // 触发合并操作
       MaybeScheduleCompaction();
     }
   }

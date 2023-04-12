@@ -64,6 +64,7 @@ class LEVELDB_EXPORT Env {
   // The result of Default() belongs to leveldb and must never be deleted.
   static Env* Default();
 
+  // 创建顺序可读文件
   // Create an object that sequentially reads the file with the specified name.
   // On success, stores a pointer to the new file in *result and returns OK.
   // On failure stores nullptr in *result and returns non-OK.  If the file does
@@ -74,6 +75,7 @@ class LEVELDB_EXPORT Env {
   virtual Status NewSequentialFile(const std::string& fname,
                                    SequentialFile** result) = 0;
 
+  // 创建随机可读文件
   // Create an object supporting random-access reads from the file with the
   // specified name.  On success, stores a pointer to the new file in
   // *result and returns OK.  On failure stores nullptr in *result and
@@ -85,6 +87,7 @@ class LEVELDB_EXPORT Env {
   virtual Status NewRandomAccessFile(const std::string& fname,
                                      RandomAccessFile** result) = 0;
 
+  // 创建顺序可写文件，无论怎样均新建文件
   // Create an object that writes to a new file with the specified
   // name.  Deletes any existing file with the same name and creates a
   // new file.  On success, stores a pointer to the new file in
@@ -95,6 +98,7 @@ class LEVELDB_EXPORT Env {
   virtual Status NewWritableFile(const std::string& fname,
                                  WritableFile** result) = 0;
 
+  // 创建顺序可写文件，只在文件不存在时新建，否则在原文件中append
   // Create an object that either appends to an existing file, or
   // writes to a new file (if the file does not exist to begin with).
   // On success, stores a pointer to the new file in *result and
@@ -113,6 +117,7 @@ class LEVELDB_EXPORT Env {
   // Returns true iff the named file exists.
   virtual bool FileExists(const std::string& fname) = 0;
 
+  // 返回指定路径下所有子文件
   // Store in *result the names of the children of the specified directory.
   // The names are relative to "dir".
   // Original contents of *results are dropped.
@@ -188,7 +193,8 @@ class LEVELDB_EXPORT Env {
   // REQUIRES: lock was returned by a successful LockFile() call
   // REQUIRES: lock has not already been unlocked.
   virtual Status UnlockFile(FileLock* lock) = 0;
-
+  
+  // 在后台线程中调度执行一个指定函数
   // Arrange to run "(*function)(arg)" once in a background thread.
   //
   // "function" may run in an unspecified thread.  Multiple functions
@@ -197,10 +203,12 @@ class LEVELDB_EXPORT Env {
   // serialized.
   virtual void Schedule(void (*function)(void* arg), void* arg) = 0;
 
+  // 启动一个新线程，执行一个指定函数
   // Start a new thread, invoking "function(arg)" within the new thread.
   // When "function(arg)" returns, the thread will be destroyed.
   virtual void StartThread(void (*function)(void* arg), void* arg) = 0;
 
+  // 返回一个用于测试任务的临时文件夹
   // *path is set to a temporary directory that can be used for testing. It may
   // or may not have just been created. The directory may or may not differ
   // between runs of the same process, but subsequent calls will return the
@@ -210,10 +218,12 @@ class LEVELDB_EXPORT Env {
   // Create and return a log file for storing informational messages.
   virtual Status NewLogger(const std::string& fname, Logger** result) = 0;
 
+  // 返回当前的时间戳，单位为ms，可用于计算机某段代码的执行时间
   // Returns the number of micro-seconds since some fixed point in time. Only
   // useful for computing deltas of time.
   virtual uint64_t NowMicros() = 0;
 
+  // 使线程休眠或暂停，时间预先指定
   // Sleep/delay the thread for the prescribed number of micro-seconds.
   virtual void SleepForMicroseconds(int micros) = 0;
 };
@@ -290,6 +300,7 @@ class LEVELDB_EXPORT WritableFile {
 };
 
 // An interface for writing log messages.
+// 用于写入日志的接口。
 class LEVELDB_EXPORT Logger {
  public:
   Logger() = default;
