@@ -2,7 +2,7 @@
  * @Author: Li_diang 787695954@qq.com
  * @Date: 2023-03-04 21:27:03
  * @LastEditors: Li_diang 787695954@qq.com
- * @LastEditTime: 2023-04-08 23:12:33
+ * @LastEditTime: 2023-04-18 16:33:04
  * @FilePath: \leveldb\table\iterator_wrapper.h
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -13,6 +13,7 @@
 #ifndef STORAGE_LEVELDB_TABLE_ITERATOR_WRAPPER_H_
 #define STORAGE_LEVELDB_TABLE_ITERATOR_WRAPPER_H_
 
+#include <iostream>
 #include "leveldb/iterator.h"
 #include "leveldb/slice.h"
 
@@ -63,10 +64,11 @@ class IteratorWrapper {
     assert(iter_);
     return iter_->status();
   }
-  void Next() {
+  int Next() {
     assert(iter_);
     iter_->Next();
     Update();
+    return 0;
   }
   void Prev() {
     assert(iter_);
@@ -78,15 +80,25 @@ class IteratorWrapper {
     iter_->Seek(k);
     Update();
   }
-  void SeekToFirst() {
+  int SeekToFirst() { // !!!
     assert(iter_);
-    iter_->SeekToFirst();
+    set_run_index(iter_->SeekToFirst());
     Update();
+    return get_run_index();
   }
-  void SeekToLast() {
+  void SeekToLast() {  // !!!
     assert(iter_);
     iter_->SeekToLast();
     Update();
+  }
+
+  inline void set_run_index (int index) { // !!!
+    assert(index >= 0);
+    run_index = index;
+  }
+
+  inline int get_run_index(){ // !!!
+    return run_index;
   }
 
  private:
@@ -97,9 +109,11 @@ class IteratorWrapper {
     }
   }
 
+
   Iterator* iter_;
   bool valid_;
   Slice key_;
+  int run_index; // !!!
 };
 
 }  // namespace leveldb

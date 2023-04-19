@@ -33,6 +33,7 @@
 
 #include "util/arena.h"
 #include "util/random.h"
+#include "leveldb/RemixHelper.h"
 
 namespace leveldb {
 
@@ -58,7 +59,7 @@ class SkipList {
   bool Contains(const Key& key) const;
 
   // Iteration over the contents of a skip list
-  class Iterator {
+  class Iterator : public Remix_Helper {
    public:
     // Initialize an iterator over the specified list.
     // The returned iterator is not valid.
@@ -73,7 +74,7 @@ class SkipList {
 
     // Advances to the next position.
     // REQUIRES: Valid()
-    void Next();
+    int Next();
 
     // Advances to the previous position.
     // REQUIRES: Valid()
@@ -84,7 +85,7 @@ class SkipList {
 
     // Position at the first entry in list.
     // Final state of iterator is Valid() iff list is not empty.
-    void SeekToFirst();
+    int SeekToFirst();
 
     // Position at the last entry in list.
     // Final state of iterator is Valid() iff list is not empty.
@@ -161,7 +162,7 @@ struct SkipList<Key, Comparator>::Node {
     assert(n >= 0);
     // Use an 'acquire load' so that we observe a fully initialized
     // version of the returned Node.
-    return next_[n].load(std::memory_order_acquire);
+    return next_[n].load(std::memory_order_acquire); // ！！！
   }
   void SetNext(int n, Node* x) {
     assert(n >= 0);
@@ -189,7 +190,8 @@ template <typename Key, class Comparator>
 typename SkipList<Key, Comparator>::Node* SkipList<Key, Comparator>::NewNode(
     const Key& key, int height) {
   char* const node_memory = arena_->AllocateAligned(
-      sizeof(Node) + sizeof(std::atomic<Node*>) * (height - 1));
+      sizeof(Node) + sizeof(std::atomic<Node*>) * (height - 1)); // new 强制使用指定内存进行对象构造
+  // new 强制使用指定内存进行对象构造
   return new (node_memory) Node(key);
 }
 // 返回给定跳表的迭代器
@@ -211,9 +213,10 @@ inline const Key& SkipList<Key, Comparator>::Iterator::key() const {
 }
 
 template <typename Key, class Comparator>
-inline void SkipList<Key, Comparator>::Iterator::Next() {
+inline int SkipList<Key, Comparator>::Iterator::Next() {
   assert(Valid());
   node_ = node_->Next(0);
+  return 0;
 }
 
 template <typename Key, class Comparator>
@@ -237,8 +240,9 @@ inline void SkipList<Key, Comparator>::Iterator::Seek(const Key& target) {
 }
 
 template <typename Key, class Comparator>
-inline void SkipList<Key, Comparator>::Iterator::SeekToFirst() {
+inline int SkipList<Key, Comparator>::Iterator::SeekToFirst() {
   node_ = list_->head_->Next(0);
+  return 0;
 }
 
 template <typename Key, class Comparator>
@@ -248,6 +252,8 @@ inline void SkipList<Key, Comparator>::Iterator::SeekToLast() {
     node_ = nullptr;
   }
 }
+
+
 
 template <typename Key, class Comparator>
 int SkipList<Key, Comparator>::RandomHeight() {
@@ -280,7 +286,7 @@ SkipList<Key, Comparator>::FindGreaterOrEqual(const Key& key,
   int level = GetMaxHeight() - 1;
   while (true) {
     // 找到对应的Node
-    Node* next = x->Next(level);
+    Node* next = x->Next(level); // ！！！
     if (KeyIsAfterNode(key, next)) {
       // Keep searching in this list
       x = next;
@@ -356,14 +362,19 @@ template <typename Key, class Comparator>
 void SkipList<Key, Comparator>::Insert(const Key& key) {
   // TODO(opt): We can use a barrier-free variant of FindGreaterOrEqual()
   // here since Insert() is externally synchronized.
+  // prev 是要插入 node 的前一个 node，类似单链表插入需要获取插入位置的前一个 node 一样，由于每个节点高度可以不同
+  // 当前节点不同层高对应的前一个节点也不同
   Node* prev[kMaxHeight];
+  // 查找大于等于 key 的节点 x，并将 0 - GetMaxHeight()-1 层的前置节点存储在 prev 数组中，即使 x 的高度小于 GetMaxHeight()
   Node* x = FindGreaterOrEqual(key, prev);
 
   // Our data structure does not allow duplicate insertion
+  // 这里 key 不会重复，key 为 internal_key = user_key + seq + type，seq 递增
   assert(x == nullptr || !Equal(key, x->key));
 
   int height = RandomHeight();
   if (height > GetMaxHeight()) {
+    // 如果新节点高度大于任何现存节点高度，新节点在 GetMaxHeight() 上面的部分的 prev 就只能是 head
     for (int i = GetMaxHeight(); i < height; i++) {
       prev[i] = head_;
     }
@@ -374,6 +385,9 @@ void SkipList<Key, Comparator>::Insert(const Key& key) {
     // the loop below.  In the former case the reader will
     // immediately drop to the next level since nullptr sorts after all
     // keys.  In the latter case the reader will use the new node.
+    // 可以在不与并发读取器进行任何同步的情况下更改max_height_。 
+    // 观察新值 max_height_ 的并发读取器将看到来自head_的新level指针的旧值 （nullptr），或在下面的循环中设置的新值。 
+    // 在前一种情况下，读取器将立即下降到下一个级别，因为 nullptr 对所有键进行排序。 在后一种情况下，读取器将使用新节点。
     max_height_.store(height, std::memory_order_relaxed);
   }
 

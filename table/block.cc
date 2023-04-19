@@ -1,3 +1,11 @@
+/*
+ * @Author: Li_diang 787695954@qq.com
+ * @Date: 2023-03-04 21:27:03
+ * @LastEditors: Li_diang 787695954@qq.com
+ * @LastEditTime: 2023-04-17 21:29:04
+ * @FilePath: \leveldb\table\block.cc
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%A
+ */
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
@@ -14,6 +22,7 @@
 #include "table/format.h"
 #include "util/coding.h"
 #include "util/logging.h"
+#include "leveldb/RemixHelper.h"
 
 namespace leveldb {
 
@@ -74,7 +83,7 @@ static inline const char* DecodeEntry(const char* p, const char* limit,
   return p;
 }
 
-class Block::Iter : public Iterator {
+class Block::Iter : public Iterator, public Remix_Helper {
  private:
   const Comparator* const comparator_;
   const char* const data_;       // 块得内容
@@ -149,9 +158,10 @@ class Block::Iter : public Iterator {
     return value_;
   }
 
-  void Next() override {
+  int Next() override {
     assert(Valid());
     ParseNextKey();
+    return 0;
   }
   
   /**
@@ -244,7 +254,7 @@ class Block::Iter : public Iterator {
     // This is true if we determined the key we desire is in the current block
     // and is after than the current key.
     assert(current_key_compare == 0 || Valid());
-    bool skip_seek = left == restart_index_ && current_key_compare < 0;
+    bool skip_seek = left == restart_index_ && current_key_compare < 0;  // 为什么没有等于0？？？
     if (!skip_seek) {
       // 通过二分查找，找到了一个重启点（该重启点定位到得数据内容中有可能包含待查找得键），接着在该数据内容中遍历查找
       // 找到第一个大于等于target得键，并将该键的位置放到Iter类中的key_和value_中
@@ -262,9 +272,10 @@ class Block::Iter : public Iterator {
     }
   }
 
-  void SeekToFirst() override {
+  int SeekToFirst() override {
     SeekToRestartPoint(0);
     ParseNextKey();
+    return 0;
   }
 /*
 +----------------------------+ <--------+last restart

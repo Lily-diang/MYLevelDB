@@ -23,6 +23,7 @@
 #include "util/logging.h"
 #include "util/mutexlock.h"
 #include "util/testutil.h"
+#include "leveldb/RemixHelper.h"
 
 namespace leveldb {
 
@@ -2167,7 +2168,7 @@ class ModelDB : public DB {
   void CompactRange(const Slice* start, const Slice* end) override {}
 
  private:
-  class ModelIter : public Iterator {
+  class ModelIter : public Iterator ,public Remix_Helper{
    public:
     ModelIter(const KVMap* map, bool owned)
         : map_(map), owned_(owned), iter_(map_->end()) {}
@@ -2175,7 +2176,7 @@ class ModelDB : public DB {
       if (owned_) delete map_;
     }
     bool Valid() const override { return iter_ != map_->end(); }
-    void SeekToFirst() override { iter_ = map_->begin(); }
+    int SeekToFirst() override { iter_ = map_->begin(); return 0;}
     void SeekToLast() override {
       if (map_->empty()) {
         iter_ = map_->end();
@@ -2186,12 +2187,11 @@ class ModelDB : public DB {
     void Seek(const Slice& k) override {
       iter_ = map_->lower_bound(k.ToString());
     }
-    void Next() override { ++iter_; }
+    int Next() override { ++iter_; return 0;}
     void Prev() override { --iter_; }
     Slice key() const override { return iter_->first; }
     Slice value() const override { return iter_->second; }
     Status status() const override { return Status::OK(); }
-
    private:
     const KVMap* const map_;
     const bool owned_;  // Do we own map_

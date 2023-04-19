@@ -1,5 +1,5 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-load("@bazel_tools//tools/build_defs/repo:git.bzl", "new_git_repository")
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
 def benchmark_deps():
     """Loads dependencies required to build Google Benchmark."""
@@ -38,27 +38,26 @@ def benchmark_deps():
         )
 
     if "com_google_googletest" not in native.existing_rules():
-        new_git_repository(
+        git_repository(
             name = "com_google_googletest",
             remote = "https://github.com/google/googletest.git",
             tag = "release-1.11.0",
         )
 
-    if "nanobind" not in native.existing_rules():
-        new_git_repository(
-            name = "nanobind",
-            remote = "https://github.com/wjakob/nanobind.git",
-            commit = "1ffbfe836c9dac599496a170274ee0075094a607", # v0.2.0
-            shallow_since = "1677873085 +0100",
-            build_file = "@//bindings/python:nanobind.BUILD",
-            recursive_init_submodules = True,
+    if "pybind11" not in native.existing_rules():
+        http_archive(
+            name = "pybind11",
+            build_file = "@//bindings/python:pybind11.BUILD",
+            sha256 = "eacf582fa8f696227988d08cfc46121770823839fe9e301a20fbce67e7cd70ec",
+            strip_prefix = "pybind11-2.10.0",
+            urls = ["https://github.com/pybind/pybind11/archive/v2.10.0.tar.gz"],
         )
 
     if "libpfm" not in native.existing_rules():
         # Downloaded from v4.9.0 tag at https://sourceforge.net/p/perfmon2/libpfm4/ref/master/tags/
         http_archive(
             name = "libpfm",
-            build_file = str(Label("//tools:libpfm.BUILD.bazel")),
+            build_file = "//tools:libpfm.BUILD.bazel",
             sha256 = "5da5f8872bde14b3634c9688d980f68bda28b510268723cc12973eedbab9fecc",
             type = "tar.gz",
             strip_prefix = "libpfm-4.11.0",

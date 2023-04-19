@@ -606,6 +606,7 @@ void DBImpl::CompactMemTable() {
 // end==nullptr 被视为数据库中所有键之后的键。
 // 因此，以下调用将压缩整个数据库：
 // db->CompactRange(nullptr, nullptr);
+// 该函数可以由用户直接调用，也即用户可以指定某一范围的SST逐层进行compact
 void DBImpl::CompactRange(const Slice* begin, const Slice* end) {
   int max_level_with_files = 1;
   {
@@ -928,6 +929,7 @@ Status DBImpl::InstallCompactionResults(CompactionState* compact) {
   return versions_->LogAndApply(compact->compaction->edit(), &mutex_);
 }
 
+// 进行compaction 操作
 Status DBImpl::DoCompactionWork(CompactionState* compact) {
   const uint64_t start_micros = env_->NowMicros();
   int64_t imm_micros = 0;  // Micros spent doing imm_ compactions
@@ -940,12 +942,16 @@ Status DBImpl::DoCompactionWork(CompactionState* compact) {
   assert(versions_->NumLevelFiles(compact->compaction->level()) > 0);
   assert(compact->builder == nullptr);
   assert(compact->outfile == nullptr);
+  // 计算最小序列号，如果compaction操作过程中有重复写入的键为最小的序列号
+  // 要根据该序列号判断是否可以删除该键
   if (snapshots_.empty()) {
     compact->smallest_snapshot = versions_->LastSequence();
   } else {
     compact->smallest_snapshot = snapshots_.oldest()->sequence_number();
   }
-
+    // 这里生成一个MergingIterator，相当于在遍历要合并的sst文件时，同时进行多路归并排序
+  // MergingIterator内部维护了n个Iterator，每个Iterator指向一个sst，进行迭代时，MergingIterator
+  // 会找所有Iterators所指key中的最小那个，这样就完成了多路归并排序
   Iterator* input = versions_->MakeInputIterator(compact->compaction);
 
   // Release mutex while we're actually doing the compaction work
@@ -957,6 +963,7 @@ Status DBImpl::DoCompactionWork(CompactionState* compact) {
   std::string current_user_key;
   bool has_current_user_key = false;
   SequenceNumber last_sequence_for_key = kMaxSequenceNumber;
+  // 遍历迭代器
   while (input->Valid() && !shutting_down_.load(std::memory_order_acquire)) {
     // Prioritize immutable compaction work
     if (has_imm_.load(std::memory_order_relaxed)) {
@@ -979,7 +986,7 @@ Status DBImpl::DoCompactionWork(CompactionState* compact) {
         break;
       }
     }
-
+    // drop代表是否要删除该key
     // Handle key/value, add to state, etc.
     bool drop = false;
     if (!ParseInternalKey(key, &ikey)) {
@@ -1146,6 +1153,7 @@ Iterator* DBImpl::NewInternalIterator(const ReadOptions& options,
 
   *seed = ++seed_;
   mutex_.Unlock();
+  internal_iter->set_runs_num(list.size());
   return internal_iter;
 }
 

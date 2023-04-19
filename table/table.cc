@@ -1,7 +1,7 @@
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
-
+// block_cache的结构封装于此文件中
 #include "leveldb/table.h"
 
 #include "leveldb/cache.h"
@@ -26,12 +26,14 @@ struct Table::Rep {
 
   Options options;
   Status status;
-  RandomAccessFile* file;
-  uint64_t cache_id;
+  RandomAccessFile* file;  // 文件句柄
+  uint64_t cache_id; // block cache中key的一部分（key 由cache_id和offset 共同组成)
   FilterBlockReader* filter;
   const char* filter_data;
 
+  //index block在ldb文件中的位置信息
   BlockHandle metaindex_handle;  // Handle to metaindex_block: saved from footer
+  // index_block的操作实例
   Block* index_block;
 };
 
@@ -151,7 +153,7 @@ static void ReleaseBlock(void* arg, void* h) {
 // Convert an index iterator value (i.e., an encoded BlockHandle)
 // into an iterator over the contents of the corresponding block.
 /**
- * @description: 读取SSTable中的Block，注意，因为对SSTable的读取是由两层迭代器组成地，第一次迭代器是找块，第二层迭代器是在块中读取
+ * @brief 根据index_value(即offset+size)，读取对应的block。读取SSTable中的Block，注意，因为对SSTable的读取是由两层迭代器组成地，第一次迭代器是找块，第二层迭代器是在块中读取
  * @param arg 一个Table结构
  * @param options 参数结构
  * @param index_value 通过第一层迭代器读取到的值
@@ -179,6 +181,9 @@ Iterator* Table::BlockReader(void* arg, const ReadOptions& options, const Slice&
       EncodeFixed64(cache_key_buffer + 8, handle.offset());
       Slice key(cache_key_buffer, sizeof(cache_key_buffer));
       cache_handle = block_cache->Lookup(key);
+
+      //1、若在cache中查找到了直接将地址赋值给block;
+	    //2、若未找到，则去SSTable文件中去查找
       if (cache_handle != nullptr) {  // cache命中
         block = reinterpret_cast<Block*>(block_cache->Value(cache_handle));
       } else {
@@ -187,6 +192,7 @@ Iterator* Table::BlockReader(void* arg, const ReadOptions& options, const Slice&
         if (s.ok()) {
           // 生成一个Block结构
           block = new Block(contents);
+          //若读取的Block是直接new的，且fill_cache,则将这个Block缓存起来。
           if (contents.cachable && options.fill_cache) {
             cache_handle = block_cache->Insert(key, block, block->size(),
                                                &DeleteCachedBlock);
@@ -194,6 +200,7 @@ Iterator* Table::BlockReader(void* arg, const ReadOptions& options, const Slice&
         }
       }
     } else { // block cache为空
+      //3、若未使用block_cache，则直接去SSTable中去读数据。
       s = ReadBlock(table->rep_->file, options, handle, &contents);
       if (s.ok()) {
         block = new Block(contents);
@@ -209,9 +216,9 @@ Iterator* Table::BlockReader(void* arg, const ReadOptions& options, const Slice&
 	  //2、cache_handle非null,表示block在缓存中，在迭代器iter析构时,
 	  //   通过ReleaseBlock，减少其一次引用计数。
     if (cache_handle == nullptr) {
-      iter->RegisterCleanup(&DeleteBlock, block, nullptr);   // 为什么要删除这个block？？？
+      iter->RegisterCleanup(&DeleteBlock, block, nullptr); 
     } else {
-      iter->RegisterCleanup(&ReleaseBlock, block_cache, cache_handle);  // 为什么此处是释放block？？？
+      iter->RegisterCleanup(&ReleaseBlock, block_cache, cache_handle); 
     }
   } else {
     iter = NewErrorIterator(s);

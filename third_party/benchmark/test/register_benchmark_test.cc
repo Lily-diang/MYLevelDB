@@ -10,7 +10,7 @@ namespace {
 
 class TestReporter : public benchmark::ConsoleReporter {
  public:
-  void ReportRuns(const std::vector<Run>& report) override {
+  virtual void ReportRuns(const std::vector<Run>& report) BENCHMARK_OVERRIDE {
     all_runs_.insert(all_runs_.end(), begin(report), end(report));
     ConsoleReporter::ReportRuns(report);
   }
@@ -19,11 +19,11 @@ class TestReporter : public benchmark::ConsoleReporter {
 };
 
 struct TestCase {
-  const std::string name;
-  const std::string label;
+  std::string name;
+  const char* label;
   // Note: not explicit as we rely on it being converted through ADD_CASES.
-  TestCase(const std::string& xname) : TestCase(xname, "") {}
-  TestCase(const std::string& xname, const std::string& xlabel)
+  TestCase(const char* xname) : TestCase(xname, nullptr) {}
+  TestCase(const char* xname, const char* xlabel)
       : name(xname), label(xlabel) {}
 
   typedef benchmark::BenchmarkReporter::Run Run;
@@ -32,7 +32,7 @@ struct TestCase {
     // clang-format off
     BM_CHECK(name == run.benchmark_name()) << "expected " << name << " got "
                                       << run.benchmark_name();
-    if (!label.empty()) {
+    if (label) {
       BM_CHECK(run.report_label == label) << "expected " << label << " got "
                                        << run.report_label;
     } else {
@@ -123,7 +123,7 @@ void TestRegistrationAtRuntime() {
   {
     CustomFixture fx;
     benchmark::RegisterBenchmark("custom_fixture", fx);
-    AddCases({std::string("custom_fixture")});
+    AddCases({"custom_fixture"});
   }
 #endif
 #ifndef BENCHMARK_HAS_NO_VARIADIC_REGISTER_BENCHMARK

@@ -20,6 +20,7 @@
 #include "table/format.h"
 #include "util/random.h"
 #include "util/testutil.h"
+#include "leveldb/RemixHelper.h"
 
 namespace leveldb {
 
@@ -272,9 +273,9 @@ class KeyConvertingIterator : public Iterator {
     AppendInternalKey(&encoded, ikey);
     iter_->Seek(encoded);
   }
-  void SeekToFirst() override { iter_->SeekToFirst(); }
+  int SeekToFirst() override { set_run_index(iter_->SeekToFirst()); return get_run_index(); }
   void SeekToLast() override { iter_->SeekToLast(); }
-  void Next() override { iter_->Next(); }
+  int Next() override { iter_->Next(); return 0;}
   void Prev() override { iter_->Prev(); }
 
   Slice key() const override {
@@ -292,9 +293,19 @@ class KeyConvertingIterator : public Iterator {
     return status_.ok() ? iter_->status() : status_;
   }
 
+  void set_run_index(int index) { // !!!
+    assert(index >= 0);
+    run_index = index;
+  }
+
+  int get_run_index() {   // !!!
+    return run_index;
+  }
+
  private:
   mutable Status status_;
   Iterator* iter_;
+  int run_index; // !!!
 };
 
 class MemTableConstructor : public Constructor {

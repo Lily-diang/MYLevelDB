@@ -1,8 +1,16 @@
 /*
  * @Author: Li_diang 787695954@qq.com
+ * @Date: 2023-03-04 21:27:02
+ * @LastEditors: Li_diang 787695954@qq.com
+ * @LastEditTime: 2023-04-17 21:33:44
+ * @FilePath: \leveldb\db\table_cache.cc
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
+/*
+ * @Author: Li_diang 787695954@qq.com
  * @Date: 2023-04-04 22:59:17
  * @LastEditors: Li_diang 787695954@qq.com
- * @LastEditTime: 2023-04-07 15:28:14
+ * @LastEditTime: 2023-04-17 17:39:52
  * @FilePath: \MYLevelDB\db\table_cache.cc
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -89,7 +97,7 @@ Status TableCache::FindTable(uint64_t file_number, uint64_t file_size,
 }
 
 /**
- * @brief 针对L0中的SST，生成一个SSTable迭代器 
+ * @brief 针对某一Level中的某一个SST，生成一个SSTable迭代器 
  * @return {*} 返回的实际上是Table类的迭代器
  */
 Iterator* TableCache::NewIterator(const ReadOptions& options,
@@ -101,7 +109,7 @@ Iterator* TableCache::NewIterator(const ReadOptions& options,
 
   Cache::Handle* handle = nullptr;
   // 在table cache中查找file_name对应的table，然后将handle指向它
-  Status s = FindTable(file_number, file_size, &handle);
+  Status s = FindTable(file_number, file_size, &handle);  // 这里的handle指的是LRUHandle，
   if (!s.ok()) {
     return NewErrorIterator(s);
   }
@@ -115,6 +123,7 @@ Iterator* TableCache::NewIterator(const ReadOptions& options,
   }
   return result;
 }
+
 
 Status TableCache::Get(const ReadOptions& options, uint64_t file_number,
                        uint64_t file_size, const Slice& k, void* arg,

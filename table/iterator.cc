@@ -2,7 +2,7 @@
  * @Author: Li_diang 787695954@qq.com
  * @Date: 2023-03-04 21:27:03
  * @LastEditors: Li_diang 787695954@qq.com
- * @LastEditTime: 2023-04-12 10:44:48
+ * @LastEditTime: 2023-04-19 11:01:48
  * @FilePath: \leveldb\table\iterator.cc
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -11,12 +11,40 @@
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
 #include "leveldb/iterator.h"
-
+#include "leveldb/RemixHelper.h"
+#include "iostream"
+using namespace std;
 namespace leveldb {
+
+int Iterator::get_index_of_runs(){  // !!!
+  return index_of_runs;
+}
+
+void Iterator::set_index_of_runs(int index){ // !!!
+  assert(index >= 0);
+  index_of_runs = index;
+}
+
+int Iterator::get_runs_num(){  // !!!
+  return runs_num;
+}
+void Iterator::set_runs_num(int num){   // !!!
+    runs_num = num;
+}
+const Comparator * Iterator::get_comparator(){ // ###
+    return cmp_;
+  }
+void Iterator::set_comparator(const Comparator * cmp){ // ###
+    cmp_ = cmp;
+  }
+
+Slice Iterator::KEY(){return Slice();}
+  
 
 Iterator::Iterator() {
   cleanup_head_.function = nullptr;
   cleanup_head_.next = nullptr;
+  set_index_of_runs(0);
 }
 
 Iterator::~Iterator() {
@@ -62,9 +90,9 @@ class EmptyIterator : public Iterator {
 
   bool Valid() const override { return false; }
   void Seek(const Slice& target) override {}
-  void SeekToFirst() override {}
+  int SeekToFirst() override { return 0;}
   void SeekToLast() override {}
-  void Next() override { assert(false); }
+  int Next() override { assert(false); return 0;}
   void Prev() override { assert(false); }
   Slice key() const override {
     assert(false);
@@ -75,7 +103,7 @@ class EmptyIterator : public Iterator {
     return Slice();
   }
   Status status() const override { return status_; }
-
+  
  private:
   Status status_;
 };

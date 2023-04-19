@@ -1,0 +1,24 @@
+﻿  1>Building Custom Rule E:/graduating design/workplace/leveldb/third_party/benchmark/src/CMakeLists.txt
+  benchmark.cc
+  benchmark_api_internal.cc
+  benchmark_name.cc
+  benchmark_register.cc
+  benchmark_runner.cc
+  check.cc
+  colorprint.cc
+  commandlineflags.cc
+  complexity.cc
+  console_reporter.cc
+  counter.cc
+  csv_reporter.cc
+  json_reporter.cc
+  perf_counters.cc
+  reporter.cc
+  sleep.cc
+  statistics.cc
+  string_util.cc
+  sysinfo.cc
+E:\graduating design\workplace\leveldb\third_party\benchmark\src\sysinfo.cc(431,45): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+  timers.cc
+  正在生成代码...
+  benchmark.vcxproj -> E:\graduating design\workplace\leveldb\third_party\benchmark\src\Debug\benchmark.lib

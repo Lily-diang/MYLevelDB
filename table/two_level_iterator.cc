@@ -8,6 +8,7 @@
 #include "table/block.h"
 #include "table/format.h"
 #include "table/iterator_wrapper.h"
+#include "leveldb/RemixHelper.h"
 
 namespace leveldb {
 
@@ -30,11 +31,11 @@ class TwoLevelIterator : public Iterator {
   // 以下三个函数都是针对一级迭代器的函数
   // 这里就是seek到index block对应元素位置
   void Seek(const Slice& target) override;
-  void SeekToFirst() override;
+  int SeekToFirst() override;
   void SeekToLast() override;
   // 以下函数都是针对二级迭代器的函数
   // DataBlock中的下一个Entry
-  void Next() override;
+  int Next() override;
   // DataBlock中的前一个Entry
   void Prev() override;
   //指向DataBlock的迭代器是否有效
@@ -86,6 +87,7 @@ class TwoLevelIterator : public Iterator {
   // "index_value" passed to block_function_ to create the data_iter_.
   //对于SSTable来说,保存index block中的offset+size。
   std::string data_block_handle_;
+  int run_index; // !!!
 };
 
 TwoLevelIterator::TwoLevelIterator(Iterator* index_iter,
@@ -109,11 +111,12 @@ void TwoLevelIterator::Seek(const Slice& target) {
   SkipEmptyDataBlocksForward();
 }
 
-void TwoLevelIterator::SeekToFirst() {
+int TwoLevelIterator::SeekToFirst() {
   index_iter_.SeekToFirst();
   InitDataBlock();
   if (data_iter_.iter() != nullptr) data_iter_.SeekToFirst();
   SkipEmptyDataBlocksForward();
+  return 0;
 }
 
 void TwoLevelIterator::SeekToLast() {
@@ -123,10 +126,11 @@ void TwoLevelIterator::SeekToLast() {
   SkipEmptyDataBlocksBackward();
 }
 
-void TwoLevelIterator::Next() {
+int TwoLevelIterator::Next() {
   assert(Valid());
   data_iter_.Next();
   SkipEmptyDataBlocksForward();
+  return 0;
 }
 
 void TwoLevelIterator::Prev() {
@@ -174,6 +178,7 @@ void TwoLevelIterator::InitDataBlock() {
   if (!index_iter_.Valid()) {
     SetDataIterator(nullptr);
   } else {
+    // index 指向的block的handle
     Slice handle = index_iter_.value();
     if (data_iter_.iter() != nullptr &&
         handle.compare(data_block_handle_) == 0) {

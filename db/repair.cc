@@ -443,6 +443,7 @@ class Repairer {
 };
 }  // namespace
 
+// leveldb异常损坏，修复leveldb过程，调用接口RepairDB()产生新的Version。
 Status RepairDB(const std::string& dbname, const Options& options) {
   Repairer repairer(dbname, options);
   return repairer.Run();
