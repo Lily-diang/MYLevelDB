@@ -1,0 +1,5 @@
+﻿  1>Building Custom Rule E:/graduating design/workplace/leveldb/third_party/googletest/googletest/CMakeLists.txt
+cl : 命令行 warning D9025: 正在重写“/EHs”(用“/EHs-”)
+cl : 命令行 warning D9025: 正在重写“/EHc”(用“/EHc-”)
+  gtest_main.cc
+  gtest_main.vcxproj -> E:\graduating design\workplace\leveldb\lib\Debug\gtest_main.lib

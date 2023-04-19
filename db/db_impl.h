@@ -175,7 +175,7 @@ class DBImpl : public DB {
 
   // State below is protected by mutex_
   port::Mutex mutex_;
-  std::atomic<bool> shutting_down_;
+  std::atomic<bool> shutting_down_;  // db是否已经关闭
   port::CondVar background_work_finished_signal_ GUARDED_BY(mutex_);
   MemTable* mem_;
   MemTable* imm_ GUARDED_BY(mutex_);  // Memtable being compacted

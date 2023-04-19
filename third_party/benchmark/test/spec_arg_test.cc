@@ -17,11 +17,11 @@ namespace {
 
 class TestReporter : public benchmark::ConsoleReporter {
  public:
-  bool ReportContext(const Context& context) override {
+  virtual bool ReportContext(const Context& context) BENCHMARK_OVERRIDE {
     return ConsoleReporter::ReportContext(context);
   };
 
-  void ReportRuns(const std::vector<Run>& report) override {
+  virtual void ReportRuns(const std::vector<Run>& report) BENCHMARK_OVERRIDE {
     assert(report.size() == 1);
     matched_functions.push_back(report[0].run_name.function_name);
     ConsoleReporter::ReportRuns(report);
@@ -29,7 +29,7 @@ class TestReporter : public benchmark::ConsoleReporter {
 
   TestReporter() {}
 
-  ~TestReporter() override {}
+  virtual ~TestReporter() {}
 
   const std::vector<std::string>& GetMatchedFunctions() const {
     return matched_functions;

@@ -6,6 +6,7 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         ":_benchmark",
+        # pip; absl:app
     ],
 )
 
@@ -16,13 +17,10 @@ py_extension(
         "-fexceptions",
         "-fno-strict-aliasing",
     ],
-    features = [
-        "-use_header_modules",
-        "-parse_headers",
-    ],
+    features = ["-use_header_modules"],
     deps = [
         "//:benchmark",
-        "@nanobind",
+        "@pybind11",
         "@python_headers",
     ],
 )

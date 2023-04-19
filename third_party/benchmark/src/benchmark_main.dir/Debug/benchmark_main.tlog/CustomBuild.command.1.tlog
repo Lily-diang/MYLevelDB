@@ -1,0 +1,10 @@
+^E:\GRADUATING DESIGN\WORKPLACE\LEVELDB\THIRD_PARTY\BENCHMARK\SRC\CMAKELISTS.TXT
+setlocal
+D:\Tools\CMake\bin\cmake.exe "-SE:/graduating design/workplace/leveldb" "-BE:/graduating design/workplace/leveldb" --check-stamp-file "E:/graduating design/workplace/leveldb/third_party/benchmark/src/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

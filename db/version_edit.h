@@ -15,17 +15,19 @@ namespace leveldb {
 
 class VersionSet;
 
+// 文件信息，维护了引用次数、允许的最大无效查询次数、文件序列号、文件大小（字节）、该文件中的最小键、该文件中的最大键
 struct FileMetaData {
   FileMetaData() : refs(0), allowed_seeks(1 << 30), file_size(0) {}
 
   int refs;           // 引用次数
-  int allowed_seeks;  // 允许的最大无效查询次数
+  int allowed_seeks;  // 允许的最大无效查询次数，超过这个次数，该文件就要被compact
   uint64_t number;    // 文件序列号
   uint64_t file_size;    // 文件大小（字节）
   InternalKey smallest;  // 该文件中的最小键
   InternalKey largest;   // 该文件中的最大键
 };
 
+// 该结构用于存储生成新的version的中间结果，最终与Version N合并直接生成Version N+1
 class VersionEdit {
  public:
   VersionEdit() { Clear(); }
@@ -91,10 +93,10 @@ class VersionEdit {
 
   typedef std::set<std::pair<int, uint64_t>> DeletedFileSet;
 
-  std::string comparator_;
-  uint64_t log_number_;
+  std::string comparator_;  // 当前的key比较器名字comparator，db一旦创建，排序的逻辑就必须保持兼容，不可变更。此时就用comparator做凭证。
+  uint64_t log_number_; //当前使用的log_number
   uint64_t prev_log_number_;
-  uint64_t next_file_number_;
+  uint64_t next_file_number_; // 其他文件编号
   SequenceNumber last_sequence_;
   bool has_comparator_;
   bool has_log_number_;
@@ -102,9 +104,9 @@ class VersionEdit {
   bool has_next_file_number_;
   bool has_last_sequence_;
 
-  std::vector<std::pair<int, InternalKey>> compact_pointers_;
-  DeletedFileSet deleted_files_;
-  std::vector<std::pair<int, FileMetaData>> new_files_;
+  std::vector<std::pair<int, InternalKey>> compact_pointers_;  // 每个level层的compact pointer
+  DeletedFileSet deleted_files_;  // 要删除的SST
+  std::vector<std::pair<int, FileMetaData>> new_files_; // 要添加的SST
 };
 
 }  // namespace leveldb

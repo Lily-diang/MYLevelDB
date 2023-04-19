@@ -1,3 +1,11 @@
+/*
+ * @Author: Li_diang 787695954@qq.com
+ * @Date: 2023-03-04 21:27:02
+ * @LastEditors: Li_diang 787695954@qq.com
+ * @LastEditTime: 2023-04-17 21:32:12
+ * @FilePath: \leveldb\db\memtable.cc
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
@@ -8,9 +16,10 @@
 #include "leveldb/env.h"
 #include "leveldb/iterator.h"
 #include "util/coding.h"
+#include "leveldb/RemixHelper.h"
 
 namespace leveldb {
-
+// 获取Interkey，跳表中存放的是memtable中的一整个entry，该函数要从data中提取出interkey及逆行比较
 static Slice GetLengthPrefixedSlice(const char* data) {
   uint32_t len;
   const char* p = data;
@@ -54,9 +63,9 @@ class MemTableIterator : public Iterator {
 
   bool Valid() const override { return iter_.Valid(); }
   void Seek(const Slice& k) override { iter_.Seek(EncodeKey(&tmp_, k)); }
-  void SeekToFirst() override { iter_.SeekToFirst(); }
+  int SeekToFirst() override { iter_.SeekToFirst(); return 0;}
   void SeekToLast() override { iter_.SeekToLast(); }
-  void Next() override { iter_.Next(); }
+  int Next() override { iter_.Next();  return 0;}
   void Prev() override { iter_.Prev(); }
   Slice key() const override { return GetLengthPrefixedSlice(iter_.key()); }
   Slice value() const override {

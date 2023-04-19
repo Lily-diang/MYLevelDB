@@ -112,8 +112,6 @@ void WriteBatch::Put(const Slice& key, const Slice& value) {
   PutLengthPrefixedSlice(&rep_, key);
   // 加入value.size()
   PutLengthPrefixedSlice(&rep_, value);
-  std::cout << std::to_string(kTypeValue) << " " << key.ToString() << " "
-            << value.ToString() << std::endl;
 }
 
 void WriteBatch::Delete(const Slice& key) {

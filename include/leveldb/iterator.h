@@ -18,13 +18,17 @@
 #include "leveldb/export.h"
 #include "leveldb/slice.h"
 #include "leveldb/status.h"
+#include "comparator.h"
 
 namespace leveldb {
 
 class LEVELDB_EXPORT Iterator {
  public:
+  int runs_num; // !!!
+  int index_of_runs; // !!!
+  const Comparator* cmp_;
   Iterator();
-
+// ################把所有的虚函数virtual后的=0删掉了，也允许用Iterator赋值构造函数了；
   Iterator(const Iterator&) = delete;
   Iterator& operator=(const Iterator&) = delete;
 
@@ -36,7 +40,7 @@ class LEVELDB_EXPORT Iterator {
 
   // Position at the first key in the source.  The iterator is Valid()
   // after this call iff the source is not empty.
-  virtual void SeekToFirst() = 0;
+  virtual int SeekToFirst() = 0;
 
   // Position at the last key in the source.  The iterator is
   // Valid() after this call iff the source is not empty.
@@ -50,7 +54,7 @@ class LEVELDB_EXPORT Iterator {
   // Moves to the next entry in the source.  After this call, Valid() is
   // true iff the iterator was not positioned at the last entry in the source.
   // REQUIRES: Valid()
-  virtual void Next() = 0;
+  virtual int Next() = 0;
 
   // Moves to the previous entry in the source.  After this call, Valid() is
   // true iff the iterator was not positioned at the first entry in source.
@@ -80,6 +84,13 @@ class LEVELDB_EXPORT Iterator {
   using CleanupFunction = void (*)(void* arg1, void* arg2);
   void RegisterCleanup(CleanupFunction function, void* arg1, void* arg2);
 
+  int get_index_of_runs();  // !!!
+  void set_index_of_runs(int index); // !!!
+  int get_runs_num(); // !!!
+  void set_runs_num(int num); // !!!
+  const Comparator* get_comparator();  // ###
+  void set_comparator(const Comparator * cmp);// ###  
+  virtual Slice KEY (); 
  private:
   // Cleanup functions are stored in a single-linked list.
   // The list's head node is inlined in the iterator.

@@ -1,3 +1,11 @@
+/*
+ * @Author: Li_diang 787695954@qq.com
+ * @Date: 2023-03-04 21:27:02
+ * @LastEditors: Li_diang 787695954@qq.com
+ * @LastEditTime: 2023-04-17 17:39:34
+ * @FilePath: \leveldb\db\table_cache.h
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
@@ -61,10 +69,10 @@ class TableCache {
    */
   Status FindTable(uint64_t file_number, uint64_t file_size, Cache::Handle**);
 
-  Env* const env_;
-  const std::string dbname_;
-  const Options& options_;
-  Cache* cache_;  
+  Env* const env_;  // 与环境操作有关的变量
+  const std::string dbname_; // 数据库的名字
+  const Options& options_; // 操作参数，里边有对block——cache的设置
+  Cache* cache_;  // 这个Cache代表一个SSTable的cache
 };
 
 }  // namespace leveldb

@@ -56,7 +56,7 @@
 
 [Exiting with an Error](#exiting-with-an-error)
 
-[A Faster `KeepRunning` Loop](#a-faster-keep-running-loop)
+[A Faster KeepRunning Loop](#a-faster-keep-running-loop)
 
 ## Benchmarking Tips
 
@@ -271,12 +271,10 @@ information about the machine on which the benchmarks are run.
 Global setup/teardown specific to each benchmark can be done by
 passing a callback to Setup/Teardown:
 
-The setup/teardown callbacks will be invoked once for each benchmark. If the
-benchmark is multi-threaded (will run in k threads), they will be invoked
-exactly once before each run with k threads.
-
-If the benchmark uses different size groups of threads, the above will be true
-for each size group.
+The setup/teardown callbacks will be invoked once for each benchmark.
+If the benchmark is multi-threaded (will run in k threads), they will be invoked exactly once before
+each run with k threads.
+If the benchmark uses different size groups of threads, the above will be true for each size group.
 
 Eg.,
 
@@ -348,8 +346,7 @@ the performance of `std::vector` initialization for uniformly increasing sizes.
 static void BM_DenseRange(benchmark::State& state) {
   for(auto _ : state) {
     std::vector<int> v(state.range(0), state.range(0));
-    auto data = v.data();
-    benchmark::DoNotOptimize(data);
+    benchmark::DoNotOptimize(v.data());
     benchmark::ClobberMemory();
   }
 }
@@ -389,17 +386,14 @@ short-hand. The following macro will pick a few appropriate arguments in the
 product of the two specified ranges and will generate a benchmark for each such
 pair.
 
-<!-- {% raw %} -->
 ```c++
 BENCHMARK(BM_SetInsert)->Ranges({{1<<10, 8<<10}, {128, 512}});
 ```
-<!-- {% endraw %} -->
 
 Some benchmarks may require specific argument values that cannot be expressed
 with `Ranges`. In this case, `ArgsProduct` offers the ability to generate a
 benchmark input for each combination in the product of the supplied vectors.
 
-<!-- {% raw %} -->
 ```c++
 BENCHMARK(BM_SetInsert)
     ->ArgsProduct({{1<<10, 3<<10, 8<<10}, {20, 40, 60, 80}})
@@ -418,7 +412,6 @@ BENCHMARK(BM_SetInsert)
     ->Args({3<<10, 80})
     ->Args({8<<10, 80});
 ```
-<!-- {% endraw %} -->
 
 For the most common scenarios, helper methods for creating a list of
 integers for a given sparse or dense range are provided.
@@ -495,8 +488,7 @@ static void BM_StringCompare(benchmark::State& state) {
   std::string s1(state.range(0), '-');
   std::string s2(state.range(0), '-');
   for (auto _ : state) {
-    auto comparison_result = s1.compare(s2);
-    benchmark::DoNotOptimize(comparison_result);
+    benchmark::DoNotOptimize(s1.compare(s2));
   }
   state.SetComplexityN(state.range(0));
 }
@@ -705,7 +697,6 @@ is 1k a 1000 (default, `benchmark::Counter::OneK::kIs1000`), or 1024
 When you're compiling in C++11 mode or later you can use `insert()` with
 `std::initializer_list`:
 
-<!-- {% raw %} -->
 ```c++
   // With C++11, this can be done:
   state.counters.insert({{"Foo", numFoos}, {"Bar", numBars}, {"Baz", numBazs}});
@@ -714,7 +705,6 @@ When you're compiling in C++11 mode or later you can use `insert()` with
   state.counters["Bar"] = numBars;
   state.counters["Baz"] = numBazs;
 ```
-<!-- {% endraw %} -->
 
 ### Counter Reporting
 
@@ -883,7 +873,6 @@ is measured. But sometimes, it is necessary to do some work inside of
 that loop, every iteration, but without counting that time to the benchmark time.
 That is possible, although it is not recommended, since it has high overhead.
 
-<!-- {% raw %} -->
 ```c++
 static void BM_SetInsert_With_Timer_Control(benchmark::State& state) {
   std::set<int> data;
@@ -898,7 +887,6 @@ static void BM_SetInsert_With_Timer_Control(benchmark::State& state) {
 }
 BENCHMARK(BM_SetInsert_With_Timer_Control)->Ranges({{1<<10, 8<<10}, {128, 512}});
 ```
-<!-- {% endraw %} -->
 
 <a name="manual-timing" />
 
@@ -1009,8 +997,7 @@ static void BM_vector_push_back(benchmark::State& state) {
   for (auto _ : state) {
     std::vector<int> v;
     v.reserve(1);
-    auto data = v.data();           // Allow v.data() to be clobbered. Pass as non-const
-    benchmark::DoNotOptimize(data); // lvalue to avoid undesired compiler optimizations
+    benchmark::DoNotOptimize(v.data()); // Allow v.data() to be clobbered.
     v.push_back(42);
     benchmark::ClobberMemory(); // Force 42 to be written to memory.
   }
@@ -1144,7 +1131,7 @@ int main(int argc, char** argv) {
 
 When errors caused by external influences, such as file I/O and network
 communication, occur within a benchmark the
-`State::SkipWithError(const std::string& msg)` function can be used to skip that run
+`State::SkipWithError(const char* msg)` function can be used to skip that run
 of benchmark and report the error. Note that only future iterations of the
 `KeepRunning()` are skipped. For the ranged-for version of the benchmark loop
 Users must explicitly exit the loop, otherwise all iterations will be performed.
@@ -1255,8 +1242,7 @@ the benchmark loop should be preferred.
 If you see this error:
 
 ```
-***WARNING*** CPU scaling is enabled, the benchmark real time measurements may
-be noisy and will incur extra overhead.
+***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
 ```
 
 you might want to disable the CPU frequency scaling while running the

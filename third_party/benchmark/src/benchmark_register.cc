@@ -204,7 +204,7 @@ bool FindBenchmarksInternal(const std::string& re,
 //                               Benchmark
 //=============================================================================//
 
-Benchmark::Benchmark(const std::string& name)
+Benchmark::Benchmark(const char* name)
     : name_(name),
       aggregation_report_mode_(ARM_Unspecified),
       time_unit_(GetDefaultTimeUnit()),
@@ -230,7 +230,7 @@ Benchmark::Benchmark(const std::string& name)
 Benchmark::~Benchmark() {}
 
 Benchmark* Benchmark::Name(const std::string& name) {
-  SetName(name);
+  SetName(name.c_str());
   return this;
 }
 
@@ -468,9 +468,7 @@ Benchmark* Benchmark::ThreadPerCpu() {
   return this;
 }
 
-void Benchmark::SetName(const std::string& name) { name_ = name; }
-
-const char* Benchmark::GetName() const { return name_.c_str(); }
+void Benchmark::SetName(const char* name) { name_ = name; }
 
 int Benchmark::ArgsCnt() const {
   if (args_.empty()) {
@@ -478,12 +476,6 @@ int Benchmark::ArgsCnt() const {
     return static_cast<int>(arg_names_.size());
   }
   return static_cast<int>(args_.front().size());
-}
-
-const char* Benchmark::GetArgName(int arg) const {
-  BM_CHECK_GE(arg, 0);
-  BM_CHECK_LT(arg, static_cast<int>(arg_names_.size()));
-  return arg_names_[arg].c_str();
 }
 
 TimeUnit Benchmark::GetTimeUnit() const {

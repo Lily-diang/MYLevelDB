@@ -51,7 +51,7 @@ namespace {
 // 定义每个哈希表的节点
 // LevelDB中的cache以LRUHandle为单位插入cache中，一个LRUHandle称为一条Entry。
 struct LRUHandle {
-  void* value;  // 节点的值
+  void* value;  // 节点中保存的值
   void (*deleter)(const Slice&, void* value);  // 节点的销毁方法
   LRUHandle* next_hash; // 如果产生哈希冲突，则用一个单向链表串联冲突的节点
   LRUHandle* next; // LRU双向链表得的后一个节点

@@ -13,6 +13,8 @@
 #include "util/logging.h"
 #include "util/mutexlock.h"
 #include "util/random.h"
+#include "db/Remix.h"
+#include "leveldb/RemixHelper.h"
 
 namespace leveldb {
 
@@ -59,7 +61,11 @@ class DBIter : public Iterator {
         direction_(kForward),
         valid_(false),
         rnd_(seed),
-        bytes_until_read_sampling_(RandomCompactionPeriod()) {}
+        bytes_until_read_sampling_(RandomCompactionPeriod())
+         {
+          set_runs_num(iter->get_runs_num());
+          set_comparator(cmp);
+        } // !!!
 
   DBIter(const DBIter&) = delete;
   DBIter& operator=(const DBIter&) = delete;
@@ -69,6 +75,10 @@ class DBIter : public Iterator {
   Slice key() const override {
     assert(valid_);
     return (direction_ == kForward) ? ExtractUserKey(iter_->key()) : saved_key_;
+  }
+  Slice KEY() override{
+    assert(valid_);
+    return iter_->key();
   }
   Slice value() const override {
     assert(valid_);
@@ -82,11 +92,12 @@ class DBIter : public Iterator {
     }
   }
 
-  void Next() override;
+  int Next() override;
   void Prev() override;
   void Seek(const Slice& target) override;
-  void SeekToFirst() override;
+  int SeekToFirst() override;
   void SeekToLast() override;
+  const Comparator* GetComperator();
 
  private:
   void FindNextUserEntry(bool skipping, std::string* skip);
@@ -126,6 +137,7 @@ class DBIter : public Iterator {
   bool valid_;
   Random rnd_; // ???
   size_t bytes_until_read_sampling_; // ???
+
 };
 
 // 解析key，从iter_中解析出key值，然后将该key值保存到ikey中
@@ -148,7 +160,7 @@ inline bool DBIter::ParseKey(ParsedInternalKey* ikey) {
   }
 }
 
-void DBIter::Next() {
+int DBIter::Next() {
   assert(valid_);
 
   if (direction_ == kReverse) {  // Switch directions?
@@ -166,7 +178,7 @@ void DBIter::Next() {
     if (!iter_->Valid()) {
       valid_ = false;
       saved_key_.clear();
-      return;
+      return 0;
     }
     // saved_key_ already contains the key to skip past.
   } else {
@@ -175,15 +187,18 @@ void DBIter::Next() {
 
     // iter_ is pointing to current key. We can now safely move to the next to
     // avoid checking current key.
-    iter_->Next();
+    int index = iter_->Next();
+    if (iter_->Valid()) iter_->set_index_of_runs(index);
+    //iter_->set_index_of_runs(iter_->Next());
     if (!iter_->Valid()) {
       valid_ = false;
       saved_key_.clear();
-      return;
+      return 0;
     }
   }
   // 跳过 iter_key().user_key_ 更旧的版本和 deleteType 版本
   FindNextUserEntry(true, &saved_key_);
+  return 0;
 }
 
 /**
@@ -371,15 +386,16 @@ void DBIter::Seek(const Slice& target) {
   }
 }
 
-void DBIter::SeekToFirst() {
+int DBIter::SeekToFirst() {
   direction_ = kForward;
   ClearSavedValue();
-  iter_->SeekToFirst();
+  iter_->set_index_of_runs(iter_->SeekToFirst());
   if (iter_->Valid()) { // 也要跳过被删除的entry
     FindNextUserEntry(false, &saved_key_ /* temporary storage */);
   } else {
     valid_ = false;
   }
+  return get_index_of_runs();
 }
 
 void DBIter::SeekToLast() {
@@ -389,6 +405,10 @@ void DBIter::SeekToLast() {
   FindPrevUserEntry();
 }
 
+const Comparator * DBIter::GetComperator() {
+  return user_comparator_;
+}
+
 }  // anonymous namespace
 
 Iterator* NewDBIterator(DBImpl* db, const Comparator* user_key_comparator,
@@ -396,5 +416,6 @@ Iterator* NewDBIterator(DBImpl* db, const Comparator* user_key_comparator,
                         uint32_t seed) {
   return new DBIter(db, user_key_comparator, internal_iter, sequence, seed);
 }
+
 
 }  // namespace leveldb

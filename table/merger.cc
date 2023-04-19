@@ -7,11 +7,12 @@
 #include "leveldb/comparator.h"
 #include "leveldb/iterator.h"
 #include "table/iterator_wrapper.h"
+#include "leveldb/RemixHelper.h"
 
 namespace leveldb {
 
 namespace {
-class MergingIterator : public Iterator {
+class MergingIterator : public Iterator, public Remix_Helper {
  public:
   MergingIterator(const Comparator* comparator, Iterator** children, int n)
       : comparator_(comparator),
@@ -28,12 +29,13 @@ class MergingIterator : public Iterator {
 
   bool Valid() const override { return (current_ != nullptr); }
 
-  void SeekToFirst() override {
+  int SeekToFirst() override {
     for (int i = 0; i < n_; i++) {
       children_[i].SeekToFirst();
     }
-    FindSmallest();
+    set_run_index(FindSmallest());
     direction_ = kForward;
+    return get_run_index();
   }
 
   void SeekToLast() override {
@@ -52,7 +54,7 @@ class MergingIterator : public Iterator {
     direction_ = kForward;
   }
   // 注意：next（）永远找的>key（）的下一个位置，调用后方向一定为kForward
-  void Next() override {
+  int Next() override {
     assert(Valid());
 
     // Ensure that all children are positioned after key().
@@ -80,7 +82,8 @@ class MergingIterator : public Iterator {
     }
 
     current_->Next();
-    FindSmallest();
+    set_run_index(FindSmallest());
+    return get_run_index();
   }
   // 注意：next（）永远找的都是<key（）的下一个位置,逻辑与next()类似，且调用了Prev()后，方向一定为kReverse
   void Prev() override {
@@ -138,11 +141,20 @@ class MergingIterator : public Iterator {
     return status;
   }
 
+  void set_run_index(int index) { // !!!
+    assert(index>=0);
+    run_index = index;
+  }
+
+  int get_run_index() {  // !!!
+    return run_index;
+  }
+
  private:
   // Which direction is the iterator moving?
   enum Direction { kForward, kReverse };
 
-  void FindSmallest();
+  int FindSmallest();
   void FindLargest();
 
   // We might want to use a heap in case there are lots of children.
@@ -154,6 +166,7 @@ class MergingIterator : public Iterator {
   int n_;
   IteratorWrapper* current_;
   Direction direction_;
+  int run_index; // !!!
 };
 
 
@@ -161,19 +174,23 @@ class MergingIterator : public Iterator {
  * @brief 遍历整个children_迭代器，找出最小的一个节点，设置为current_
  * @return {*}
  */
-void MergingIterator::FindSmallest() {
+int MergingIterator::FindSmallest() {
   IteratorWrapper* smallest = nullptr;
+  int index = 0;
   for (int i = 0; i < n_; i++) {
     IteratorWrapper* child = &children_[i];
     if (child->Valid()) {
       if (smallest == nullptr) {
         smallest = child;
+        index = i;
       } else if (comparator_->Compare(child->key(), smallest->key()) < 0) {
         smallest = child;
+        index = i;
       }
     }
   }
   current_ = smallest;
+  return index;
 }
 
 /**

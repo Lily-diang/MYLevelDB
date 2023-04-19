@@ -109,6 +109,7 @@ class Version {
 
   // Return the level at which we should place a new memtable compaction
   // result that covers the range [smallest_user_key,largest_user_key].
+  // 计算新生成的sstable所属的层级（在minor compaction过程中）。
   int PickLevelForMemTableOutput(const Slice& smallest_user_key,
                                  const Slice& largest_user_key);
 
@@ -299,7 +300,7 @@ class VersionSet {
   Env* const env_;
   const std::string dbname_;
   const Options* const options_;
-  TableCache* const table_cache_;  
+  TableCache* const table_cache_;  // 
   const InternalKeyComparator icmp_;
   uint64_t next_file_number_;   // 下一个文件序列号
   uint64_t manifest_file_number_; // Manifest文件的文件序列号
@@ -310,12 +311,12 @@ class VersionSet {
   // Opened lazily
   WritableFile* descriptor_file_;
   log::Writer* descriptor_log_;
-  Version dummy_versions_;  // Head of circular doubly-linked list of versions.
+  Version dummy_versions_;  // Head of circular doubly-linked list of versions. version set的头结点
   Version* current_;        // == dummy_versions_.prev_ 当前的最新版本
 
   // Per-level key at which the next compaction at that level should start.
   // Either an empty string, or a valid InternalKey.
-  std::string compact_pointer_[config::kNumLevels];  // 记录每个层级下一次开始compaction操作时需要从哪个键开始
+  std::string compact_pointer_[config::kNumLevels];  // compact_pointer_是指level上开始compaction的最小key，下一次compaction从这个key开始
 };
 
 // A Compaction encapsulates information about a compaction.

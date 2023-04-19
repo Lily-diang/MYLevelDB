@@ -59,6 +59,7 @@
 
 #include "check.h"
 #include "log.h"
+#include "sleep.h"
 #include "string_util.h"
 
 namespace benchmark {
@@ -66,9 +67,6 @@ namespace benchmark {
 // Suppress unused warnings on helper functions.
 #if defined(__GNUC__)
 #pragma GCC diagnostic ignored "-Wunused-function"
-#endif
-#if defined(__NVCOMPILER)
-#pragma diag_suppress declared_but_not_referenced
 #endif
 
 namespace {

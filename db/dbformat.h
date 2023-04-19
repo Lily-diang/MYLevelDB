@@ -8,6 +8,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <string>
+#include <vector>
+#include <iostream>
 
 #include "leveldb/comparator.h"
 #include "leveldb/db.h"
@@ -229,6 +231,33 @@ class LookupKey {
 inline LookupKey::~LookupKey() {
   if (start_ != space_) delete[] start_;
 }
+
+
+
+    // class Remix{
+    //     public:
+    //         std::vector<Slice> anchor_keys; //锚键数组，每一个键对应一个segment
+    //         std::vector<struct segment> segments; // Remix中维护的段结构
+    //         size_t segment_size; // 实际拥有的段数量
+    //         size_t Max_segment_size; // Remix中能够存放的最大段数
+            
+    //         bool empty(){
+    //             return anchor_keys.empty();
+    //         }
+
+    //         // bool segment_is_full(size_t n){
+    //         //     // 如果还没有构造整个全局视图或者anchor_key的数量比n小，则此时说明该段还没开始构造，返回false
+    //         //     if(segments.empty() || anchor_keys.size() < n) return false;
+    //         //     return segments[n].size;
+    //         // }
+            
+    //         Remix() : segment_size(0) , Max_segment_size(1), segments(1){
+    //             std::cout << "创建了Remix" << std::endl;
+    //         };
+
+    //         ~Remix(){};
+    // };
+    
 
 }  // namespace leveldb
 

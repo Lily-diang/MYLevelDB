@@ -17,15 +17,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, ubuntu-20.04, macos-latest]
+        # ubuntu-18.04 is deprecated but included for best-effort support
+        os: [ubuntu-22.04, ubuntu-20.04, ubuntu-18.04, macos-latest]
         build_type: ['Release', 'Debug']
-        compiler: ['g++', 'clang++']
+        compiler: [g++, clang++]
         lib: ['shared', 'static']
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
 
-      - uses: lukka/get-cmake@latest
+      - name: setup cmake
+        if: matrix.os == 'ubuntu-18.04'
+        uses: jwlawson/actions-setup-cmake@v1.9
+        with:
+          cmake-version: '3.16.3'
 
       - name: create build environment
         run: cmake -E make_directory ${{ runner.workspace }}/_build
@@ -44,7 +49,6 @@ jobs:
           -DBENCHMARK_DOWNLOAD_DEPENDENCIES=ON
           -DBUILD_SHARED_LIBS=${{ matrix.lib == 'shared' }}
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-          -DCMAKE_CXX_COMPILER=${{ env.CXX }}
           -DCMAKE_CXX_VISIBILITY_PRESET=hidden
           -DCMAKE_VISIBILITY_INLINES_HIDDEN=ON
 
@@ -88,8 +92,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-
-      - uses: lukka/get-cmake@latest
 
       - name: configure cmake
         run: >
