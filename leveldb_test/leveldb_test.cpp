@@ -4,7 +4,7 @@
 #include "leveldb/db.h"
 #include "leveldb/write_batch.h"
 
-#include "../db/Remix.h"
+#include "leveldb/Remix.h"
 #define N 900000
 using namespace std;
 using namespace leveldb;
