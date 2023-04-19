@@ -4,3 +4,5 @@ leveldb_test:leveldb_test.cpp
 clear:
 	rm -f leveldb_test
 	rm -rf testdb
+run:
+	./leveldb_test
