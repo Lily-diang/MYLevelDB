@@ -60,9 +60,7 @@ static const char* FLAGS_benchmarks =
     "fill100K,"
     "crc32c,"
     "snappycomp,"
-    "snappyuncomp,"
-    "zstdcomp,"
-    "zstduncomp,";
+    "snappyuncomp,";
 
 // Number of key/values to place in database
 static int FLAGS_num = 1000000;
@@ -369,57 +367,6 @@ struct ThreadState {
   ThreadState(int index, int seed) : tid(index), rand(seed), shared(nullptr) {}
 };
 
-void Compress(
-    ThreadState* thread, std::string name,
-    std::function<bool(const char*, size_t, std::string*)> compress_func) {
-  RandomGenerator gen;
-  Slice input = gen.Generate(Options().block_size);
-  int64_t bytes = 0;
-  int64_t produced = 0;
-  bool ok = true;
-  std::string compressed;
-  while (ok && bytes < 1024 * 1048576) {  // Compress 1G
-    ok = compress_func(input.data(), input.size(), &compressed);
-    produced += compressed.size();
-    bytes += input.size();
-    thread->stats.FinishedSingleOp();
-  }
-
-  if (!ok) {
-    thread->stats.AddMessage("(" + name + " failure)");
-  } else {
-    char buf[100];
-    std::snprintf(buf, sizeof(buf), "(output: %.1f%%)",
-                  (produced * 100.0) / bytes);
-    thread->stats.AddMessage(buf);
-    thread->stats.AddBytes(bytes);
-  }
-}
-
-void Uncompress(
-    ThreadState* thread, std::string name,
-    std::function<bool(const char*, size_t, std::string*)> compress_func,
-    std::function<bool(const char*, size_t, char*)> uncompress_func) {
-  RandomGenerator gen;
-  Slice input = gen.Generate(Options().block_size);
-  std::string compressed;
-  bool ok = compress_func(input.data(), input.size(), &compressed);
-  int64_t bytes = 0;
-  char* uncompressed = new char[input.size()];
-  while (ok && bytes < 1024 * 1048576) {  // Compress 1G
-    ok = uncompress_func(compressed.data(), compressed.size(), uncompressed);
-    bytes += input.size();
-    thread->stats.FinishedSingleOp();
-  }
-  delete[] uncompressed;
-
-  if (!ok) {
-    thread->stats.AddMessage("(" + name + " failure)");
-  } else {
-    thread->stats.AddBytes(bytes);
-  }
-}
-
 }  // namespace
 
 class Benchmark {
@@ -632,10 +579,6 @@ class Benchmark {
         method = &Benchmark::SnappyCompress;
       } else if (name == Slice("snappyuncomp")) {
         method = &Benchmark::SnappyUncompress;
-      } else if (name == Slice("zstdcomp")) {
-        method = &Benchmark::ZstdCompress;
-      } else if (name == Slice("zstduncomp")) {
-        method = &Benchmark::ZstdUncompress;
       } else if (name == Slice("heapprofile")) {
         HeapProfile();
       } else if (name == Slice("stats")) {
@@ -770,20 +713,50 @@ class Benchmark {
   }
 
   void SnappyCompress(ThreadState* thread) {
-    Compress(thread, "snappy", &port::Snappy_Compress);
+    RandomGenerator gen;
+    Slice input = gen.Generate(Options().block_size);
+    int64_t bytes = 0;
+    int64_t produced = 0;
+    bool ok = true;
+    std::string compressed;
+    while (ok && bytes < 1024 * 1048576) {  // Compress 1G
+      ok = port::Snappy_Compress(input.data(), input.size(), &compressed);
+      produced += compressed.size();
+      bytes += input.size();
+      thread->stats.FinishedSingleOp();
+    }
+
+    if (!ok) {
+      thread->stats.AddMessage("(snappy failure)");
+    } else {
+      char buf[100];
+      std::snprintf(buf, sizeof(buf), "(output: %.1f%%)",
+                    (produced * 100.0) / bytes);
+      thread->stats.AddMessage(buf);
+      thread->stats.AddBytes(bytes);
+    }
   }
 
   void SnappyUncompress(ThreadState* thread) {
-    Uncompress(thread, "snappy", &port::Snappy_Compress,
-               &port::Snappy_Uncompress);
-  }
+    RandomGenerator gen;
+    Slice input = gen.Generate(Options().block_size);
+    std::string compressed;
+    bool ok = port::Snappy_Compress(input.data(), input.size(), &compressed);
+    int64_t bytes = 0;
+    char* uncompressed = new char[input.size()];
+    while (ok && bytes < 1024 * 1048576) {  // Compress 1G
+      ok = port::Snappy_Uncompress(compressed.data(), compressed.size(),
+                                   uncompressed);
+      bytes += input.size();
+      thread->stats.FinishedSingleOp();
+    }
+    delete[] uncompressed;
 
-  void ZstdCompress(ThreadState* thread) {
-    Compress(thread, "zstd", &port::Zstd_Compress);
-  }
-
-  void ZstdUncompress(ThreadState* thread) {
-    Uncompress(thread, "zstd", &port::Zstd_Compress, &port::Zstd_Uncompress);
+    if (!ok) {
+      thread->stats.AddMessage("(snappy failure)");
+    } else {
+      thread->stats.AddBytes(bytes);
+    }
   }
 
   void Open() {

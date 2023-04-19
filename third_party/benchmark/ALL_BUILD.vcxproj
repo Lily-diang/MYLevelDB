@@ -25,7 +25,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{F4341874-4118-39CC-8AB7-CF77D8936AB2}</ProjectGuid>
+    <ProjectGuid>{914C163F-1C58-36E5-8B2D-D7F8AC67A6F6}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
     <Platform>x64</Platform>
@@ -69,7 +69,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Midl>
-      <AdditionalIncludeDirectories>E:\graduating design\workplace\leveldb\include;E:\graduating design\workplace\leveldb\.;E:\graduating design\workplace\leveldb\third_party\benchmark\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\graduating design\leveldb\include;E:\graduating design\leveldb\.;E:\graduating design\leveldb\third_party\benchmark\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -79,7 +79,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Midl>
-      <AdditionalIncludeDirectories>E:\graduating design\workplace\leveldb\include;E:\graduating design\workplace\leveldb\.;E:\graduating design\workplace\leveldb\third_party\benchmark\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\graduating design\leveldb\include;E:\graduating design\leveldb\.;E:\graduating design\leveldb\third_party\benchmark\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -89,7 +89,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
     <Midl>
-      <AdditionalIncludeDirectories>E:\graduating design\workplace\leveldb\include;E:\graduating design\workplace\leveldb\.;E:\graduating design\workplace\leveldb\third_party\benchmark\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\graduating design\leveldb\include;E:\graduating design\leveldb\.;E:\graduating design\leveldb\third_party\benchmark\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -99,7 +99,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <Midl>
-      <AdditionalIncludeDirectories>E:\graduating design\workplace\leveldb\include;E:\graduating design\workplace\leveldb\.;E:\graduating design\workplace\leveldb\third_party\benchmark\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\graduating design\leveldb\include;E:\graduating design\leveldb\.;E:\graduating design\leveldb\third_party\benchmark\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -108,11 +108,11 @@
     </Midl>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="E:\graduating design\workplace\leveldb\third_party\benchmark\CMakeLists.txt">
+    <CustomBuild Include="E:\graduating design\leveldb\third_party\benchmark\CMakeLists.txt">
       <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BuildInParallel>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule E:/graduating design/workplace/leveldb/third_party/benchmark/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule E:/graduating design/leveldb/third_party/benchmark/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-D:\Tools\CMake\bin\cmake.exe "-SE:/graduating design/workplace/leveldb" "-BE:/graduating design/workplace/leveldb" --check-stamp-file "E:/graduating design/workplace/leveldb/third_party/benchmark/CMakeFiles/generate.stamp"
+D:\Tools\CMake\bin\cmake.exe "-SE:/graduating design/leveldb" "-BE:/graduating design/leveldb" --check-stamp-file "E:/graduating design/leveldb/third_party/benchmark/CMakeFiles/generate.stamp"
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -120,13 +120,13 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Tools\CMake\share\cmake-3.26\Modules\CheckCSourceCompiles.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckCXXCompilerFlag.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckIncludeFile.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckLibraryExists.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindGit.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindThreads.cmake;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\AddCXXCompilerFlag.cmake;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\CXXFeatureCheck.cmake;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\GetGitVersion.cmake;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\gnu_posix_regex.cpp;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\posix_regex.cpp;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\std_regex.cpp;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\steady_clock.cpp;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:\graduating design\workplace\leveldb\third_party\benchmark\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Tools\CMake\share\cmake-3.26\Modules\CheckCSourceCompiles.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckCXXCompilerFlag.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckIncludeFile.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckLibraryExists.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindGit.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindThreads.cmake;E:\graduating design\leveldb\third_party\benchmark\cmake\AddCXXCompilerFlag.cmake;E:\graduating design\leveldb\third_party\benchmark\cmake\CXXFeatureCheck.cmake;E:\graduating design\leveldb\third_party\benchmark\cmake\GetGitVersion.cmake;E:\graduating design\leveldb\third_party\benchmark\cmake\gnu_posix_regex.cpp;E:\graduating design\leveldb\third_party\benchmark\cmake\posix_regex.cpp;E:\graduating design\leveldb\third_party\benchmark\cmake\std_regex.cpp;E:\graduating design\leveldb\third_party\benchmark\cmake\steady_clock.cpp;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:\graduating design\leveldb\third_party\benchmark\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
       <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BuildInParallel>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule E:/graduating design/workplace/leveldb/third_party/benchmark/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule E:/graduating design/leveldb/third_party/benchmark/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
-D:\Tools\CMake\bin\cmake.exe "-SE:/graduating design/workplace/leveldb" "-BE:/graduating design/workplace/leveldb" --check-stamp-file "E:/graduating design/workplace/leveldb/third_party/benchmark/CMakeFiles/generate.stamp"
+D:\Tools\CMake\bin\cmake.exe "-SE:/graduating design/leveldb" "-BE:/graduating design/leveldb" --check-stamp-file "E:/graduating design/leveldb/third_party/benchmark/CMakeFiles/generate.stamp"
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -134,13 +134,13 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Tools\CMake\share\cmake-3.26\Modules\CheckCSourceCompiles.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckCXXCompilerFlag.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckIncludeFile.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckLibraryExists.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindGit.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindThreads.cmake;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\AddCXXCompilerFlag.cmake;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\CXXFeatureCheck.cmake;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\GetGitVersion.cmake;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\gnu_posix_regex.cpp;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\posix_regex.cpp;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\std_regex.cpp;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\steady_clock.cpp;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:\graduating design\workplace\leveldb\third_party\benchmark\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Tools\CMake\share\cmake-3.26\Modules\CheckCSourceCompiles.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckCXXCompilerFlag.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckIncludeFile.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckLibraryExists.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindGit.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindThreads.cmake;E:\graduating design\leveldb\third_party\benchmark\cmake\AddCXXCompilerFlag.cmake;E:\graduating design\leveldb\third_party\benchmark\cmake\CXXFeatureCheck.cmake;E:\graduating design\leveldb\third_party\benchmark\cmake\GetGitVersion.cmake;E:\graduating design\leveldb\third_party\benchmark\cmake\gnu_posix_regex.cpp;E:\graduating design\leveldb\third_party\benchmark\cmake\posix_regex.cpp;E:\graduating design\leveldb\third_party\benchmark\cmake\std_regex.cpp;E:\graduating design\leveldb\third_party\benchmark\cmake\steady_clock.cpp;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:\graduating design\leveldb\third_party\benchmark\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
       <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</BuildInParallel>
-      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule E:/graduating design/workplace/leveldb/third_party/benchmark/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule E:/graduating design/leveldb/third_party/benchmark/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
-D:\Tools\CMake\bin\cmake.exe "-SE:/graduating design/workplace/leveldb" "-BE:/graduating design/workplace/leveldb" --check-stamp-file "E:/graduating design/workplace/leveldb/third_party/benchmark/CMakeFiles/generate.stamp"
+D:\Tools\CMake\bin\cmake.exe "-SE:/graduating design/leveldb" "-BE:/graduating design/leveldb" --check-stamp-file "E:/graduating design/leveldb/third_party/benchmark/CMakeFiles/generate.stamp"
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -148,13 +148,13 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\Tools\CMake\share\cmake-3.26\Modules\CheckCSourceCompiles.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckCXXCompilerFlag.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckIncludeFile.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckLibraryExists.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindGit.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindThreads.cmake;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\AddCXXCompilerFlag.cmake;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\CXXFeatureCheck.cmake;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\GetGitVersion.cmake;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\gnu_posix_regex.cpp;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\posix_regex.cpp;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\std_regex.cpp;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\steady_clock.cpp;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">E:\graduating design\workplace\leveldb\third_party\benchmark\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\Tools\CMake\share\cmake-3.26\Modules\CheckCSourceCompiles.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckCXXCompilerFlag.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckIncludeFile.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckLibraryExists.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindGit.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindThreads.cmake;E:\graduating design\leveldb\third_party\benchmark\cmake\AddCXXCompilerFlag.cmake;E:\graduating design\leveldb\third_party\benchmark\cmake\CXXFeatureCheck.cmake;E:\graduating design\leveldb\third_party\benchmark\cmake\GetGitVersion.cmake;E:\graduating design\leveldb\third_party\benchmark\cmake\gnu_posix_regex.cpp;E:\graduating design\leveldb\third_party\benchmark\cmake\posix_regex.cpp;E:\graduating design\leveldb\third_party\benchmark\cmake\std_regex.cpp;E:\graduating design\leveldb\third_party\benchmark\cmake\steady_clock.cpp;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">E:\graduating design\leveldb\third_party\benchmark\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
       <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</BuildInParallel>
-      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule E:/graduating design/workplace/leveldb/third_party/benchmark/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule E:/graduating design/leveldb/third_party/benchmark/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
-D:\Tools\CMake\bin\cmake.exe "-SE:/graduating design/workplace/leveldb" "-BE:/graduating design/workplace/leveldb" --check-stamp-file "E:/graduating design/workplace/leveldb/third_party/benchmark/CMakeFiles/generate.stamp"
+D:\Tools\CMake\bin\cmake.exe "-SE:/graduating design/leveldb" "-BE:/graduating design/leveldb" --check-stamp-file "E:/graduating design/leveldb/third_party/benchmark/CMakeFiles/generate.stamp"
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -162,26 +162,26 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\Tools\CMake\share\cmake-3.26\Modules\CheckCSourceCompiles.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckCXXCompilerFlag.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckIncludeFile.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckLibraryExists.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindGit.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindThreads.cmake;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\AddCXXCompilerFlag.cmake;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\CXXFeatureCheck.cmake;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\GetGitVersion.cmake;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\gnu_posix_regex.cpp;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\posix_regex.cpp;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\std_regex.cpp;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\steady_clock.cpp;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">E:\graduating design\workplace\leveldb\third_party\benchmark\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\Tools\CMake\share\cmake-3.26\Modules\CheckCSourceCompiles.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckCXXCompilerFlag.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckIncludeFile.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckLibraryExists.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindGit.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindThreads.cmake;E:\graduating design\leveldb\third_party\benchmark\cmake\AddCXXCompilerFlag.cmake;E:\graduating design\leveldb\third_party\benchmark\cmake\CXXFeatureCheck.cmake;E:\graduating design\leveldb\third_party\benchmark\cmake\GetGitVersion.cmake;E:\graduating design\leveldb\third_party\benchmark\cmake\gnu_posix_regex.cpp;E:\graduating design\leveldb\third_party\benchmark\cmake\posix_regex.cpp;E:\graduating design\leveldb\third_party\benchmark\cmake\std_regex.cpp;E:\graduating design\leveldb\third_party\benchmark\cmake\steady_clock.cpp;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">E:\graduating design\leveldb\third_party\benchmark\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="E:\graduating design\workplace\leveldb\ZERO_CHECK.vcxproj">
-      <Project>{BB7EE5FA-E280-3B1B-B1F5-7FD497FA9EDF}</Project>
+    <ProjectReference Include="E:\graduating design\leveldb\ZERO_CHECK.vcxproj">
+      <Project>{F64F5B04-607C-3E84-A680-EF9F2E38DC24}</Project>
       <Name>ZERO_CHECK</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </ProjectReference>
-    <ProjectReference Include="E:\graduating design\workplace\leveldb\third_party\benchmark\src\benchmark.vcxproj">
-      <Project>{9EC6065C-8B6D-30BB-B426-088FA4312258}</Project>
+    <ProjectReference Include="E:\graduating design\leveldb\third_party\benchmark\src\benchmark.vcxproj">
+      <Project>{E1E606E2-B772-3714-A71A-E42783A0FA3A}</Project>
       <Name>benchmark</Name>
     </ProjectReference>
-    <ProjectReference Include="E:\graduating design\workplace\leveldb\third_party\benchmark\src\benchmark_main.vcxproj">
-      <Project>{0C0A3AD1-27F9-34F7-9095-535750305545}</Project>
+    <ProjectReference Include="E:\graduating design\leveldb\third_party\benchmark\src\benchmark_main.vcxproj">
+      <Project>{A4550389-4BB5-3200-8292-9B12187B5ECF}</Project>
       <Name>benchmark_main</Name>
     </ProjectReference>
   </ItemGroup>

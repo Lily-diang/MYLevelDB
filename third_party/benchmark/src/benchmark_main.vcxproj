@@ -22,7 +22,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{0C0A3AD1-27F9-34F7-9095-535750305545}</ProjectGuid>
+    <ProjectGuid>{A4550389-4BB5-3200-8292-9B12187B5ECF}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
     <Platform>x64</Platform>
@@ -59,26 +59,26 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:\graduating design\workplace\leveldb\third_party\benchmark\src\Debug\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:\graduating design\leveldb\third_party\benchmark\src\Debug\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">benchmark_main.dir\Debug\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">benchmark_main</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:\graduating design\workplace\leveldb\third_party\benchmark\src\Release\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:\graduating design\leveldb\third_party\benchmark\src\Release\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">benchmark_main.dir\Release\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">benchmark_main</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">E:\graduating design\workplace\leveldb\third_party\benchmark\src\MinSizeRel\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">E:\graduating design\leveldb\third_party\benchmark\src\MinSizeRel\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">benchmark_main.dir\MinSizeRel\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">benchmark_main</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.lib</TargetExt>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">E:\graduating design\workplace\leveldb\third_party\benchmark\src\RelWithDebInfo\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">E:\graduating design\leveldb\third_party\benchmark\src\RelWithDebInfo\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">benchmark_main.dir\RelWithDebInfo\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">benchmark_main</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.lib</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>E:\graduating design\workplace\leveldb\include;E:\graduating design\workplace\leveldb\.;E:\graduating design\workplace\leveldb\third_party\benchmark\include;E:\graduating design\workplace\leveldb\third_party\benchmark\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\graduating design\leveldb\include;E:\graduating design\leveldb\.;E:\graduating design\leveldb\third_party\benchmark\include;E:\graduating design\leveldb\third_party\benchmark\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /EHs-c- -EHs- -EHa-</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -98,10 +98,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;_UNICODE;UNICODE;_HAS_EXCEPTIONS=0;_CRT_SECURE_NO_WARNINGS;HAVE_STD_REGEX;HAVE_STEADY_CLOCK;BENCHMARK_STATIC_DEFINE;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>E:\graduating design\workplace\leveldb\include;E:\graduating design\workplace\leveldb\.;E:\graduating design\workplace\leveldb\third_party\benchmark\include;E:\graduating design\workplace\leveldb\third_party\benchmark\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\graduating design\leveldb\include;E:\graduating design\leveldb\.;E:\graduating design\leveldb\third_party\benchmark\include;E:\graduating design\leveldb\third_party\benchmark\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>E:\graduating design\workplace\leveldb\include;E:\graduating design\workplace\leveldb\.;E:\graduating design\workplace\leveldb\third_party\benchmark\include;E:\graduating design\workplace\leveldb\third_party\benchmark\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\graduating design\leveldb\include;E:\graduating design\leveldb\.;E:\graduating design\leveldb\third_party\benchmark\include;E:\graduating design\leveldb\third_party\benchmark\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -114,7 +114,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>E:\graduating design\workplace\leveldb\include;E:\graduating design\workplace\leveldb\.;E:\graduating design\workplace\leveldb\third_party\benchmark\include;E:\graduating design\workplace\leveldb\third_party\benchmark\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\graduating design\leveldb\include;E:\graduating design\leveldb\.;E:\graduating design\leveldb\third_party\benchmark\include;E:\graduating design\leveldb\third_party\benchmark\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /EHs-c- -EHs- -EHa-</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <ExceptionHandling>
@@ -134,10 +134,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_UNICODE;UNICODE;_HAS_EXCEPTIONS=0;_CRT_SECURE_NO_WARNINGS;HAVE_STD_REGEX;HAVE_STEADY_CLOCK;BENCHMARK_STATIC_DEFINE;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>E:\graduating design\workplace\leveldb\include;E:\graduating design\workplace\leveldb\.;E:\graduating design\workplace\leveldb\third_party\benchmark\include;E:\graduating design\workplace\leveldb\third_party\benchmark\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\graduating design\leveldb\include;E:\graduating design\leveldb\.;E:\graduating design\leveldb\third_party\benchmark\include;E:\graduating design\leveldb\third_party\benchmark\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>E:\graduating design\workplace\leveldb\include;E:\graduating design\workplace\leveldb\.;E:\graduating design\workplace\leveldb\third_party\benchmark\include;E:\graduating design\workplace\leveldb\third_party\benchmark\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\graduating design\leveldb\include;E:\graduating design\leveldb\.;E:\graduating design\leveldb\third_party\benchmark\include;E:\graduating design\leveldb\third_party\benchmark\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -150,7 +150,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>E:\graduating design\workplace\leveldb\include;E:\graduating design\workplace\leveldb\.;E:\graduating design\workplace\leveldb\third_party\benchmark\include;E:\graduating design\workplace\leveldb\third_party\benchmark\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\graduating design\leveldb\include;E:\graduating design\leveldb\.;E:\graduating design\leveldb\third_party\benchmark\include;E:\graduating design\leveldb\third_party\benchmark\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /EHs-c- -EHs- -EHa-</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <ExceptionHandling>
@@ -170,10 +170,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_UNICODE;UNICODE;_HAS_EXCEPTIONS=0;_CRT_SECURE_NO_WARNINGS;HAVE_STD_REGEX;HAVE_STEADY_CLOCK;BENCHMARK_STATIC_DEFINE;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>E:\graduating design\workplace\leveldb\include;E:\graduating design\workplace\leveldb\.;E:\graduating design\workplace\leveldb\third_party\benchmark\include;E:\graduating design\workplace\leveldb\third_party\benchmark\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\graduating design\leveldb\include;E:\graduating design\leveldb\.;E:\graduating design\leveldb\third_party\benchmark\include;E:\graduating design\leveldb\third_party\benchmark\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>E:\graduating design\workplace\leveldb\include;E:\graduating design\workplace\leveldb\.;E:\graduating design\workplace\leveldb\third_party\benchmark\include;E:\graduating design\workplace\leveldb\third_party\benchmark\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\graduating design\leveldb\include;E:\graduating design\leveldb\.;E:\graduating design\leveldb\third_party\benchmark\include;E:\graduating design\leveldb\third_party\benchmark\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -186,7 +186,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>E:\graduating design\workplace\leveldb\include;E:\graduating design\workplace\leveldb\.;E:\graduating design\workplace\leveldb\third_party\benchmark\include;E:\graduating design\workplace\leveldb\third_party\benchmark\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\graduating design\leveldb\include;E:\graduating design\leveldb\.;E:\graduating design\leveldb\third_party\benchmark\include;E:\graduating design\leveldb\third_party\benchmark\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /EHs-c- -EHs- -EHa-</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -205,10 +205,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_UNICODE;UNICODE;_HAS_EXCEPTIONS=0;_CRT_SECURE_NO_WARNINGS;HAVE_STD_REGEX;HAVE_STEADY_CLOCK;BENCHMARK_STATIC_DEFINE;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>E:\graduating design\workplace\leveldb\include;E:\graduating design\workplace\leveldb\.;E:\graduating design\workplace\leveldb\third_party\benchmark\include;E:\graduating design\workplace\leveldb\third_party\benchmark\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\graduating design\leveldb\include;E:\graduating design\leveldb\.;E:\graduating design\leveldb\third_party\benchmark\include;E:\graduating design\leveldb\third_party\benchmark\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>E:\graduating design\workplace\leveldb\include;E:\graduating design\workplace\leveldb\.;E:\graduating design\workplace\leveldb\third_party\benchmark\include;E:\graduating design\workplace\leveldb\third_party\benchmark\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\graduating design\leveldb\include;E:\graduating design\leveldb\.;E:\graduating design\leveldb\third_party\benchmark\include;E:\graduating design\leveldb\third_party\benchmark\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -220,11 +220,11 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="E:\graduating design\workplace\leveldb\third_party\benchmark\src\CMakeLists.txt">
+    <CustomBuild Include="E:\graduating design\leveldb\third_party\benchmark\src\CMakeLists.txt">
       <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BuildInParallel>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule E:/graduating design/workplace/leveldb/third_party/benchmark/src/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule E:/graduating design/leveldb/third_party/benchmark/src/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-D:\Tools\CMake\bin\cmake.exe "-SE:/graduating design/workplace/leveldb" "-BE:/graduating design/workplace/leveldb" --check-stamp-file "E:/graduating design/workplace/leveldb/third_party/benchmark/src/CMakeFiles/generate.stamp"
+D:\Tools\CMake\bin\cmake.exe "-SE:/graduating design/leveldb" "-BE:/graduating design/leveldb" --check-stamp-file "E:/graduating design/leveldb/third_party/benchmark/src/CMakeFiles/generate.stamp"
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -232,13 +232,13 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Tools\CMake\share\cmake-3.26\Modules\BasicConfigVersion-SameMajorVersion.cmake.in;D:\Tools\CMake\share\cmake-3.26\Modules\CMakePackageConfigHelpers.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\GNUInstallDirs.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\WriteBasicConfigVersionFile.cmake;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\Config.cmake.in;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\benchmark.pc.in;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:\graduating design\workplace\leveldb\third_party\benchmark\src\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Tools\CMake\share\cmake-3.26\Modules\BasicConfigVersion-SameMajorVersion.cmake.in;D:\Tools\CMake\share\cmake-3.26\Modules\CMakePackageConfigHelpers.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\GNUInstallDirs.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\WriteBasicConfigVersionFile.cmake;E:\graduating design\leveldb\third_party\benchmark\cmake\Config.cmake.in;E:\graduating design\leveldb\third_party\benchmark\cmake\benchmark.pc.in;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:\graduating design\leveldb\third_party\benchmark\src\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
       <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BuildInParallel>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule E:/graduating design/workplace/leveldb/third_party/benchmark/src/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule E:/graduating design/leveldb/third_party/benchmark/src/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
-D:\Tools\CMake\bin\cmake.exe "-SE:/graduating design/workplace/leveldb" "-BE:/graduating design/workplace/leveldb" --check-stamp-file "E:/graduating design/workplace/leveldb/third_party/benchmark/src/CMakeFiles/generate.stamp"
+D:\Tools\CMake\bin\cmake.exe "-SE:/graduating design/leveldb" "-BE:/graduating design/leveldb" --check-stamp-file "E:/graduating design/leveldb/third_party/benchmark/src/CMakeFiles/generate.stamp"
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -246,13 +246,13 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Tools\CMake\share\cmake-3.26\Modules\BasicConfigVersion-SameMajorVersion.cmake.in;D:\Tools\CMake\share\cmake-3.26\Modules\CMakePackageConfigHelpers.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\GNUInstallDirs.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\WriteBasicConfigVersionFile.cmake;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\Config.cmake.in;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\benchmark.pc.in;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:\graduating design\workplace\leveldb\third_party\benchmark\src\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Tools\CMake\share\cmake-3.26\Modules\BasicConfigVersion-SameMajorVersion.cmake.in;D:\Tools\CMake\share\cmake-3.26\Modules\CMakePackageConfigHelpers.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\GNUInstallDirs.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\WriteBasicConfigVersionFile.cmake;E:\graduating design\leveldb\third_party\benchmark\cmake\Config.cmake.in;E:\graduating design\leveldb\third_party\benchmark\cmake\benchmark.pc.in;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:\graduating design\leveldb\third_party\benchmark\src\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
       <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</BuildInParallel>
-      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule E:/graduating design/workplace/leveldb/third_party/benchmark/src/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule E:/graduating design/leveldb/third_party/benchmark/src/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
-D:\Tools\CMake\bin\cmake.exe "-SE:/graduating design/workplace/leveldb" "-BE:/graduating design/workplace/leveldb" --check-stamp-file "E:/graduating design/workplace/leveldb/third_party/benchmark/src/CMakeFiles/generate.stamp"
+D:\Tools\CMake\bin\cmake.exe "-SE:/graduating design/leveldb" "-BE:/graduating design/leveldb" --check-stamp-file "E:/graduating design/leveldb/third_party/benchmark/src/CMakeFiles/generate.stamp"
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -260,13 +260,13 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\Tools\CMake\share\cmake-3.26\Modules\BasicConfigVersion-SameMajorVersion.cmake.in;D:\Tools\CMake\share\cmake-3.26\Modules\CMakePackageConfigHelpers.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\GNUInstallDirs.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\WriteBasicConfigVersionFile.cmake;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\Config.cmake.in;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\benchmark.pc.in;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">E:\graduating design\workplace\leveldb\third_party\benchmark\src\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\Tools\CMake\share\cmake-3.26\Modules\BasicConfigVersion-SameMajorVersion.cmake.in;D:\Tools\CMake\share\cmake-3.26\Modules\CMakePackageConfigHelpers.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\GNUInstallDirs.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\WriteBasicConfigVersionFile.cmake;E:\graduating design\leveldb\third_party\benchmark\cmake\Config.cmake.in;E:\graduating design\leveldb\third_party\benchmark\cmake\benchmark.pc.in;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">E:\graduating design\leveldb\third_party\benchmark\src\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
       <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</BuildInParallel>
-      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule E:/graduating design/workplace/leveldb/third_party/benchmark/src/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule E:/graduating design/leveldb/third_party/benchmark/src/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
-D:\Tools\CMake\bin\cmake.exe "-SE:/graduating design/workplace/leveldb" "-BE:/graduating design/workplace/leveldb" --check-stamp-file "E:/graduating design/workplace/leveldb/third_party/benchmark/src/CMakeFiles/generate.stamp"
+D:\Tools\CMake\bin\cmake.exe "-SE:/graduating design/leveldb" "-BE:/graduating design/leveldb" --check-stamp-file "E:/graduating design/leveldb/third_party/benchmark/src/CMakeFiles/generate.stamp"
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -274,23 +274,23 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\Tools\CMake\share\cmake-3.26\Modules\BasicConfigVersion-SameMajorVersion.cmake.in;D:\Tools\CMake\share\cmake-3.26\Modules\CMakePackageConfigHelpers.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\GNUInstallDirs.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\WriteBasicConfigVersionFile.cmake;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\Config.cmake.in;E:\graduating design\workplace\leveldb\third_party\benchmark\cmake\benchmark.pc.in;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">E:\graduating design\workplace\leveldb\third_party\benchmark\src\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\Tools\CMake\share\cmake-3.26\Modules\BasicConfigVersion-SameMajorVersion.cmake.in;D:\Tools\CMake\share\cmake-3.26\Modules\CMakePackageConfigHelpers.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\GNUInstallDirs.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\WriteBasicConfigVersionFile.cmake;E:\graduating design\leveldb\third_party\benchmark\cmake\Config.cmake.in;E:\graduating design\leveldb\third_party\benchmark\cmake\benchmark.pc.in;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">E:\graduating design\leveldb\third_party\benchmark\src\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="E:\graduating design\workplace\leveldb\third_party\benchmark\src\benchmark_main.cc" />
+    <ClCompile Include="E:\graduating design\leveldb\third_party\benchmark\src\benchmark_main.cc" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="E:\graduating design\workplace\leveldb\ZERO_CHECK.vcxproj">
-      <Project>{BB7EE5FA-E280-3B1B-B1F5-7FD497FA9EDF}</Project>
+    <ProjectReference Include="E:\graduating design\leveldb\ZERO_CHECK.vcxproj">
+      <Project>{F64F5B04-607C-3E84-A680-EF9F2E38DC24}</Project>
       <Name>ZERO_CHECK</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </ProjectReference>
-    <ProjectReference Include="E:\graduating design\workplace\leveldb\third_party\benchmark\src\benchmark.vcxproj">
-      <Project>{9EC6065C-8B6D-30BB-B426-088FA4312258}</Project>
+    <ProjectReference Include="E:\graduating design\leveldb\third_party\benchmark\src\benchmark.vcxproj">
+      <Project>{E1E606E2-B772-3714-A71A-E42783A0FA3A}</Project>
       <Name>benchmark</Name>
     </ProjectReference>
   </ItemGroup>
