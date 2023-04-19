@@ -22,7 +22,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{CA74AA81-9960-3EAB-A509-2B22B4459C21}</ProjectGuid>
+    <ProjectGuid>{35DCE6A1-8948-34AF-A9E3-6707C110C8B9}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
     <Platform>x64</Platform>
@@ -59,26 +59,26 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:\graduating design\workplace\leveldb\lib\Debug\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:\graduating design\leveldb\lib\Debug\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">gtest.dir\Debug\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">gtest</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:\graduating design\workplace\leveldb\lib\Release\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:\graduating design\leveldb\lib\Release\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">gtest.dir\Release\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">gtest</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">E:\graduating design\workplace\leveldb\lib\MinSizeRel\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">E:\graduating design\leveldb\lib\MinSizeRel\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">gtest.dir\MinSizeRel\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">gtest</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.lib</TargetExt>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">E:\graduating design\workplace\leveldb\lib\RelWithDebInfo\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">E:\graduating design\leveldb\lib\RelWithDebInfo\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">gtest.dir\RelWithDebInfo\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">gtest</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.lib</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>E:\graduating design\workplace\leveldb\include;E:\graduating design\workplace\leveldb\.;E:\graduating design\workplace\leveldb\third_party\googletest\googletest\include;E:\graduating design\workplace\leveldb\third_party\googletest\googletest;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\graduating design\leveldb\include;E:\graduating design\leveldb\.;E:\graduating design\leveldb\third_party\googletest\googletest\include;E:\graduating design\leveldb\third_party\googletest\googletest;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /EHs-c- -J -utf-8</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -98,14 +98,14 @@
       <WarningLevel>Level4</WarningLevel>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_UNICODE;UNICODE;_WIN32;STRICT;WIN32_LEAN_AND_MEAN;GTEST_HAS_PTHREAD=0;_HAS_EXCEPTIONS=1;_HAS_EXCEPTIONS=0;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
-      <ProgramDataBaseFileName>E:\graduating design\workplace\leveldb\lib\Debug\gtestpdb_debug_postfix-NOTFOUND.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>E:\graduating design\leveldb\lib\Debug\gtestpdb_debug_postfix-NOTFOUND.pdb</ProgramDataBaseFileName>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;_UNICODE;UNICODE;_WIN32;STRICT;WIN32_LEAN_AND_MEAN;GTEST_HAS_PTHREAD=0;_HAS_EXCEPTIONS=1;_HAS_EXCEPTIONS=0;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>E:\graduating design\workplace\leveldb\include;E:\graduating design\workplace\leveldb\.;E:\graduating design\workplace\leveldb\third_party\googletest\googletest\include;E:\graduating design\workplace\leveldb\third_party\googletest\googletest;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\graduating design\leveldb\include;E:\graduating design\leveldb\.;E:\graduating design\leveldb\third_party\googletest\googletest\include;E:\graduating design\leveldb\third_party\googletest\googletest;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>E:\graduating design\workplace\leveldb\include;E:\graduating design\workplace\leveldb\.;E:\graduating design\workplace\leveldb\third_party\googletest\googletest\include;E:\graduating design\workplace\leveldb\third_party\googletest\googletest;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\graduating design\leveldb\include;E:\graduating design\leveldb\.;E:\graduating design\leveldb\third_party\googletest\googletest\include;E:\graduating design\leveldb\third_party\googletest\googletest;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -118,7 +118,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>E:\graduating design\workplace\leveldb\include;E:\graduating design\workplace\leveldb\.;E:\graduating design\workplace\leveldb\third_party\googletest\googletest\include;E:\graduating design\workplace\leveldb\third_party\googletest\googletest;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\graduating design\leveldb\include;E:\graduating design\leveldb\.;E:\graduating design\leveldb\third_party\googletest\googletest\include;E:\graduating design\leveldb\third_party\googletest\googletest;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /EHs-c- -J -utf-8</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BufferSecurityCheck>true</BufferSecurityCheck>
@@ -138,14 +138,14 @@
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <DebugInformationFormat>
       </DebugInformationFormat>
-      <ProgramDataBaseFileName>E:\graduating design\workplace\leveldb\lib\Release\gtest.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>E:\graduating design\leveldb\lib\Release\gtest.pdb</ProgramDataBaseFileName>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_UNICODE;UNICODE;_WIN32;STRICT;WIN32_LEAN_AND_MEAN;GTEST_HAS_PTHREAD=0;_HAS_EXCEPTIONS=1;_HAS_EXCEPTIONS=0;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>E:\graduating design\workplace\leveldb\include;E:\graduating design\workplace\leveldb\.;E:\graduating design\workplace\leveldb\third_party\googletest\googletest\include;E:\graduating design\workplace\leveldb\third_party\googletest\googletest;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\graduating design\leveldb\include;E:\graduating design\leveldb\.;E:\graduating design\leveldb\third_party\googletest\googletest\include;E:\graduating design\leveldb\third_party\googletest\googletest;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>E:\graduating design\workplace\leveldb\include;E:\graduating design\workplace\leveldb\.;E:\graduating design\workplace\leveldb\third_party\googletest\googletest\include;E:\graduating design\workplace\leveldb\third_party\googletest\googletest;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\graduating design\leveldb\include;E:\graduating design\leveldb\.;E:\graduating design\leveldb\third_party\googletest\googletest\include;E:\graduating design\leveldb\third_party\googletest\googletest;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -158,7 +158,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>E:\graduating design\workplace\leveldb\include;E:\graduating design\workplace\leveldb\.;E:\graduating design\workplace\leveldb\third_party\googletest\googletest\include;E:\graduating design\workplace\leveldb\third_party\googletest\googletest;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\graduating design\leveldb\include;E:\graduating design\leveldb\.;E:\graduating design\leveldb\third_party\googletest\googletest\include;E:\graduating design\leveldb\third_party\googletest\googletest;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /EHs-c- -J -utf-8</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BufferSecurityCheck>true</BufferSecurityCheck>
@@ -178,14 +178,14 @@
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <DebugInformationFormat>
       </DebugInformationFormat>
-      <ProgramDataBaseFileName>E:\graduating design\workplace\leveldb\lib\MinSizeRel\gtest.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>E:\graduating design\leveldb\lib\MinSizeRel\gtest.pdb</ProgramDataBaseFileName>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_UNICODE;UNICODE;_WIN32;STRICT;WIN32_LEAN_AND_MEAN;GTEST_HAS_PTHREAD=0;_HAS_EXCEPTIONS=1;_HAS_EXCEPTIONS=0;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>E:\graduating design\workplace\leveldb\include;E:\graduating design\workplace\leveldb\.;E:\graduating design\workplace\leveldb\third_party\googletest\googletest\include;E:\graduating design\workplace\leveldb\third_party\googletest\googletest;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\graduating design\leveldb\include;E:\graduating design\leveldb\.;E:\graduating design\leveldb\third_party\googletest\googletest\include;E:\graduating design\leveldb\third_party\googletest\googletest;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>E:\graduating design\workplace\leveldb\include;E:\graduating design\workplace\leveldb\.;E:\graduating design\workplace\leveldb\third_party\googletest\googletest\include;E:\graduating design\workplace\leveldb\third_party\googletest\googletest;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\graduating design\leveldb\include;E:\graduating design\leveldb\.;E:\graduating design\leveldb\third_party\googletest\googletest\include;E:\graduating design\leveldb\third_party\googletest\googletest;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -198,7 +198,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>E:\graduating design\workplace\leveldb\include;E:\graduating design\workplace\leveldb\.;E:\graduating design\workplace\leveldb\third_party\googletest\googletest\include;E:\graduating design\workplace\leveldb\third_party\googletest\googletest;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\graduating design\leveldb\include;E:\graduating design\leveldb\.;E:\graduating design\leveldb\third_party\googletest\googletest\include;E:\graduating design\leveldb\third_party\googletest\googletest;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /EHs-c- -J -utf-8</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BufferSecurityCheck>true</BufferSecurityCheck>
@@ -217,14 +217,14 @@
       <WarningLevel>Level4</WarningLevel>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_UNICODE;UNICODE;_WIN32;STRICT;WIN32_LEAN_AND_MEAN;GTEST_HAS_PTHREAD=0;_HAS_EXCEPTIONS=1;_HAS_EXCEPTIONS=0;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
-      <ProgramDataBaseFileName>E:\graduating design\workplace\leveldb\lib\RelWithDebInfo\gtest.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>E:\graduating design\leveldb\lib\RelWithDebInfo\gtest.pdb</ProgramDataBaseFileName>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_UNICODE;UNICODE;_WIN32;STRICT;WIN32_LEAN_AND_MEAN;GTEST_HAS_PTHREAD=0;_HAS_EXCEPTIONS=1;_HAS_EXCEPTIONS=0;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>E:\graduating design\workplace\leveldb\include;E:\graduating design\workplace\leveldb\.;E:\graduating design\workplace\leveldb\third_party\googletest\googletest\include;E:\graduating design\workplace\leveldb\third_party\googletest\googletest;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\graduating design\leveldb\include;E:\graduating design\leveldb\.;E:\graduating design\leveldb\third_party\googletest\googletest\include;E:\graduating design\leveldb\third_party\googletest\googletest;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>E:\graduating design\workplace\leveldb\include;E:\graduating design\workplace\leveldb\.;E:\graduating design\workplace\leveldb\third_party\googletest\googletest\include;E:\graduating design\workplace\leveldb\third_party\googletest\googletest;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\graduating design\leveldb\include;E:\graduating design\leveldb\.;E:\graduating design\leveldb\third_party\googletest\googletest\include;E:\graduating design\leveldb\third_party\googletest\googletest;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -236,11 +236,11 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="E:\graduating design\workplace\leveldb\third_party\googletest\googletest\CMakeLists.txt">
+    <CustomBuild Include="E:\graduating design\leveldb\third_party\googletest\googletest\CMakeLists.txt">
       <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BuildInParallel>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule E:/graduating design/workplace/leveldb/third_party/googletest/googletest/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule E:/graduating design/leveldb/third_party/googletest/googletest/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-D:\Tools\CMake\bin\cmake.exe "-SE:/graduating design/workplace/leveldb" "-BE:/graduating design/workplace/leveldb" --check-stamp-file "E:/graduating design/workplace/leveldb/third_party/googletest/googletest/CMakeFiles/generate.stamp"
+D:\Tools\CMake\bin\cmake.exe "-SE:/graduating design/leveldb" "-BE:/graduating design/leveldb" --check-stamp-file "E:/graduating design/leveldb/third_party/googletest/googletest/CMakeFiles/generate.stamp"
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -248,13 +248,13 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Tools\CMake\share\cmake-3.26\Modules\BasicConfigVersion-AnyNewerVersion.cmake.in;D:\Tools\CMake\share\cmake-3.26\Modules\CMakePackageConfigHelpers.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckCSourceCompiles.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckIncludeFile.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckLibraryExists.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPython.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPython\Support.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindThreads.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\WriteBasicConfigVersionFile.cmake;E:\graduating design\workplace\leveldb\third_party\googletest\googletest\cmake\Config.cmake.in;E:\graduating design\workplace\leveldb\third_party\googletest\googletest\cmake\gtest.pc.in;E:\graduating design\workplace\leveldb\third_party\googletest\googletest\cmake\gtest_main.pc.in;E:\graduating design\workplace\leveldb\third_party\googletest\googletest\cmake\internal_utils.cmake;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:\graduating design\workplace\leveldb\third_party\googletest\googletest\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Tools\CMake\share\cmake-3.26\Modules\BasicConfigVersion-AnyNewerVersion.cmake.in;D:\Tools\CMake\share\cmake-3.26\Modules\CMakePackageConfigHelpers.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckCSourceCompiles.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckIncludeFile.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckLibraryExists.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPython.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPython\Support.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindThreads.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\WriteBasicConfigVersionFile.cmake;E:\graduating design\leveldb\third_party\googletest\googletest\cmake\Config.cmake.in;E:\graduating design\leveldb\third_party\googletest\googletest\cmake\gtest.pc.in;E:\graduating design\leveldb\third_party\googletest\googletest\cmake\gtest_main.pc.in;E:\graduating design\leveldb\third_party\googletest\googletest\cmake\internal_utils.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:\graduating design\leveldb\third_party\googletest\googletest\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
       <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BuildInParallel>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule E:/graduating design/workplace/leveldb/third_party/googletest/googletest/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule E:/graduating design/leveldb/third_party/googletest/googletest/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
-D:\Tools\CMake\bin\cmake.exe "-SE:/graduating design/workplace/leveldb" "-BE:/graduating design/workplace/leveldb" --check-stamp-file "E:/graduating design/workplace/leveldb/third_party/googletest/googletest/CMakeFiles/generate.stamp"
+D:\Tools\CMake\bin\cmake.exe "-SE:/graduating design/leveldb" "-BE:/graduating design/leveldb" --check-stamp-file "E:/graduating design/leveldb/third_party/googletest/googletest/CMakeFiles/generate.stamp"
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -262,13 +262,13 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Tools\CMake\share\cmake-3.26\Modules\BasicConfigVersion-AnyNewerVersion.cmake.in;D:\Tools\CMake\share\cmake-3.26\Modules\CMakePackageConfigHelpers.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckCSourceCompiles.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckIncludeFile.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckLibraryExists.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPython.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPython\Support.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindThreads.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\WriteBasicConfigVersionFile.cmake;E:\graduating design\workplace\leveldb\third_party\googletest\googletest\cmake\Config.cmake.in;E:\graduating design\workplace\leveldb\third_party\googletest\googletest\cmake\gtest.pc.in;E:\graduating design\workplace\leveldb\third_party\googletest\googletest\cmake\gtest_main.pc.in;E:\graduating design\workplace\leveldb\third_party\googletest\googletest\cmake\internal_utils.cmake;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:\graduating design\workplace\leveldb\third_party\googletest\googletest\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Tools\CMake\share\cmake-3.26\Modules\BasicConfigVersion-AnyNewerVersion.cmake.in;D:\Tools\CMake\share\cmake-3.26\Modules\CMakePackageConfigHelpers.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckCSourceCompiles.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckIncludeFile.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckLibraryExists.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPython.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPython\Support.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindThreads.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\WriteBasicConfigVersionFile.cmake;E:\graduating design\leveldb\third_party\googletest\googletest\cmake\Config.cmake.in;E:\graduating design\leveldb\third_party\googletest\googletest\cmake\gtest.pc.in;E:\graduating design\leveldb\third_party\googletest\googletest\cmake\gtest_main.pc.in;E:\graduating design\leveldb\third_party\googletest\googletest\cmake\internal_utils.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:\graduating design\leveldb\third_party\googletest\googletest\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
       <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</BuildInParallel>
-      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule E:/graduating design/workplace/leveldb/third_party/googletest/googletest/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule E:/graduating design/leveldb/third_party/googletest/googletest/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
-D:\Tools\CMake\bin\cmake.exe "-SE:/graduating design/workplace/leveldb" "-BE:/graduating design/workplace/leveldb" --check-stamp-file "E:/graduating design/workplace/leveldb/third_party/googletest/googletest/CMakeFiles/generate.stamp"
+D:\Tools\CMake\bin\cmake.exe "-SE:/graduating design/leveldb" "-BE:/graduating design/leveldb" --check-stamp-file "E:/graduating design/leveldb/third_party/googletest/googletest/CMakeFiles/generate.stamp"
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -276,13 +276,13 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\Tools\CMake\share\cmake-3.26\Modules\BasicConfigVersion-AnyNewerVersion.cmake.in;D:\Tools\CMake\share\cmake-3.26\Modules\CMakePackageConfigHelpers.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckCSourceCompiles.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckIncludeFile.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckLibraryExists.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPython.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPython\Support.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindThreads.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\WriteBasicConfigVersionFile.cmake;E:\graduating design\workplace\leveldb\third_party\googletest\googletest\cmake\Config.cmake.in;E:\graduating design\workplace\leveldb\third_party\googletest\googletest\cmake\gtest.pc.in;E:\graduating design\workplace\leveldb\third_party\googletest\googletest\cmake\gtest_main.pc.in;E:\graduating design\workplace\leveldb\third_party\googletest\googletest\cmake\internal_utils.cmake;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">E:\graduating design\workplace\leveldb\third_party\googletest\googletest\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\Tools\CMake\share\cmake-3.26\Modules\BasicConfigVersion-AnyNewerVersion.cmake.in;D:\Tools\CMake\share\cmake-3.26\Modules\CMakePackageConfigHelpers.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckCSourceCompiles.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckIncludeFile.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckLibraryExists.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPython.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPython\Support.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindThreads.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\WriteBasicConfigVersionFile.cmake;E:\graduating design\leveldb\third_party\googletest\googletest\cmake\Config.cmake.in;E:\graduating design\leveldb\third_party\googletest\googletest\cmake\gtest.pc.in;E:\graduating design\leveldb\third_party\googletest\googletest\cmake\gtest_main.pc.in;E:\graduating design\leveldb\third_party\googletest\googletest\cmake\internal_utils.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">E:\graduating design\leveldb\third_party\googletest\googletest\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
       <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</BuildInParallel>
-      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule E:/graduating design/workplace/leveldb/third_party/googletest/googletest/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule E:/graduating design/leveldb/third_party/googletest/googletest/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
-D:\Tools\CMake\bin\cmake.exe "-SE:/graduating design/workplace/leveldb" "-BE:/graduating design/workplace/leveldb" --check-stamp-file "E:/graduating design/workplace/leveldb/third_party/googletest/googletest/CMakeFiles/generate.stamp"
+D:\Tools\CMake\bin\cmake.exe "-SE:/graduating design/leveldb" "-BE:/graduating design/leveldb" --check-stamp-file "E:/graduating design/leveldb/third_party/googletest/googletest/CMakeFiles/generate.stamp"
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -290,17 +290,17 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\Tools\CMake\share\cmake-3.26\Modules\BasicConfigVersion-AnyNewerVersion.cmake.in;D:\Tools\CMake\share\cmake-3.26\Modules\CMakePackageConfigHelpers.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckCSourceCompiles.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckIncludeFile.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckLibraryExists.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPython.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPython\Support.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindThreads.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\WriteBasicConfigVersionFile.cmake;E:\graduating design\workplace\leveldb\third_party\googletest\googletest\cmake\Config.cmake.in;E:\graduating design\workplace\leveldb\third_party\googletest\googletest\cmake\gtest.pc.in;E:\graduating design\workplace\leveldb\third_party\googletest\googletest\cmake\gtest_main.pc.in;E:\graduating design\workplace\leveldb\third_party\googletest\googletest\cmake\internal_utils.cmake;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">E:\graduating design\workplace\leveldb\third_party\googletest\googletest\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\Tools\CMake\share\cmake-3.26\Modules\BasicConfigVersion-AnyNewerVersion.cmake.in;D:\Tools\CMake\share\cmake-3.26\Modules\CMakePackageConfigHelpers.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckCSourceCompiles.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckIncludeFile.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\CheckLibraryExists.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPython.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindPython\Support.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\FindThreads.cmake;D:\Tools\CMake\share\cmake-3.26\Modules\WriteBasicConfigVersionFile.cmake;E:\graduating design\leveldb\third_party\googletest\googletest\cmake\Config.cmake.in;E:\graduating design\leveldb\third_party\googletest\googletest\cmake\gtest.pc.in;E:\graduating design\leveldb\third_party\googletest\googletest\cmake\gtest_main.pc.in;E:\graduating design\leveldb\third_party\googletest\googletest\cmake\internal_utils.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">E:\graduating design\leveldb\third_party\googletest\googletest\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="E:\graduating design\workplace\leveldb\third_party\googletest\googletest\src\gtest-all.cc" />
+    <ClCompile Include="E:\graduating design\leveldb\third_party\googletest\googletest\src\gtest-all.cc" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="E:\graduating design\workplace\leveldb\ZERO_CHECK.vcxproj">
-      <Project>{BB7EE5FA-E280-3B1B-B1F5-7FD497FA9EDF}</Project>
+    <ProjectReference Include="E:\graduating design\leveldb\ZERO_CHECK.vcxproj">
+      <Project>{F64F5B04-607C-3E84-A680-EF9F2E38DC24}</Project>
       <Name>ZERO_CHECK</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
