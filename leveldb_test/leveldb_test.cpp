@@ -48,10 +48,10 @@ int main() {
     assert(mystatus.ok());
   }
   Remix* my_sorted_view = new Remix(mydb);
-  my_sorted_view->print();
-  cout << "create my sorted view successfully" << endl;
+  //my_sorted_view->print();
+  //cout << "create my sorted view successfully" << endl;
   Iterator* it = my_sorted_view->NewIterator();
-  for (it->Seek("1"); it->Valid() && it->key().ToString() < "80"; it->Next()) {
+  for (it->SeekToFirst(); it->Valid() && it->key().ToString() < "80"; it->Next()) {
     cout << it->key().ToString() << ": " << it->value().ToString() << endl;
   }
   // 按照顺序批量写入
