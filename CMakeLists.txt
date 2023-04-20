@@ -40,7 +40,6 @@ check_include_file("unistd.h" HAVE_UNISTD_H)
 include(CheckLibraryExists)
 check_library_exists(crc32c crc32c_value "" HAVE_CRC32C)
 check_library_exists(snappy snappy_compress "" HAVE_SNAPPY)
-check_library_exists(zstd zstd_compress "" HAVE_ZSTD)
 check_library_exists(tcmalloc malloc "" HAVE_TCMALLOC)
 
 include(CheckCXXSymbolExists)
@@ -151,6 +150,7 @@ target_sources(leveldb
     "db/version_set.h"
     "db/write_batch_internal.h"
     "db/write_batch.cc"
+    "db/Remix.cc"
     "port/port_stdcxx.h"
     "port/port.h"
     "port/thread_annotations.h"
@@ -208,6 +208,8 @@ target_sources(leveldb
     "${LEVELDB_PUBLIC_INCLUDE_DIR}/table_builder.h"
     "${LEVELDB_PUBLIC_INCLUDE_DIR}/table.h"
     "${LEVELDB_PUBLIC_INCLUDE_DIR}/write_batch.h"
+    "${LEVELDB_PUBLIC_INCLUDE_DIR}/Remix.h"
+    "${LEVELDB_PUBLIC_INCLUDE_DIR}/RemixIterator.h"
 )
 
 if (WIN32)
@@ -274,9 +276,6 @@ endif(HAVE_CRC32C)
 if(HAVE_SNAPPY)
   target_link_libraries(leveldb snappy)
 endif(HAVE_SNAPPY)
-if(HAVE_ZSTD)
-  target_link_libraries(leveldb zstd)
-endif(HAVE_ZSTD)
 if(HAVE_TCMALLOC)
   target_link_libraries(leveldb tcmalloc)
 endif(HAVE_TCMALLOC)
@@ -492,6 +491,8 @@ if(LEVELDB_INSTALL)
       "${LEVELDB_PUBLIC_INCLUDE_DIR}/table_builder.h"
       "${LEVELDB_PUBLIC_INCLUDE_DIR}/table.h"
       "${LEVELDB_PUBLIC_INCLUDE_DIR}/write_batch.h"
+      "${LEVELDB_PUBLIC_INCLUDE_DIR}/Remix.h"
+      "${LEVELDB_PUBLIC_INCLUDE_DIR}/RemixIterator.h"
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/leveldb"
   )
 
