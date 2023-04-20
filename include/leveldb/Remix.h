@@ -43,7 +43,7 @@ struct Segment {
     //<< " Cursor_Offsets in it" << std::endl;
   }
      Segment(int num, int pre_num)
-      : Cursor_Offsets(pre_num), runs_num(num), size(0), Run_Selectors(5),runs_sum(num,0),key_num_perseg(pre_num){
+      : Cursor_Offsets(pre_num), runs_num(num), size(0), Run_Selectors(pre_num),runs_sum(num,0),key_num_perseg(pre_num){
     // std::cout << "create segment successfully and create " << num
     //<< " Cursor_Offsets in it" << std::endl;
   }
