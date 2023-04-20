@@ -1,3 +1,11 @@
+/*
+ * @Author: Li_diang 787695954@qq.com
+ * @Date: 2023-03-04 21:27:02
+ * @LastEditors: Li_diang 787695954@qq.com
+ * @LastEditTime: 2023-04-20 16:24:32
+ * @FilePath: \leveldb\benchmarks\db_bench.cc
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
@@ -20,6 +28,8 @@
 #include "util/mutexlock.h"
 #include "util/random.h"
 #include "util/testutil.h"
+#include "leveldb/Remix.h"
+#include "leveldb/RemixIterator.h"
 
 // Comma-separated list of operations to run in the specified order
 //   Actual benchmarks:
@@ -44,16 +54,40 @@
 //      stats       -- Print DB stats
 //      sstables    -- Print sstable info
 //      heapprofile -- Dump a heap profile (if supported by this port)
+
+// 按指定顺序运行的以逗号分隔的操作列表
+// 实际基准：
+// fillseq -- 在异步模式下按顺序键顺序写入 N 个值
+// fillrandom -- 在异步模式下以随机键顺序写入 N 个值
+// overwrite -- 在异步模式下以随机键顺序覆盖 N 个值
+// fillsync -- 在同步模式下以随机键顺序写入 N/100 个值
+// fill100K -- 在异步模式下以随机顺序写入 N/1000 个 100K 值
+// deleteseq -- 按顺序删除 N 个键
+// deleterandom -- 以随机顺序删除 N 个键
+// readseq -- 连续读取 N 次
+// readreverse -- 倒序读取N次
+// readrandom -- 随机读取 N 次
+// readmissing--以随机顺序读取 N 个丢失的键
+// readhot -- 从 DB 的 1% 部分以随机顺序读取 N 次
+// seekrandom -- N 次随机搜索
+// seekordered -- N 有序查找
+// open -- 打开数据库的成本
+// crc32c -- 4K数据的重复crc32c
+// 元操作：
+// compact -- 压缩整个数据库
+// stats -- 打印数据库统计信息
+// sstables -- 打印 sstable 信息
+// heapprofile -- 转储堆配置文件（如果此端口支持）
 static const char* FLAGS_benchmarks =
-    "fillseq,"
-    "fillsync,"
-    "fillrandom,"
-    "overwrite,"
-    "readrandom,"
+    "fillseq,"      // 顺序写方式创建数据库，只需将数据写入操作系统的缓冲区即可
+    "fillsync,"     // 每次写操作，均将数据同步写到磁盘中才算操作完成；
+    "fillrandom,"   // 以随机写方式创建数据库
+    "overwrite,"    // 以随机写方式更新数据库中的某些存在的key的数据
+    "readrandom,"   // 以随机的方式进行查询读
     "readrandom,"  // Extra run to allow previous compactions to quiesce
-    "readseq,"
-    "readreverse,"
-    "compact,"
+    "readseq,"    // 按正向顺序读
+    "readreverse,"  // 按逆向顺序读
+    "compact,"    
     "readrandom,"
     "readseq,"
     "readreverse,"
@@ -71,17 +105,20 @@ static int FLAGS_reads = -1;
 // Number of concurrent threads to run.
 static int FLAGS_threads = 1;
 
-// Size of each value
+// Size of each value 每个value的大小（字节）
 static int FLAGS_value_size = 100;
 
 // Arrange to generate values that shrink to this fraction of
 // their original size after compression
+// 压缩比例
 static double FLAGS_compression_ratio = 0.5;
 
 // Print histogram of operation timings
+// 打印操作时间的直方图
 static bool FLAGS_histogram = false;
 
 // Count the number of string comparisons performed
+// 统计执行的字符串比较次数
 static bool FLAGS_comparisons = false;
 
 // Number of bytes to buffer in memtable before compacting
@@ -108,11 +145,13 @@ static int FLAGS_open_files = 0;
 static int FLAGS_bloom_bits = -1;
 
 // Common key prefix length.
+// 公共前缀长度
 static int FLAGS_key_prefix = 0;
 
 // If true, do not destroy the existing database.  If you set this
 // flag and also specify a benchmark that wants a fresh database, that
 // benchmark will fail.
+// 如果这个标志为True，那么请不要破坏现有的数据库，如果你设置了该标志，且用一个测试工具测试一个新的数据库，那测试程序会失败
 static bool FLAGS_use_existing_db = false;
 
 // If true, reuse existing log/MANIFEST files when re-opening a database.
@@ -177,7 +216,7 @@ class RandomGenerator {
     }
     pos_ = 0;
   }
-
+  // 提取data_中pos_后的长度为len的字符串，并生成Slice
   Slice Generate(size_t len) {
     if (pos_ + len > data_.size()) {
       pos_ = 0;
@@ -194,10 +233,13 @@ class KeyBuffer {
     assert(FLAGS_key_prefix < sizeof(buffer_));
     memset(buffer_, 'a', FLAGS_key_prefix);
   }
-  KeyBuffer& operator=(KeyBuffer& other) = delete;
-  KeyBuffer(KeyBuffer& other) = delete;
-
+  KeyBuffer& operator=(KeyBuffer& other) = delete;  //禁止使用该函数
+  KeyBuffer(KeyBuffer& other) = delete;   //禁止使用该函数
+  //设置MyString对象表示的以0结尾的C字符串。
   void Set(int k) {
+    // 函数在格式化字符串时，可以避免缓冲区溢出。 如果格式化后的字符串的长度超过了 size-1 ，
+    // 则 snprintf() 函数只会写入 size-1 个字符，并在字符串的末尾添加一个空字符（ \0 ）以表示字符串的结束。
+    // 将k写入buffer中
     std::snprintf(buffer_ + FLAGS_key_prefix,
                   sizeof(buffer_) - FLAGS_key_prefix, "%016d", k);
   }
@@ -225,7 +267,7 @@ static Slice TrimSpace(Slice s) {
 static void AppendWithSpace(std::string* str, Slice msg) {
   if (msg.empty()) return;
   if (!str->empty()) {
-    str->push_back(' ');
+    str->push_back(' ');   // 为什么要加‘  ’？？？
   }
   str->append(msg.data(), msg.size());
 }
@@ -244,7 +286,7 @@ class Stats {
 
  public:
   Stats() { Start(); }
-
+  // 初始化
   void Start() {
     next_report_ = 100;
     hist_.Clear();
@@ -274,10 +316,11 @@ class Stats {
 
   void AddMessage(Slice msg) { AppendWithSpace(&message_, msg); }
 
+  // 什么意思，完成一次操作？？？
   void FinishedSingleOp() {
     if (FLAGS_histogram) {
       double now = g_env->NowMicros();
-      double micros = now - last_op_finish_;
+      double micros = now - last_op_finish_;  // 微秒数
       hist_.Add(micros);
       if (micros > 20000) {
         std::fprintf(stderr, "long op: %.1f micros%30s\r", micros, "");
@@ -312,12 +355,14 @@ class Stats {
   void Report(const Slice& name) {
     // Pretend at least one op was done in case we are running a benchmark
     // that does not call FinishedSingleOp().
+    // 假装至少完成了一个OP，以防我们正在运行一个不会调用FinishedsingLeop()的基准测试。
     if (done_ < 1) done_ = 1;
 
     std::string extra;
     if (bytes_ > 0) {
       // Rate is computed on actual elapsed time, not the sum of per-thread
       // elapsed times.
+      //速率是根据实际运行时间计算的，而不是每线程/运行时间的总和。
       double elapsed = (finish_ - start_) * 1e-6;
       char rate[100];
       std::snprintf(rate, sizeof(rate), "%6.1f MB/s",
@@ -333,13 +378,16 @@ class Stats {
       std::fprintf(stdout, "Microseconds per op:\n%s\n",
                    hist_.ToString().c_str());
     }
+    //冲洗流中的信息，该函数通常用于处理磁盘文件。 fflush()会强迫将缓冲区内的数据写回参数stream 指定的文件中。
     std::fflush(stdout);
   }
 };
 
 // State shared by all concurrent executions of the same benchmark.
+//所有同时执行同一基准的State。
 struct SharedState {
   port::Mutex mu;
+  // 声明数据成员受给定功能保护。对数据的读取操作需要共享访问，而写入操作需要独占访问。
   port::CondVar cv GUARDED_BY(mu);
   int total GUARDED_BY(mu);
 
@@ -358,6 +406,7 @@ struct SharedState {
 };
 
 // Per-thread state for concurrent executions of the same benchmark.
+//每个线程状态，用于并发执行同一基准。
 struct ThreadState {
   int tid;      // 0..n-1 when running in n threads
   Random rand;  // Has different seeds for different threads
@@ -382,6 +431,7 @@ class Benchmark {
   int heap_counter_;
   CountComparator count_comparator_;
   int total_thread_count_;
+  Remix *sorted_view_;
 
   void PrintHeader() {
     const int kKeySize = 16 + FLAGS_key_prefix;
@@ -390,7 +440,7 @@ class Benchmark {
     std::fprintf(
         stdout, "Values:     %d bytes each (%d bytes after compression)\n",
         FLAGS_value_size,
-        static_cast<int>(FLAGS_value_size * FLAGS_compression_ratio + 0.5));
+        static_cast<int>(FLAGS_value_size * FLAGS_compression_ratio + 0.5));  //static_cast是一个c++运算符，功能是把一个表达式转换为某种类型，但没有运行时类型检查来保证转换的安全性
     std::fprintf(stdout, "Entries:    %d\n", num_);
     std::fprintf(stdout, "RawSize:    %.1f MB (estimated)\n",
                  ((static_cast<int64_t>(kKeySize + FLAGS_value_size) * num_) /
@@ -406,7 +456,7 @@ class Benchmark {
   void PrintWarnings() {
 #if defined(__GNUC__) && !defined(__OPTIMIZE__)
     std::fprintf(
-        stdout,
+        stdout, //警告：优化被禁用：基准测试不必要地慢；
         "WARNING: Optimization is disabled: benchmarks unnecessarily slow\n");
 #endif
 #ifndef NDEBUG
@@ -414,7 +464,7 @@ class Benchmark {
         stdout,
         "WARNING: Assertions are enabled; benchmarks unnecessarily slow\n");
 #endif
-
+    // 查看snappy是否通过压缩可压缩字符来工作，且是否有效
     // See if snappy is working by attempting to compress a compressible string
     const char text[] = "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy";
     std::string compressed;
@@ -474,7 +524,8 @@ class Benchmark {
         reads_(FLAGS_reads < 0 ? FLAGS_num : FLAGS_reads),
         heap_counter_(0),
         count_comparator_(BytewiseComparator()),
-        total_thread_count_(0) {
+        total_thread_count_(0) ,
+        sorted_view_(nullptr){
     std::vector<std::string> files;
     g_env->GetChildren(FLAGS_db, &files);
     for (size_t i = 0; i < files.size(); i++) {
@@ -499,6 +550,7 @@ class Benchmark {
 
     const char* benchmarks = FLAGS_benchmarks;
     while (benchmarks != nullptr) {
+      // strchr（）用于查找字符串中的一个字符，并返回该字符在字符串中第一次出现的位置。
       const char* sep = strchr(benchmarks, ',');
       Slice name;
       if (sep == nullptr) {
@@ -516,7 +568,7 @@ class Benchmark {
       entries_per_batch_ = 1;
       write_options_ = WriteOptions();
 
-      void (Benchmark::*method)(ThreadState*) = nullptr;
+      void (Benchmark::*method)(ThreadState*) = nullptr;  // 这是一个指针变量，指向一个函数，该函数一定在BenchMark类中，且参数一定是ThreadState*类型
       bool fresh_db = false;
       int num_threads = FLAGS_threads;
 
@@ -614,12 +666,13 @@ class Benchmark {
  private:
   struct ThreadArg {
     Benchmark* bm;
-    SharedState* shared;
-    ThreadState* thread;
-    void (Benchmark::*method)(ThreadState*);
+    SharedState* shared;  //所有同时执行同一基准的State。
+    ThreadState* thread; // 每个线程状态，用于并发执行同一基准。
+    void (Benchmark::*method)(ThreadState*);  // 该线程对应的任务
   };
 
   static void ThreadBody(void* v) {
+    // reinterpret_cast运算符是用来处理无关类型之间的转换；它会产生一个新的值，这个值会有与原始参数（expressoin）有完全相同的比特位。
     ThreadArg* arg = reinterpret_cast<ThreadArg*>(v);
     SharedState* shared = arg->shared;
     ThreadState* thread = arg->thread;
@@ -641,12 +694,13 @@ class Benchmark {
     {
       MutexLock l(&shared->mu);
       shared->num_done++;
+      // 这是为什么？？？做完了居然还要SignalALL？？？
       if (shared->num_done >= shared->total) {
         shared->cv.SignalAll();
       }
     }
   }
-
+  // 产生n个线程，每个线程运行method所指的函数，
   void RunBenchmark(int n, Slice name,
                     void (Benchmark::*method)(ThreadState*)) {
     SharedState shared(n);
@@ -660,12 +714,15 @@ class Benchmark {
       // Seed the thread's random state deterministically based upon thread
       // creation across all benchmarks. This ensures that the seeds are unique
       // but reproducible when rerunning the same set of benchmarks.
+     // 种子线程在所有基准测试中基于线程创建确定的随机状态。
+     // 这确保了seed是唯一的,但在重新运行同一组基准时是可重复的。
       arg[i].thread = new ThreadState(i, /*seed=*/1000 + total_thread_count_);
       arg[i].thread->shared = &shared;
       g_env->StartThread(ThreadBody, &arg[i]);
     }
 
     shared.mu.Lock();
+    // 要等到所有的线程都初始化了才能继续
     while (shared.num_initialized < n) {
       shared.cv.Wait();
     }
@@ -695,6 +752,7 @@ class Benchmark {
 
   void Crc32c(ThreadState* thread) {
     // Checksum about 500MB of data total
+    // 500MB数据的CRC检验和
     const int size = 4096;
     const char* label = "(4K per op)";
     std::string data(size, 'x');
@@ -711,7 +769,7 @@ class Benchmark {
     thread->stats.AddBytes(bytes);
     thread->stats.AddMessage(label);
   }
-
+  // Snappy模式的compress
   void SnappyCompress(ThreadState* thread) {
     RandomGenerator gen;
     Slice input = gen.Generate(Options().block_size);
@@ -741,6 +799,7 @@ class Benchmark {
     RandomGenerator gen;
     Slice input = gen.Generate(Options().block_size);
     std::string compressed;
+    // 这个OK是为了什么？？？为什么要用SnappyCompress
     bool ok = port::Snappy_Compress(input.data(), input.size(), &compressed);
     int64_t bytes = 0;
     char* uncompressed = new char[input.size()];
@@ -824,9 +883,12 @@ class Benchmark {
     }
     thread->stats.AddBytes(bytes);
   }
-
+  // 顺序读，这个用迭代器实现顺序读 7777
   void ReadSequential(ThreadState* thread) {
-    Iterator* iter = db_->NewIterator(ReadOptions());
+    if(sorted_view_ == nullptr){
+      sorted_view_ = new Remix(db_);
+    }
+    Iterator* iter = sorted_view_->NewIterator();
     int i = 0;
     int64_t bytes = 0;
     for (iter->SeekToFirst(); i < reads_ && iter->Valid(); iter->Next()) {
@@ -837,7 +899,7 @@ class Benchmark {
     delete iter;
     thread->stats.AddBytes(bytes);
   }
-
+  // 这个也是用迭代器实现的 7777
   void ReadReverse(ThreadState* thread) {
     Iterator* iter = db_->NewIterator(ReadOptions());
     int i = 0;
@@ -868,7 +930,7 @@ class Benchmark {
     std::snprintf(msg, sizeof(msg), "(%d of %d found)", found, num_);
     thread->stats.AddMessage(msg);
   }
-
+  // 以随机顺序读取 N 个丢失的键
   void ReadMissing(ThreadState* thread) {
     ReadOptions options;
     std::string value;
@@ -881,7 +943,7 @@ class Benchmark {
       thread->stats.FinishedSingleOp();
     }
   }
-
+  // 从 DB 的 1% 部分以随机顺序读取 N 次
   void ReadHot(ThreadState* thread) {
     ReadOptions options;
     std::string value;
@@ -962,6 +1024,8 @@ class Benchmark {
       ReadRandom(thread);
     } else {
       // Special thread that keeps writing until other threads are done.
+      // 某线程一直写到其他线程完成为止。
+
       RandomGenerator gen;
       KeyBuffer key;
       while (true) {
@@ -984,6 +1048,7 @@ class Benchmark {
       }
 
       // Do not count any of the preceding work/delay in stats.
+      // 不要在统计中计算前面的任何工作/延迟。
       thread->stats.Start();
     }
   }
@@ -1001,7 +1066,8 @@ class Benchmark {
   static void WriteToFile(void* arg, const char* buf, int n) {
     reinterpret_cast<WritableFile*>(arg)->Append(Slice(buf, n));
   }
-
+  // 这个什么意思？？？
+  // 堆配置文件
   void HeapProfile() {
     char fname[100];
     std::snprintf(fname, sizeof(fname), "%s/heap-%04d", FLAGS_db,
@@ -1012,6 +1078,7 @@ class Benchmark {
       std::fprintf(stderr, "%s\n", s.ToString().c_str());
       return;
     }
+    // 一定返回false为啥？？？
     bool ok = port::GetHeapProfile(WriteToFile, file);
     delete file;
     if (!ok) {

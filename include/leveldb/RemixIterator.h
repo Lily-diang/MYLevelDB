@@ -11,7 +11,9 @@ namespace leveldb{
     
 class RemixIterator : public Iterator {
  public:
-  RemixIterator(Remix sorted_view) : current_(),my_sorted_view_(sorted_view){cout << "Create a RemixIterator successfully " << endl;}
+  RemixIterator(Remix sorted_view) : current_(),my_sorted_view_(sorted_view){
+    //cout << "Create a RemixIterator successfully " << endl;
+    }
 
   ~RemixIterator() override {if(current_ != NULL) delete current_;};
   void Seek(const Slice& target) override{
@@ -55,7 +57,15 @@ class RemixIterator : public Iterator {
     }
 
   };
-  int SeekToFirst() override{return 0;};
+  int SeekToFirst() override{
+    Segment seg = my_sorted_view_.segments[0];
+    Iterator * it = my_sorted_view_.mydb->NewIterator(ReadOptions());
+    it->Seek(seg.Cursor_Offsets[seg.Run_Selectors[0]]->key().ToString());
+    current_ = it;
+    current_anchor_key_ = 0;
+    current_segment_ = 0;
+    return 0;
+  };
   void SeekToLast() override{};
   int Next() override{
     current_->Next(my_sorted_view_,current_anchor_key_,current_segment_);
