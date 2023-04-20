@@ -2,7 +2,7 @@
  * @Author: Li_diang 787695954@qq.com
  * @Date: 2023-03-04 21:27:02
  * @LastEditors: Li_diang 787695954@qq.com
- * @LastEditTime: 2023-04-20 23:21:06
+ * @LastEditTime: 2023-04-20 23:31:16
  * @FilePath: \leveldb\benchmarks\db_bench.cc
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -85,12 +85,15 @@ static const char* FLAGS_benchmarks =
     "overwrite,"    // 以随机写方式更新数据库中的某些存在的key的数据
     "readrandom,"   // 以随机的方式进行查询读
     "readrandom,"  // Extra run to allow previous compactions to quiesce
-    "readseq,"    // 按正向顺序读
+    "readseq_Leveldb,"
+    "create view,"
+    "readseq_Remix,"    // 按正向顺序读
     "readreverse,"  // 按逆向顺序读
     "compact,"    
     "readrandom,"
-    "readIter,"
-    "readseq,"
+    "readseq_Leveldb,"
+    "create view,"
+    "readseq_Remix,"
     "readreverse,"
     "fill100K,"
     "crc32c,"
@@ -602,10 +605,12 @@ class Benchmark {
         num_ /= 1000;
         value_size_ = 100 * 1000;
         method = &Benchmark::WriteRandom;
-      } else if (name == Slice("readIter")) {
+      } else if (name == Slice("readseq_Leveldb")) {
         method = &Benchmark::ReadIter;
-      }else if (name == Slice("readseq")) {
+      }else if (name == Slice("readseq_Remix")) {
         method = &Benchmark::ReadSequential;
+      } else if (name == Slice("create view")) {
+        method = &Benchmark::CreateView;
       } else if (name == Slice("readreverse")) {
         method = &Benchmark::ReadReverse;
       } else if (name == Slice("readrandom")) {
@@ -891,9 +896,6 @@ class Benchmark {
   }
   // 顺序读，这个用迭代器实现顺序读 7777
   void ReadSequential(ThreadState* thread) {
-    if(sorted_view_ == nullptr){
-      sorted_view_ = new Remix(db_);
-    }
     Iterator* iter = sorted_view_->NewIterator();
     int i = 0;
     int64_t bytes = 0;
@@ -916,6 +918,20 @@ class Benchmark {
     }
     delete iter;
     thread->stats.AddBytes(bytes);
+  }
+    void CreateView(ThreadState* thread) {
+    // Iterator* iter = db_->NewIterator(ReadOptions());
+    // int i = 0;
+    // int64_t bytes = 0;
+    // for (iter->SeekToFirst(); i < reads_ && iter->Valid(); iter->Next()) {
+    //   bytes += iter->key().size() + iter->value().size();
+    //   thread->stats.FinishedSingleOp();
+    //   ++i;
+    // }
+    // delete iter;
+    if(sorted_view_ != NULL) delete sorted_view_;
+    sorted_view_ = new Remix(db_);
+    thread->stats.FinishedSingleOp();
   }
   // 这个也是用迭代器实现的 7777
   void ReadReverse(ThreadState* thread) {
