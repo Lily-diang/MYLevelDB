@@ -13,7 +13,7 @@
 #include "util/logging.h"
 #include "util/mutexlock.h"
 #include "util/random.h"
-#include "db/Remix.h"
+#include "leveldb/Remix.h"
 #include "leveldb/RemixHelper.h"
 
 namespace leveldb {
@@ -93,6 +93,7 @@ class DBIter : public Iterator {
   }
 
   int Next() override;
+  void Next(Remix my_sorted_view,size_t &index_anchor_key, size_t &segment_index) override;
   void Prev() override;
   void Seek(const Slice& target) override;
   int SeekToFirst() override;
@@ -188,7 +189,7 @@ int DBIter::Next() {
     // iter_ is pointing to current key. We can now safely move to the next to
     // avoid checking current key.
     int index = iter_->Next();
-    if (iter_->Valid()) iter_->set_index_of_runs(index);
+    if (iter_->Valid()) set_index_of_runs(index);
     //iter_->set_index_of_runs(iter_->Next());
     if (!iter_->Valid()) {
       valid_ = false;
@@ -198,7 +199,21 @@ int DBIter::Next() {
   }
   // 跳过 iter_key().user_key_ 更旧的版本和 deleteType 版本
   FindNextUserEntry(true, &saved_key_);
-  return 0;
+  return get_index_of_runs();
+}
+
+// ##############
+void DBIter::Next(Remix my_sorted_view,size_t &index_anchor_key, size_t &segment_index) {
+  assert(valid_);
+    SaveKey(ExtractUserKey(iter_->key()), &saved_key_);
+    iter_->Next(my_sorted_view,index_anchor_key,segment_index);
+    if (!iter_->Valid()) {
+      valid_ = false;
+      saved_key_.clear();
+      return ;
+    }
+  // 跳过 iter_key().user_key_ 更旧的版本和 deleteType 版本
+  FindNextUserEntry(true, &saved_key_);
 }
 
 /**
@@ -389,7 +404,7 @@ void DBIter::Seek(const Slice& target) {
 int DBIter::SeekToFirst() {
   direction_ = kForward;
   ClearSavedValue();
-  iter_->set_index_of_runs(iter_->SeekToFirst());
+  set_index_of_runs(iter_->SeekToFirst());
   if (iter_->Valid()) { // 也要跳过被删除的entry
     FindNextUserEntry(false, &saved_key_ /* temporary storage */);
   } else {

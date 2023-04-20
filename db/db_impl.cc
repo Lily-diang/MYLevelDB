@@ -1147,6 +1147,7 @@ Iterator* DBImpl::NewInternalIterator(const ReadOptions& options,
   Iterator* internal_iter =
       NewMergingIterator(&internal_comparator_, &list[0], list.size());
   versions_->current()->Ref();
+  //internal_iter->set_comparator(&internal_comparator_);
 
   IterState* cleanup = new IterState(&mutex_, mem_, imm_, versions_->current());
   internal_iter->RegisterCleanup(CleanupIteratorState, cleanup, nullptr);

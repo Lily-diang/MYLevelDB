@@ -41,7 +41,15 @@ class LEVELDB_EXPORT Slice {
   // Intentionally copyable.
   Slice(const Slice&) = default;
   Slice& operator=(const Slice&) = default;
-
+  // Slice& operator=(const Slice& origin){
+  //   if(this == &origin){return *this;}
+  //   if(data_ != NULL){
+  //     data_ = NULL;
+  //   }
+  //   data_ = origin.data_;
+  //   size_ = origin.size_;
+  //   //memcpy(data_,origin.data_,size_);
+  // }
   // Return a pointer to the beginning of the referenced data
   const char* data() const { return data_; }
 

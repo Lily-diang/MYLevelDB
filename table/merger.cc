@@ -8,10 +8,12 @@
 #include "leveldb/iterator.h"
 #include "table/iterator_wrapper.h"
 #include "leveldb/RemixHelper.h"
+#include "leveldb/Remix.h"
 
 namespace leveldb {
 
 namespace {
+
 class MergingIterator : public Iterator, public Remix_Helper {
  public:
   MergingIterator(const Comparator* comparator, Iterator** children, int n)
@@ -85,6 +87,20 @@ class MergingIterator : public Iterator, public Remix_Helper {
     set_run_index(FindSmallest());
     return get_run_index();
   }
+
+  //##################
+  void Next(Remix my_sorted_view, size_t &index_anchor_key, size_t &segment_index)  override{
+    assert(Valid());
+
+    current_->Next();
+    int index = FindSmallest(my_sorted_view,index_anchor_key,segment_index);
+    if(index < 0){
+      current_ = nullptr;
+    }
+    else{
+      current_ = &children_[index];
+    }
+  }
   // 注意：next（）永远找的都是<key（）的下一个位置,逻辑与next()类似，且调用了Prev()后，方向一定为kReverse
   void Prev() override {
     assert(Valid());
@@ -155,6 +171,7 @@ class MergingIterator : public Iterator, public Remix_Helper {
   enum Direction { kForward, kReverse };
 
   int FindSmallest();
+  int FindSmallest(Remix my_sorted_view, size_t &index_anchor_key, size_t &segment_index); // ##########
   void FindLargest();
 
   // We might want to use a heap in case there are lots of children.
@@ -190,6 +207,27 @@ int MergingIterator::FindSmallest() {
     }
   }
   current_ = smallest;
+  return index;
+}
+
+// ##############
+int MergingIterator::FindSmallest(Remix my_sorted_view, size_t &index_anchor_key, size_t &segment_index) {
+  //IteratorWrapper* smallest = nullptr;
+  Segment seg = my_sorted_view.segments[index_anchor_key];
+  int index;
+  if(segment_index+1 < seg.size){
+    index = seg.Run_Selectors[segment_index+1];
+    segment_index++;
+  }
+  else if(index_anchor_key + 1 < my_sorted_view.segment_size){
+    index = my_sorted_view.segments[index_anchor_key+1].Run_Selectors[0];
+    index_anchor_key++;
+  }
+  else{
+    index = -1;
+  }
+  
+  //current_ = smallest;
   return index;
 }
 

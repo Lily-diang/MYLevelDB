@@ -1,11 +1,11 @@
 ﻿#include <iostream>
 #include <vector>
 
-#include "leveldb/db.h"
-#include "leveldb/write_batch.h"
-
 #include "leveldb/Remix.h"
-#define N 900000
+#include "leveldb/db.h"
+#include "leveldb/slice.h"
+#include "leveldb/write_batch.h"
+#define N 123
 using namespace std;
 using namespace leveldb;
 int main() {
@@ -48,7 +48,12 @@ int main() {
     assert(mystatus.ok());
   }
   Remix* my_sorted_view = new Remix(mydb);
-
+  my_sorted_view->print();
+  cout << "create my sorted view successfully" << endl;
+  Iterator* it = my_sorted_view->NewIterator();
+  for (it->Seek("1"); it->Valid() && it->key().ToString() < "80"; it->Next()) {
+    cout << it->key().ToString() << ": " << it->value().ToString() << endl;
+  }
   // 按照顺序批量写入
   /*leveldb::WriteBatch batch;
   leveldb::Status s;
@@ -69,10 +74,10 @@ int main() {
   // std::cout << key_ << ": " << val_ << std::endl;
 
   // 遍历levelDB中的所有数据
-/*  leveldb::Iterator* it = mydb->NewIterator(leveldb::ReadOptions());
+  /*leveldb::Iterator* it = mydb->NewIterator(leveldb::ReadOptions());
   for (it->SeekToFirst(); it->Valid(); it->Next()) {
-    //std::cout << it->key().ToString() << ": " << it->value().ToString()
-    //<< std::endl;
+    if (it->get_runs_num() > 1)
+    std::cout << it->value().ToString() << std::endl;
     //cout << endl;
   }*/
 
@@ -118,4 +123,3 @@ int main() {
               << std::endl;
   }*/
 }
-
