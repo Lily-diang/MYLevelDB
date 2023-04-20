@@ -11,7 +11,26 @@
 using namespace std;
 namespace leveldb{
 Remix::Remix(DB* db)
-      : segment_size(0), Max_segment_size(5), anchor_keys(5), mydb(db) {
+      : segment_size(0), Max_segment_size(5), anchor_keys(5), mydb(db),key_num_perseg(5) {
+    //cout << "create the Remix successfully" << endl;
+    ReadOptions opt;
+    Iterator* it = db->NewIterator(opt);
+    //cout << "create the it successfully and the runs_num is "
+         //<< it->get_runs_num() << endl;
+    runs_num = it->get_runs_num();
+    cmp_ = it->get_comparator();
+    for (it->SeekToFirst(); it->Valid(); it->Next()) {
+      //if (it->key().ToString() > "190000") {
+      //cout << it->value().ToString() << endl;
+      //}
+      char *temp1 = (char *)malloc(it->key().size());
+      memcpy(temp1,it->key().data(),it->key().size());
+      insert(string(temp1,it->key().size()), cmp_, it);
+    }
+    // printf("create Remix successfully\n");
+  }
+  Remix::Remix(DB* db,int num)
+      : segment_size(0), Max_segment_size(5), anchor_keys(5), mydb(db),key_num_perseg(num) {
     //cout << "create the Remix successfully" << endl;
     ReadOptions opt;
     Iterator* it = db->NewIterator(opt);

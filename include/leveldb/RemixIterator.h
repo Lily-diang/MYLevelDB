@@ -68,10 +68,11 @@ class RemixIterator : public Iterator {
   //   return 0;
   // };
   int SeekToFirst() override{
-    Segment seg = my_sorted_view_.segments[0];
-    current_ = seg.Cursor_Offsets[0];
+    // Segment seg = my_sorted_view_.segments[0];
+    // current_ = seg.Cursor_Offsets[0];
     current_anchor_key_ = 0;
     current_segment_ = 0;
+    current_ = my_sorted_view_.segments[0].Cursor_Offsets[0];
     return 0;
   };
 

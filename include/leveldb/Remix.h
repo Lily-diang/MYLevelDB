@@ -2,7 +2,7 @@
  * @Author: Li_diang 787695954@qq.com
  * @Date: 2023-04-16 19:37:32
  * @LastEditors: Li_diang 787695954@qq.com
- * @LastEditTime: 2023-04-20 22:01:48
+ * @LastEditTime: 2023-04-20 23:08:42
  * @FilePath: \leveldb\include\leveldb\Remix.h
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -29,7 +29,7 @@ struct Segment {
   vector<string> keys;  // 段里边存的键,与Run_Selecors一一对应
   size_t size;         // 当前段里实际存储的key的数量
   int runs_num;        // 当前共有n个段
-  int key_num_perseg = 5;
+  int key_num_perseg;
   vector<int>runs_sum; // 当Run_Selectors[i] = n时，代表该键值对在第n个run中，此时需要复制Cursor_Offsets[n]这个迭代器，然后向后走runs_sum[n]个即可找到该键的迭代器
   vector<int> stept;
   // Segment(int num)
@@ -38,7 +38,12 @@ struct Segment {
   //   //<< " Cursor_Offsets in it" << std::endl;
   // }
     Segment(int num)
-      : Cursor_Offsets(5), runs_num(num), size(0), Run_Selectors(5),runs_sum(num,0) {
+      : Cursor_Offsets(5), runs_num(num), size(0), Run_Selectors(5),runs_sum(num,0),key_num_perseg(5) {
+    // std::cout << "create segment successfully and create " << num
+    //<< " Cursor_Offsets in it" << std::endl;
+  }
+     Segment(int num, int pre_num)
+      : Cursor_Offsets(pre_num), runs_num(num), size(0), Run_Selectors(5),runs_sum(num,0),key_num_perseg(pre_num){
     // std::cout << "create segment successfully and create " << num
     //<< " Cursor_Offsets in it" << std::endl;
   }
@@ -58,9 +63,11 @@ class Remix {
   int runs_num;             // run的数量
   DB* mydb;                 // DB指针，用于创建一个新的迭代器
   const Comparator*  cmp_;
+  int key_num_perseg;
 
 
   Remix(DB *db);
+  Remix(DB *db,int num);
   
 
   Remix() { cout << "create a Remix successfully" << endl; }
@@ -88,7 +95,7 @@ class Remix {
     // ExtractUserKey(iter->KEY()).ToString()
     //<< endl;
     anchor_keys[segment_size] =Internal_key;
-    segments.push_back(Segment(runs_num));
+    segments.push_back(Segment(runs_num,key_num_perseg));
     segment_size++;
     insert_to_segment(iter, segments[segment_size - 1],Internal_key);
   }

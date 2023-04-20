@@ -2,7 +2,7 @@
  * @Author: Li_diang 787695954@qq.com
  * @Date: 2023-03-04 21:27:02
  * @LastEditors: Li_diang 787695954@qq.com
- * @LastEditTime: 2023-04-20 22:05:38
+ * @LastEditTime: 2023-04-20 23:01:53
  * @FilePath: \leveldb\benchmarks\db_bench.cc
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -94,10 +94,11 @@ static const char* FLAGS_benchmarks =
     "fill100K,"
     "crc32c,"
     "snappycomp,"
-    "snappyuncomp,";
+    "snappyuncomp,"
+    "readIter,";
 
 // Number of key/values to place in database
-static int FLAGS_num = 1000000;
+static int FLAGS_num = 10000;
 
 // Number of read operations to do.  If negative, do FLAGS_num reads.
 static int FLAGS_reads = -1;
@@ -162,6 +163,8 @@ static bool FLAGS_compression = true;
 
 // Use the db with the following name.
 static const char* FLAGS_db = nullptr;
+
+static const int key_num_perseg = 5;
 
 namespace leveldb {
 
@@ -601,6 +604,8 @@ class Benchmark {
         method = &Benchmark::WriteRandom;
       } else if (name == Slice("readseq")) {
         method = &Benchmark::ReadSequential;
+      }else if (name == Slice("readIter")) {
+        method = &Benchmark::ReadIter;
       } else if (name == Slice("readreverse")) {
         method = &Benchmark::ReadReverse;
       } else if (name == Slice("readrandom")) {
@@ -671,6 +676,7 @@ class Benchmark {
     void (Benchmark::*method)(ThreadState*);  // 该线程对应的任务
   };
 
+// 999
   static void ThreadBody(void* v) {
     // reinterpret_cast运算符是用来处理无关类型之间的转换；它会产生一个新的值，这个值会有与原始参数（expressoin）有完全相同的比特位。
     ThreadArg* arg = reinterpret_cast<ThreadArg*>(v);
@@ -889,6 +895,18 @@ class Benchmark {
       sorted_view_ = new Remix(db_);
     }
     Iterator* iter = sorted_view_->NewIterator();
+    int i = 0;
+    int64_t bytes = 0;
+    for (iter->SeekToFirst(); i < reads_ && iter->Valid(); iter->Next()) {
+      bytes += iter->key().size() + iter->value().size();
+      thread->stats.FinishedSingleOp();
+      ++i;
+    }
+    delete iter;
+    thread->stats.AddBytes(bytes);
+  }
+  void ReadIter(ThreadState* thread) {
+    Iterator* iter = db_->NewIterator(ReadOptions());
     int i = 0;
     int64_t bytes = 0;
     for (iter->SeekToFirst(); i < reads_ && iter->Valid(); iter->Next()) {
