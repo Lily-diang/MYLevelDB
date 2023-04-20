@@ -2,7 +2,7 @@
  * @Author: Li_diang 787695954@qq.com
  * @Date: 2023-03-04 21:27:02
  * @LastEditors: Li_diang 787695954@qq.com
- * @LastEditTime: 2023-04-20 23:31:16
+ * @LastEditTime: 2023-04-20 23:38:58
  * @FilePath: \leveldb\benchmarks\db_bench.cc
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -88,17 +88,18 @@ static const char* FLAGS_benchmarks =
     "readseq_Leveldb,"
     "create view,"
     "readseq_Remix,"    // 按正向顺序读
-    "readreverse,"  // 按逆向顺序读
+    // "readreverse,"  // 按逆向顺序读
     "compact,"    
     "readrandom,"
     "readseq_Leveldb,"
     "create view,"
     "readseq_Remix,"
-    "readreverse,"
-    "fill100K,"
-    "crc32c,"
-    "snappycomp,"
-    "snappyuncomp,";
+    // "readreverse,"
+    // "fill100K,"
+    // "crc32c,"
+    // "snappycomp,"
+    // "snappyuncomp,"
+    ;
 
 // Number of key/values to place in database
 static int FLAGS_num = 10000;
@@ -167,7 +168,7 @@ static bool FLAGS_compression = true;
 // Use the db with the following name.
 static const char* FLAGS_db = nullptr;
 
-static const int key_num_perseg = 5;
+static  int FLAGS_key_num_perseg = 5;
 
 namespace leveldb {
 
@@ -930,7 +931,7 @@ class Benchmark {
     // }
     // delete iter;
     if(sorted_view_ != NULL) delete sorted_view_;
-    sorted_view_ = new Remix(db_);
+    sorted_view_ = new Remix(db_,FLAGS_key_num_perseg);
     thread->stats.FinishedSingleOp();
   }
   // 这个也是用迭代器实现的 7777
@@ -1178,6 +1179,8 @@ int main(int argc, char** argv) {
       FLAGS_open_files = n;
     } else if (strncmp(argv[i], "--db=", 5) == 0) {
       FLAGS_db = argv[i] + 5;
+    } else if (sscanf(argv[i], "--num_seg=%d%c", &n, &junk) == 1) {
+      FLAGS_key_num_perseg = n;
     } else {
       std::fprintf(stderr, "Invalid flag '%s'\n", argv[i]);
       std::exit(1);
