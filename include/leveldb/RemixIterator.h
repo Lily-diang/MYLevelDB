@@ -58,27 +58,48 @@ class RemixIterator : public Iterator {
     }
 
   };
+  // int SeekToFirst() override{
+  //   Segment seg = my_sorted_view_.segments[0];
+  //   Iterator * it = my_sorted_view_.mydb->NewIterator(ReadOptions());
+  //   it->Seek(seg.Cursor_Offsets[seg.Run_Selectors[0]]->key().ToString());
+  //   current_ = it;
+  //   current_anchor_key_ = 0;
+  //   current_segment_ = 0;
+  //   return 0;
+  // };
   int SeekToFirst() override{
     Segment seg = my_sorted_view_.segments[0];
-    Iterator * it = my_sorted_view_.mydb->NewIterator(ReadOptions());
-    it->Seek(seg.Cursor_Offsets[seg.Run_Selectors[0]]->key().ToString());
-    current_ = it;
+    current_ = seg.Cursor_Offsets[0];
     current_anchor_key_ = 0;
     current_segment_ = 0;
     return 0;
   };
+
   void SeekToLast() override{};
+  // int Next() override{
+  //   current_->Next(my_sorted_view_,current_anchor_key_,current_segment_);
+  //   return 0;}
   int Next() override{
-    current_->Next(my_sorted_view_,current_anchor_key_,current_segment_);
+    Segment seg = my_sorted_view_.segments[current_anchor_key_];
+    if(current_segment_+ 1  < seg.size) {
+      current_segment_++;
+      current_ = seg.Cursor_Offsets[current_segment_];
+      }
+    else if(current_anchor_key_ + 1 < my_sorted_view_.segment_size) {
+      current_anchor_key_++;
+      current_segment_ = 0;
+      current_ = my_sorted_view_.segments[current_anchor_key_].Cursor_Offsets[0];
+    }
+    else current_ = NULL;
     return 0;}
   void Prev() override{};
-  bool Valid() const override { return current_->Valid(); }
+  bool Valid() const override { return (current_ != NULL && current_->Valid()); }
   Slice key() const override {
     assert(Valid());
     return current_->key();
   }
   Slice value() const override {
-    assert(Valid());
+    assert(Valid() || current_ == NULL);
     return current_->value();
   }
   Status status() const override { return current_->status(); }
