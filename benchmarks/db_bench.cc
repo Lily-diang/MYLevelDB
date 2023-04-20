@@ -602,10 +602,10 @@ class Benchmark {
         num_ /= 1000;
         value_size_ = 100 * 1000;
         method = &Benchmark::WriteRandom;
-      } else if (name == Slice("readseq")) {
-        method = &Benchmark::ReadSequential;
-      }else if (name == Slice("readIter")) {
+      } else if (name == Slice("readIter")) {
         method = &Benchmark::ReadIter;
+      }else if (name == Slice("readseq")) {
+        method = &Benchmark::ReadSequential;
       } else if (name == Slice("readreverse")) {
         method = &Benchmark::ReadReverse;
       } else if (name == Slice("readrandom")) {
