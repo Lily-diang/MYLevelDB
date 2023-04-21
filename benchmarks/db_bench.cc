@@ -2,7 +2,7 @@
  * @Author: Li_diang 787695954@qq.com
  * @Date: 2023-03-04 21:27:02
  * @LastEditors: Li_diang 787695954@qq.com
- * @LastEditTime: 2023-04-21 13:28:49
+ * @LastEditTime: 2023-04-21 13:49:09
  * @FilePath: \leveldb\benchmarks\db_bench.cc
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -95,11 +95,11 @@ static const char* FLAGS_benchmarks =
     "create view,"
     "readseq_Remix,"    // 按正向顺序读
     // "readreverse,"  // 按逆向顺序读
-    "compact,"    
-    "readrandom,"
-    "readseq_Leveldb,"
-    "create view,"
-    "readseq_Remix,"
+    // "compact,"    
+    // "readrandom,"
+    // "readseq_Leveldb,"
+    //"create view,"
+    //"readseq_Remix,"
     // "readreverse,"
     // "fill100K,"
     // "crc32c,"
@@ -108,7 +108,7 @@ static const char* FLAGS_benchmarks =
     ;
 
 // Number of key/values to place in database
-static int FLAGS_num = 10000;
+static int FLAGS_num = 1000000;
 
 // Number of read operations to do.  If negative, do FLAGS_num reads.
 static int FLAGS_reads = -1;

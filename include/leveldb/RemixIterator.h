@@ -81,7 +81,8 @@ class RemixIterator : public Iterator {
   // int Next() override{
   //   current_->Next(my_sorted_view_,current_anchor_key_,current_segment_);
   //   return 0;}
-  int Next() override{
+
+  int Next() override{  // 版本1
     Segment* seg = &my_sorted_view_->segments[current_anchor_key_];
     if(current_segment_+ 1  < seg->size) {
       current_segment_++;
@@ -94,6 +95,11 @@ class RemixIterator : public Iterator {
     }
     else current_ = NULL;
     return 0;}
+
+  // int Next() override{
+  //   current_->Next(my_sorted_view_,current_anchor_key_,current_segment_);
+  //   return 0;
+  // }
   void Prev() override{};
   bool Valid() const override { return (current_ != NULL && current_->Valid()); }
   Slice key() const override {
