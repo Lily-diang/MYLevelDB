@@ -2,7 +2,7 @@
  * @Author: Li_diang 787695954@qq.com
  * @Date: 2023-04-16 19:37:32
  * @LastEditors: Li_diang 787695954@qq.com
- * @LastEditTime: 2023-04-20 23:08:42
+ * @LastEditTime: 2023-04-21 10:59:28
  * @FilePath: \leveldb\include\leveldb\Remix.h
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -21,16 +21,18 @@
 using namespace std;
 namespace leveldb {
 struct Segment {
-  vector<Iterator*>
+  Iterator**
       Cursor_Offsets;  // 每个段维护的迭代器，有N个run，就有N个Iterator*元素
-  vector<int>
+  //vector<int>
+  int *
       Run_Selectors;  // run
                       // 选择器，每个run选择器对应一个键值对,该值指示现在下一个要访问的Cursor_Offsets的下标[0,...,n-1]
   vector<string> keys;  // 段里边存的键,与Run_Selecors一一对应
   size_t size;         // 当前段里实际存储的key的数量
   int runs_num;        // 当前共有n个段
   int key_num_perseg;
-  vector<int>runs_sum; // 当Run_Selectors[i] = n时，代表该键值对在第n个run中，此时需要复制Cursor_Offsets[n]这个迭代器，然后向后走runs_sum[n]个即可找到该键的迭代器
+  int * runs_sum;
+  //vector<int> runs_sum; // 当Run_Selectors[i] = n时，代表该键值对在第n个run中，此时需要复制Cursor_Offsets[n]这个迭代器，然后向后走runs_sum[n]个即可找到该键的迭代器
   vector<int> stept;
   // Segment(int num)
   //     : Cursor_Offsets(num), runs_num(num), size(0), Run_Selectors(20),runs_sum(num,0) {
@@ -38,20 +40,29 @@ struct Segment {
   //   //<< " Cursor_Offsets in it" << std::endl;
   // }
     Segment(int num)
-      : Cursor_Offsets(5), runs_num(num), size(0), Run_Selectors(5),runs_sum(num,0),key_num_perseg(5) {
+      :  runs_num(num), size(0),key_num_perseg(5) {
     // std::cout << "create segment successfully and create " << num
     //<< " Cursor_Offsets in it" << std::endl;
+    Cursor_Offsets = new Iterator *[5];
+     Run_Selectors = new int[5];
+     runs_sum = new int[5];
+     memset(runs_sum,0,5*sizeof(int));
   }
      Segment(int num, int pre_num)
-      : Cursor_Offsets(pre_num), runs_num(num), size(0), Run_Selectors(pre_num),runs_sum(num,0),key_num_perseg(pre_num){
+      :  runs_num(num), size(0),key_num_perseg(pre_num){
     // std::cout << "create segment successfully and create " << num
     //<< " Cursor_Offsets in it" << std::endl;
+    Cursor_Offsets = new Iterator *[pre_num];
+    Run_Selectors = new int [pre_num];
+     runs_sum = new int[pre_num];
+     memset(runs_sum,0,pre_num*sizeof(int));
   }
-  Segment() : size(0), Run_Selectors(20) {
-    // std::cout << "create segment successfully" << std::endl;
-  }
+
   ~Segment() {
     // cout << "delete segment" << endl;
+    //delete[] Cursor_Offsets;
+    //delete[] Run_Selectors;
+    //delete[] runs_sum;
   }
 };
 class Remix {

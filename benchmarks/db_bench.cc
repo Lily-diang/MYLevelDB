@@ -2,7 +2,7 @@
  * @Author: Li_diang 787695954@qq.com
  * @Date: 2023-03-04 21:27:02
  * @LastEditors: Li_diang 787695954@qq.com
- * @LastEditTime: 2023-04-20 23:38:58
+ * @LastEditTime: 2023-04-21 10:36:11
  * @FilePath: \leveldb\benchmarks\db_bench.cc
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -85,6 +85,12 @@ static const char* FLAGS_benchmarks =
     "overwrite,"    // 以随机写方式更新数据库中的某些存在的key的数据
     "readrandom,"   // 以随机的方式进行查询读
     "readrandom,"  // Extra run to allow previous compactions to quiesce
+    "single seek op with leveldb,"
+    "create view,"
+    "single seek op with Remix,"
+    "single seek+next op with leveldb,"
+    "create view,"
+    "single seek+next op with Remix,"
     "readseq_Leveldb,"
     "create view,"
     "readseq_Remix,"    // 按正向顺序读
@@ -579,7 +585,7 @@ class Benchmark {
       bool fresh_db = false;
       int num_threads = FLAGS_threads;
 
-      if (name == Slice("open")) {
+      if (name == Slice("open")) {  
         method = &Benchmark::OpenBench;
         num_ /= 10000;
         if (num_ < 1) num_ = 1;
@@ -606,8 +612,16 @@ class Benchmark {
         num_ /= 1000;
         value_size_ = 100 * 1000;
         method = &Benchmark::WriteRandom;
-      } else if (name == Slice("readseq_Leveldb")) {
+      } else if (name == Slice("readseq_Leveldb")) {   // 222222
         method = &Benchmark::ReadIter;
+      } else if (name == Slice("single seek op with leveldb")) {   // 222222
+        method = &Benchmark::Single_Seek_Leveldb;
+      } else if (name == Slice("single seek op with Remix")) {   // 222222
+        method = &Benchmark::Single_Seek_Remix;
+      } else if (name == Slice("single seek+next op with leveldb")) {   // 222222
+        method = &Benchmark::Single_sn_Leveldb;
+      } else if (name == Slice("single seek+next op with Remix")) {   // 222222
+        method = &Benchmark::Single_sn_Remix;
       }else if (name == Slice("readseq_Remix")) {
         method = &Benchmark::ReadSequential;
       } else if (name == Slice("create view")) {
@@ -835,7 +849,8 @@ class Benchmark {
     Options options;
     options.env = g_env;
     options.create_if_missing = !FLAGS_use_existing_db;
-    options.block_cache = cache_;
+    //options.block_cache = cache_;
+    options.block_cache = nullptr;
     options.write_buffer_size = FLAGS_write_buffer_size;
     options.max_file_size = FLAGS_max_file_size;
     options.block_size = FLAGS_block_size;
@@ -921,18 +936,49 @@ class Benchmark {
     thread->stats.AddBytes(bytes);
   }
     void CreateView(ThreadState* thread) {
-    // Iterator* iter = db_->NewIterator(ReadOptions());
-    // int i = 0;
-    // int64_t bytes = 0;
-    // for (iter->SeekToFirst(); i < reads_ && iter->Valid(); iter->Next()) {
-    //   bytes += iter->key().size() + iter->value().size();
-    //   thread->stats.FinishedSingleOp();
-    //   ++i;
-    // }
-    // delete iter;
     if(sorted_view_ != NULL) delete sorted_view_;
     sorted_view_ = new Remix(db_,FLAGS_key_num_perseg);
     thread->stats.FinishedSingleOp();
+  }
+  void Single_Seek_Leveldb(ThreadState* thread) {
+    Iterator* iter = db_->NewIterator(ReadOptions());
+    iter->SeekToFirst();
+    //int64_t bytes = 0;
+    //bytes += iter->key().size() + iter->value().size();
+    thread->stats.FinishedSingleOp();
+    delete iter;
+    //thread->stats.AddBytes(bytes);
+  }
+  void Single_Seek_Remix(ThreadState* thread) {
+    Iterator* iter = sorted_view_->NewIterator();
+    iter->SeekToFirst();
+    // int64_t bytes = 0;
+    // bytes += iter->key().size() + iter->value().size();
+    thread->stats.FinishedSingleOp();
+    delete iter;
+    //thread->stats.AddBytes(bytes);
+  }
+    void Single_sn_Leveldb(ThreadState* thread) {
+    Iterator* iter = db_->NewIterator(ReadOptions());
+    iter->SeekToFirst();
+    //int64_t bytes = 0;
+    //bytes += iter->key().size() + iter->value().size();
+    iter->Next();
+    //bytes += iter->key().size() + iter->value().size();
+    thread->stats.FinishedSingleOp();
+    delete iter;
+   // thread->stats.AddBytes(bytes);
+  }
+  void Single_sn_Remix(ThreadState* thread) {
+    Iterator* iter = sorted_view_->NewIterator();
+    iter->SeekToFirst();
+    //int64_t bytes = 0;
+    //bytes += iter->key().size() + iter->value().size();
+    iter->Next();
+    //bytes += iter->key().size() + iter->value().size();
+    thread->stats.FinishedSingleOp();
+    delete iter;
+    //thread->stats.AddBytes(bytes);
   }
   // 这个也是用迭代器实现的 7777
   void ReadReverse(ThreadState* thread) {

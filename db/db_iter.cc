@@ -93,7 +93,7 @@ class DBIter : public Iterator {
   }
 
   int Next() override;
-  void Next(Remix my_sorted_view,size_t &index_anchor_key, size_t &segment_index) override;
+  void Next(Remix *my_sorted_view,size_t &index_anchor_key, size_t &segment_index) override;
   void Prev() override;
   void Seek(const Slice& target) override;
   int SeekToFirst() override;
@@ -203,7 +203,7 @@ int DBIter::Next() {
 }
 
 // ##############
-void DBIter::Next(Remix my_sorted_view,size_t &index_anchor_key, size_t &segment_index) {
+void DBIter::Next(Remix *my_sorted_view,size_t &index_anchor_key, size_t &segment_index) {
   assert(valid_);
     SaveKey(ExtractUserKey(iter_->key()), &saved_key_);
     iter_->Next(my_sorted_view,index_anchor_key,segment_index);

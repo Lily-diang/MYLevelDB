@@ -91,7 +91,7 @@ class LEVELDB_EXPORT Iterator {
   const Comparator* get_comparator();  // ###
   void set_comparator(const Comparator * cmp);// ###  
   virtual Slice KEY (); // #######
-  virtual void Next(Remix my_sorted_view,size_t &index_anchor_key, size_t &segment_index); // ##########
+  virtual void Next(Remix *my_sorted_view,size_t &index_anchor_key, size_t &segment_index); // ##########
  private:
   // Cleanup functions are stored in a single-linked list.
   // The list's head node is inlined in the iterator.
