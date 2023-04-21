@@ -2,7 +2,7 @@
  * @Author: Li_diang 787695954@qq.com
  * @Date: 2023-04-20 10:58:18
  * @LastEditors: Li_diang 787695954@qq.com
- * @LastEditTime: 2023-04-21 10:45:11
+ * @LastEditTime: 2023-04-21 12:28:40
  * @FilePath: \leveldb\db\Remix.cc
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -11,8 +11,11 @@
 using namespace std;
 namespace leveldb{
 Remix::Remix(DB* db)
-      : segment_size(0), Max_segment_size(5), anchor_keys(5), mydb(db),key_num_perseg(5) {
+      : segment_size(0), Max_segment_size(5), mydb(db),key_num_perseg(5) {
     //cout << "create the Remix successfully" << endl;
+    anchor_keys = new string[5];
+    segments = new struct Segment[5];
+    //segmens = new struct Segment[5](runs_num,key_num_perseg);
     ReadOptions opt;
     Iterator* it = db->NewIterator(opt);
     //cout << "create the it successfully and the runs_num is "
@@ -30,8 +33,10 @@ Remix::Remix(DB* db)
     // printf("create Remix successfully\n");
   }
   Remix::Remix(DB* db,int num)
-      : segment_size(0), Max_segment_size(5), anchor_keys(5), mydb(db),key_num_perseg(num) {
+      : segment_size(0), Max_segment_size(5), mydb(db),key_num_perseg(num) {
     //cout << "create the Remix successfully" << endl;
+    anchor_keys = new string[5];
+    segments = new struct Segment[5];
     ReadOptions opt;
     Iterator* it = db->NewIterator(opt);
     //cout << "create the it successfully and the runs_num is "
@@ -72,7 +77,17 @@ Remix::Remix(DB* db)
     //print();
     // 长度不够
     if (segment_size + 1 > Max_segment_size) {
-      anchor_keys.resize(Max_segment_size + 5);
+      //anchor_keys.resize(Max_segment_size + 5);
+      string* temp = new string[Max_segment_size+5];
+      struct Segment *tempp = new struct Segment[Max_segment_size+5];
+      for(int i = 0; i < Max_segment_size; i++){
+        temp[i] = anchor_keys[i];
+        tempp[i] = segments[i];
+      }
+      delete []anchor_keys;
+      delete []segments;
+      anchor_keys = temp;
+      segments = tempp;
       Max_segment_size += 5;
     }
 

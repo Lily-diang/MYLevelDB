@@ -31,7 +31,8 @@ class RemixIterator : public Iterator {
     if (my_sorted_view_->anchor_keys[left] > targ) left--;
     // 再段里进行二分查找，找到第一个大于或等于targ的位置，然后向后移
     Segment *seg = &my_sorted_view_->segments[left];
-    vector<string> keys = seg->keys;
+    //vector<string> keys = seg->keys;
+    string* keys = seg->keys;
     size_t l = 0, r = seg->size-1;
     while(l < r){
         mid = (l+r) /2;
