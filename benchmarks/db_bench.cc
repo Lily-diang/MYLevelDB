@@ -2,7 +2,7 @@
  * @Author: Li_diang 787695954@qq.com
  * @Date: 2023-03-04 21:27:02
  * @LastEditors: Li_diang 787695954@qq.com
- * @LastEditTime: 2023-04-21 10:36:11
+ * @LastEditTime: 2023-04-21 13:21:46
  * @FilePath: \leveldb\benchmarks\db_bench.cc
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -82,9 +82,9 @@ static const char* FLAGS_benchmarks =
     "fillseq,"      // 顺序写方式创建数据库，只需将数据写入操作系统的缓冲区即可
     "fillsync,"     // 每次写操作，均将数据同步写到磁盘中才算操作完成；
     "fillrandom,"   // 以随机写方式创建数据库
-    "overwrite,"    // 以随机写方式更新数据库中的某些存在的key的数据
-    "readrandom,"   // 以随机的方式进行查询读
-    "readrandom,"  // Extra run to allow previous compactions to quiesce
+    //"overwrite,"    // 以随机写方式更新数据库中的某些存在的key的数据
+    //"readrandom,"   // 以随机的方式进行查询读
+    //"readrandom,"  // Extra run to allow previous compactions to quiesce
     "single seek op with leveldb,"
     "create view,"
     "single seek op with Remix,"
