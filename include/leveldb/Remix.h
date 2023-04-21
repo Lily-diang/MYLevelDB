@@ -49,11 +49,7 @@ struct Segment {
      memset(runs_sum,0,5*sizeof(int));
   }
      Segment(int num, int pre_num)
-<<<<<<< HEAD
       :  runs_num(num), size(0),key_num_perseg(pre_num){
-=======
-      : Cursor_Offsets(pre_num), runs_num(num), size(0), Run_Selectors(pre_num),runs_sum(num,0),key_num_perseg(pre_num){
->>>>>>> 435bc6a76947e4d4710c8ad9ebb6bfc9fa1dfea2
     // std::cout << "create segment successfully and create " << num
     //<< " Cursor_Offsets in it" << std::endl;
     Cursor_Offsets = new Iterator *[pre_num];
