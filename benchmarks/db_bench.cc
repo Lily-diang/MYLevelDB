@@ -945,7 +945,7 @@ class Benchmark {
     int i = 0;
     int64_t bytes = 0;
     KeyBuffer key;
-    key.Set(thread->rand.Uniform(FLAGS_num-50));
+    key.Set(thread->rand.Uniform(FLAGS_num/4) + FLAGS_num-FLAGS_num/4);
     //cout << key.slice().ToString() << endl;
     for(iter->Seek(key.slice()); i < 50; i++,iter->Next()){
       bytes += iter->key().size() + iter->value().size();
