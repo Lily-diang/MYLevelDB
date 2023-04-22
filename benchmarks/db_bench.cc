@@ -2,7 +2,7 @@
  * @Author: Li_diang 787695954@qq.com
  * @Date: 2023-03-04 21:27:02
  * @LastEditors: Li_diang 787695954@qq.com
- * @LastEditTime: 2023-04-22 09:42:52
+ * @LastEditTime: 2023-04-22 17:43:44
  * @FilePath: \leveldb\benchmarks\db_bench.cc
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -944,7 +944,10 @@ class Benchmark {
     Iterator* iter = db_->NewIterator(ReadOptions());
     int i = 0;
     int64_t bytes = 0;
-    for(iter->SeekToFirst(); i < 50; i++,iter->Next()){
+    KeyBuffer key;
+    key.Set((rand() % (FLAGS_num-50)));
+    //cout << key.slice().ToString() << endl;
+    for(iter->Seek(key.slice()); i < 50; i++,iter->Next()){
       bytes += iter->key().size() + iter->value().size();
       thread->stats.FinishedSingleOp();
     }
@@ -955,7 +958,10 @@ class Benchmark {
     Iterator* iter = sorted_view_->NewIterator();
     int i = 0;
     int64_t bytes = 0;
-    for(iter->SeekToFirst(); i < 50; i++,iter->Next()){
+    KeyBuffer key;
+    key.Set((rand() % (FLAGS_num - 50)));
+    // cout << key.slice().ToString() << endl;
+    for (iter->Seek(key.slice()); i < 50; i++, iter->Next()) {
       bytes += iter->key().size() + iter->value().size();
       thread->stats.FinishedSingleOp();
     }
@@ -965,6 +971,7 @@ class Benchmark {
     void Single_sn_Leveldb(ThreadState* thread) {
     Iterator* iter = db_->NewIterator(ReadOptions());
     iter->SeekToFirst();
+    //cout << iter->key().ToString() << endl;
     //int64_t bytes = 0;
     //bytes += iter->key().size() + iter->value().size();
     iter->Next();

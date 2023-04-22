@@ -47,16 +47,17 @@ class RemixIterator : public Iterator {
     // 复制it迭代器
     //Iterator * it = my_sorted_view_->mydb->NewIterator(ReadOptions());
     //it->Seek(seg->Cursor_Offsets[seg->Run_Selectors[l]]->key().ToString());
-    Iterator* it = seg->Cursor_Offsets[seg->Run_Selectors[l]];
-    current_ = it;
-    current_anchor_key_ = left;
-    current_segment_ = 0;
-    for(size_t i = 0; i < seg->stept[l];){
-      //cout << it->key().ToString() << " ";
-        it->Next(my_sorted_view_,left,i);
-        current_anchor_key_ = left;
-        current_segment_ = i;
-    }
+    // Iterator* it = seg->Cursor_Offsets[seg->Run_Selectors[l]];
+    // current_ = it;
+    // current_anchor_key_ = left;
+    // current_segment_ = 0;
+    // for(size_t i = 0; i < seg->stept[l];){
+    //   //cout << it->key().ToString() << " ";
+    //     it->Next(my_sorted_view_,left,i);
+    //     current_anchor_key_ = left;
+    //     current_segment_ = i;
+    // }
+    current_ = seg->Cursor_Offsets[l];
 
   };
   // int SeekToFirst() override{
