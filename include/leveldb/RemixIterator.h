@@ -58,6 +58,8 @@ class RemixIterator : public Iterator {
     //     current_segment_ = i;
     // }
     current_ = seg->Cursor_Offsets[l];
+    current_anchor_key_ = left;
+    current_segment_ = l;
 
   };
   // int SeekToFirst() override{
