@@ -945,7 +945,7 @@ class Benchmark {
     int i = 0;
     int64_t bytes = 0;
     KeyBuffer key;
-    key.Set(thread->rand.Uniform(FLAGS_num));
+    key.Set(thread->rand.Uniform(FLAGS_num-50));
     //cout << key.slice().ToString() << endl;
     for(iter->Seek(key.slice()); i < 50; i++,iter->Next()){
       bytes += iter->key().size() + iter->value().size();
@@ -959,7 +959,8 @@ class Benchmark {
     int i = 0;
     int64_t bytes = 0;
     KeyBuffer key;
-    key.Set((rand() % (FLAGS_num - 50)));
+    //const int range = (FLAGS_num + FLAGS_num/2) / 100;
+    key.Set(thread->rand.Uniform(FLAGS_num/4) + FLAGS_num/2);
     // cout << key.slice().ToString() << endl;
     for (iter->Seek(key.slice()); i < 50; i++, iter->Next()) {
       bytes += iter->key().size() + iter->value().size();
