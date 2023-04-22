@@ -2,7 +2,7 @@
  * @Author: Li_diang 787695954@qq.com
  * @Date: 2023-03-04 21:27:02
  * @LastEditors: Li_diang 787695954@qq.com
- * @LastEditTime: 2023-04-22 09:31:17
+ * @LastEditTime: 2023-04-22 09:42:52
  * @FilePath: \leveldb\benchmarks\db_bench.cc
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -1186,6 +1186,7 @@ int main(int argc, char** argv) {
     double d;
     int n;
     char junk;
+    bool flag = false;
     if (leveldb::Slice(argv[i]).starts_with("--benchmarks=")) {
       FLAGS_benchmarks = argv[i] + strlen("--benchmarks=");
     } else if (sscanf(argv[i], "--compression_ratio=%lf%c", &d, &junk) == 1) {
@@ -1231,9 +1232,13 @@ int main(int argc, char** argv) {
       FLAGS_db = argv[i] + 5;
     } else if (sscanf(argv[i], "--num_seg=%d%c", &n, &junk) == 1) {
       FLAGS_key_num_perseg = n;
+      flag = true;
     } else {
       std::fprintf(stderr, "Invalid flag '%s'\n", argv[i]);
       std::exit(1);
+    }
+    if(!flag){
+      FLAGS_key_num_perseg = FLAGS_key_num_perseg > 100000? FLAGS_key_num_perseg/2000: FLAGS_key_num_perseg;
     }
   }
 
@@ -1245,6 +1250,7 @@ int main(int argc, char** argv) {
     default_db_path += "/dbbench";
     FLAGS_db = default_db_path.c_str();
   }
+
 
   leveldb::Benchmark benchmark;
   benchmark.Run();
