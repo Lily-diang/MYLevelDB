@@ -59,7 +59,7 @@ class RemixIterator : public Iterator {
     // }
     current_ = seg->Cursor_Offsets[l];
     current_anchor_key_ = left;
-    current_segment_ = l;
+    current_segment_ =l;
 
   };
   // int SeekToFirst() override{
@@ -80,7 +80,7 @@ class RemixIterator : public Iterator {
     return 0;
   };
 
-  // void SeekToLast() override{};
+  void SeekToLast() override{};
   // int Next() override{ // 版本2
   //   current_->Next(my_sorted_view_,current_anchor_key_,current_segment_);
   //   return 0;}
@@ -99,10 +99,6 @@ class RemixIterator : public Iterator {
     else current_ = NULL;
     return 0;}
 
-  // int Next() override{
-  //   current_->Next(my_sorted_view_,current_anchor_key_,current_segment_);
-  //   return 0;
-  // }
   void Prev() override{};
   bool Valid() const override { return (current_ != NULL && current_->Valid()); }
   Slice key() const override {
