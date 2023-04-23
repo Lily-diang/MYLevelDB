@@ -78,9 +78,9 @@ class RemixIterator : public Iterator {
     }
     //cout << seg->keys[l] << endl;
     // 复制it迭代器
-    Iterator * it = my_sorted_view_->mydb->NewIterator(ReadOptions());
-    it->Seek(seg->Cursor_[seg->Run_Selectors[l]]->key().ToString());
-    //Iterator* it = seg->Cursor_Offsets[seg->Run_Selectors[l]];
+    //Iterator * it = my_sorted_view_->mydb->NewIterator(ReadOptions());
+    //it->Seek(seg->Cursor_[seg->Run_Selectors[l]]->key().ToString());
+    Iterator* it = seg->Cursor_Offsets[seg->Run_Selectors[l]];
     current_ = it;
     current_anchor_key_ = left;
     current_segment_ = 0;
