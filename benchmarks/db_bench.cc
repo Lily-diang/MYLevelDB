@@ -2,7 +2,7 @@
  * @Author: Li_diang 787695954@qq.com
  * @Date: 2023-03-04 21:27:02
  * @LastEditors: Li_diang 787695954@qq.com
- * @LastEditTime: 2023-04-23 18:48:19
+ * @LastEditTime: 2023-04-23 23:08:04
  * @FilePath: \leveldb\benchmarks\db_bench.cc
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -117,7 +117,7 @@ static int FLAGS_reads = -1;
 static int FLAGS_threads = 1;
 
 // Size of each value 每个value的大小（字节）
-static int FLAGS_value_size = 100;
+static int FLAGS_value_size = 1000;
 
 // Arrange to generate values that shrink to this fraction of
 // their original size after compression
@@ -461,6 +461,10 @@ class Benchmark {
     std::fprintf(
         stdout, "FileSize:   %.1f MB (estimated)\n",
         (((kKeySize + FLAGS_value_size * FLAGS_compression_ratio) * num_) /
+         1048576.0));
+    std::fprintf(
+        stdout, "Keys num per seg:   %d \n",
+        ((FLAGS_key_num_perseg) /
          1048576.0));
     PrintWarnings();
     std::fprintf(stdout, "------------------------------------------------\n");
