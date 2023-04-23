@@ -203,7 +203,7 @@ int DBIter::Next() {
 }
 
 // ##############
-void DBIter::Next(Remix *my_sorted_view,size_t &index_anchor_key, size_t &segment_index) {
+void DBIter::Next(Remix *my_sorted_view,size_t &index_anchor_key, size_t &segment_index)  {
   assert(valid_);
     SaveKey(ExtractUserKey(iter_->key()), &saved_key_);
     iter_->Next(my_sorted_view,index_anchor_key,segment_index);

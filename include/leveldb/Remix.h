@@ -2,7 +2,7 @@
  * @Author: Li_diang 787695954@qq.com
  * @Date: 2023-04-16 19:37:32
  * @LastEditors: Li_diang 787695954@qq.com
- * @LastEditTime: 2023-04-21 12:30:38
+ * @LastEditTime: 2023-04-23 11:15:41
  * @FilePath: \leveldb\include\leveldb\Remix.h
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -24,6 +24,8 @@ namespace leveldb {
 struct Segment {
   Iterator**
       Cursor_Offsets;  // 每个段维护的迭代器，有N个run，就有N个Iterator*元素
+  Iterator**
+      Cursor_;
   //vector<int>
   int *
       Run_Selectors;  // run
@@ -50,6 +52,7 @@ struct Segment {
      Run_Selectors = new int[5]();
      runs_sum = new int[5]();
      keys = new string[10];
+     Cursor_ = new Iterator*[num];
   }
      Segment(int num, int pre_num)
       :  runs_num(num), size(0),key_num_perseg(pre_num),keys_capacity(10){
@@ -59,6 +62,7 @@ struct Segment {
     Run_Selectors = new int [pre_num]();
     runs_sum = new int[pre_num]();
     keys = new string[10];
+    Cursor_ = new Iterator *[num];
   }
   Segment(){}
 
@@ -138,12 +142,12 @@ class Remix {
     dst.keys[dst.size] = Iternal_key;
     dst.stept.push_back(dst.runs_sum[iter->get_index_of_runs()]);
     dst.runs_sum[iter->get_index_of_runs()] += 1;
-    // if (dst.Cursor_Offsets[iter->get_index_of_runs()] == NULL) {
-    //   Iterator* temp = mydb->NewIterator(leveldb::ReadOptions());
-    //   temp->Seek(iter->key());
-    //   dst.Cursor_Offsets[iter->get_index_of_runs()] = temp;
-    //   // cout << "insert a new iter to the segment " << endl;
-    // }
+    if (dst.Cursor_[iter->get_index_of_runs()] == NULL) {
+      Iterator* temp = mydb->NewIterator(leveldb::ReadOptions());
+      temp->Seek(iter->key());
+      dst.Cursor_[iter->get_index_of_runs()] = temp;
+      // cout << "insert a new iter to the segment " << endl;
+    }
     dst.Cursor_Offsets[dst.size] = mydb->NewIterator(leveldb::ReadOptions());
     dst.Cursor_Offsets[dst.size]->Seek(iter->key());
     dst.size++;

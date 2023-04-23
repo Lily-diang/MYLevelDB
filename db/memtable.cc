@@ -2,7 +2,7 @@
  * @Author: Li_diang 787695954@qq.com
  * @Date: 2023-03-04 21:27:02
  * @LastEditors: Li_diang 787695954@qq.com
- * @LastEditTime: 2023-04-17 21:32:12
+ * @LastEditTime: 2023-04-23 12:29:22
  * @FilePath: \leveldb\db\memtable.cc
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -66,6 +66,9 @@ class MemTableIterator : public Iterator {
   int SeekToFirst() override { iter_.SeekToFirst(); return 0;}
   void SeekToLast() override { iter_.SeekToLast(); }
   int Next() override { iter_.Next();  return 0;}
+  void Next (Remix* my_sorted_view,size_t &index_anchor_key, size_t &segment_index) override{
+    
+  }
   void Prev() override { iter_.Prev(); }
   Slice key() const override { return GetLengthPrefixedSlice(iter_.key()); }
   Slice value() const override {
