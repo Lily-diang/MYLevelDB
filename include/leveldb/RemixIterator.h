@@ -92,23 +92,24 @@ class RemixIterator : public Iterator {
     }
 
   };
-  // int SeekToFirst() override{
-  //   Segment seg = my_sorted_view_->segments[0];
-  //   Iterator * it = my_sorted_view_->mydb->NewIterator(ReadOptions());
-  //   it->Seek(seg->Cursor_Offsets[seg->Run_Selectors[0]]->key().ToString());
-  //   current_ = it;
-  //   current_anchor_key_ = 0;
-  //   current_segment_ = 0;
-  //   return 0;
-  // };
-  int SeekToFirst() override {
-    // Segment seg = my_sorted_view_->segments[0];
-    // current_ = seg->Cursor_Offsets[0];
+
+  int SeekToFirst() override{  // 版本3
+    Segment *seg = &my_sorted_view_->segments[0];
+    Iterator * it = my_sorted_view_->mydb->NewIterator(ReadOptions());
+    it->Seek(seg->Cursor_[seg->Run_Selectors[0]]->key().ToString());
+    current_ = it;
     current_anchor_key_ = 0;
     current_segment_ = 0;
-    current_ = my_sorted_view_->segments[0].Cursor_Offsets[0];
     return 0;
   };
+  // int SeekToFirst() override {  // 版本1、2
+  //   // Segment seg = my_sorted_view_->segments[0];
+  //   // current_ = seg->Cursor_Offsets[0];
+  //   current_anchor_key_ = 0;
+  //   current_segment_ = 0;
+  //   current_ = my_sorted_view_->segments[0].Cursor_Offsets[0];
+  //   return 0;
+  // };
 
   void SeekToLast() override{};
   int Next() override {  // 版本2

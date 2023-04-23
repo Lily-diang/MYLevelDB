@@ -2,7 +2,7 @@
  * @Author: Li_diang 787695954@qq.com
  * @Date: 2023-03-04 21:27:02
  * @LastEditors: Li_diang 787695954@qq.com
- * @LastEditTime: 2023-04-23 12:29:22
+ * @LastEditTime: 2023-04-23 14:16:36
  * @FilePath: \leveldb\db\memtable.cc
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -17,6 +17,7 @@
 #include "leveldb/iterator.h"
 #include "util/coding.h"
 #include "leveldb/RemixHelper.h"
+#include "leveldb/Remix.h"
 
 namespace leveldb {
 // 获取Interkey，跳表中存放的是memtable中的一整个entry，该函数要从data中提取出interkey及逆行比较
@@ -66,8 +67,18 @@ class MemTableIterator : public Iterator {
   int SeekToFirst() override { iter_.SeekToFirst(); return 0;}
   void SeekToLast() override { iter_.SeekToLast(); }
   int Next() override { iter_.Next();  return 0;}
-  void Next (Remix* my_sorted_view,size_t &index_anchor_key, size_t &segment_index) override{
-    
+  void Next(Remix* my_sorted_view,size_t &index_anchor_key, size_t &segment_index)override{
+    iter_.Next();
+    Segment *seg = &my_sorted_view->segments[index_anchor_key];
+    //int index;
+    if(segment_index+1 < seg->size){
+      //index = seg->Run_Selectors[segment_index+1];
+      segment_index++;
+    }
+    else if(index_anchor_key + 1 < my_sorted_view->segment_size){
+      //index = my_sorted_view->segments[index_anchor_key+1].Run_Selectors[0];
+      index_anchor_key++;
+    }
   }
   void Prev() override { iter_.Prev(); }
   Slice key() const override { return GetLengthPrefixedSlice(iter_.key()); }

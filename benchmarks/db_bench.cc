@@ -2,7 +2,7 @@
  * @Author: Li_diang 787695954@qq.com
  * @Date: 2023-03-04 21:27:02
  * @LastEditors: Li_diang 787695954@qq.com
- * @LastEditTime: 2023-04-23 12:55:46
+ * @LastEditTime: 2023-04-23 12:50:05
  * @FilePath: \leveldb\benchmarks\db_bench.cc
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -108,7 +108,7 @@ static const char* FLAGS_benchmarks =
     ;
 
 // Number of key/values to place in database
-static int FLAGS_num = 10000;
+static int FLAGS_num = 1000;
 
 // Number of read operations to do.  If negative, do FLAGS_num reads.
 static int FLAGS_reads = -1;
@@ -946,9 +946,10 @@ class Benchmark {
     int64_t bytes = 0;
     KeyBuffer key;
     //key.Set(thread->rand.Uniform(FLAGS_num/4) + FLAGS_num-FLAGS_num/4);
-    key.Set(thread->rand.Uniform(FLAGS_num/4) + FLAGS_num/2);
+    key.Set(thread->rand.Uniform(FLAGS_num));
     //cout << key.slice().ToString() << endl;
-    for(iter->Seek(key.slice()); i < 50; i++,iter->Next()){
+    for(iter->Seek(key.slice()); iter->Valid()&&i < 50; i++,iter->Next()){
+      //cout << iter->key().ToString() << endl;
       bytes += iter->key().size() + iter->value().size();
       thread->stats.FinishedSingleOp();
     }
@@ -961,10 +962,10 @@ class Benchmark {
     int64_t bytes = 0;
     KeyBuffer key;
     //const int range = (FLAGS_num + FLAGS_num/2) / 100;
-    key.Set(thread->rand.Uniform(FLAGS_num/4) + FLAGS_num/2);
+    key.Set(thread->rand.Uniform(FLAGS_num));
     //key.Set(thread->rand.Uniform(FLAGS_num/4) + FLAGS_num-FLAGS_num/4);
-    // cout << key.slice().ToString() << endl;
-    for (iter->Seek(key.slice()); i < 50; i++, iter->Next()) {
+    for (iter->Seek(key.slice()); iter->Valid()&&i < 50; i++, iter->Next()) {
+      //cout << iter->key().ToString() << endl;
       bytes += iter->key().size() + iter->value().size();
       thread->stats.FinishedSingleOp();
     }

@@ -62,7 +62,7 @@ struct Segment {
     Run_Selectors = new int [pre_num]();
     runs_sum = new int[pre_num]();
     keys = new string[10];
-    Cursor_ = new Iterator *[num];
+    Cursor_ = new Iterator *[num]();
   }
   Segment(){}
 
