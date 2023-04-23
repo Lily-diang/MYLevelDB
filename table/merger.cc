@@ -213,10 +213,10 @@ int MergingIterator::FindSmallest() {
 // ##############
 int MergingIterator::FindSmallest(Remix *my_sorted_view, size_t &index_anchor_key, size_t &segment_index) {
   //IteratorWrapper* smallest = nullptr;
-  Segment seg = my_sorted_view->segments[index_anchor_key];
+  Segment *seg = &my_sorted_view->segments[index_anchor_key];
   int index;
-  if(segment_index+1 < seg.size){
-    index = seg.Run_Selectors[segment_index+1];
+  if(segment_index+1 < seg->size){
+    index = seg->Run_Selectors[segment_index+1];
     segment_index++;
   }
   else if(index_anchor_key + 1 < my_sorted_view->segment_size){
