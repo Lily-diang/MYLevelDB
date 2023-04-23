@@ -949,7 +949,7 @@ class Benchmark {
     key.Set(thread->rand.Uniform(FLAGS_num));
     //cout << key.slice().ToString() << endl;
     for(iter->Seek(key.slice()); iter->Valid()&&i < 50; i++,iter->Next()){
-      //cout << iter->key().ToString() << endl;
+      if(i == 0) cout << iter->key().ToString() << endl;
       bytes += iter->key().size() + iter->value().size();
       thread->stats.FinishedSingleOp();
     }
@@ -965,7 +965,7 @@ class Benchmark {
     key.Set(thread->rand.Uniform(FLAGS_num));
     //key.Set(thread->rand.Uniform(FLAGS_num/4) + FLAGS_num-FLAGS_num/4);
     for (iter->Seek(key.slice()); iter->Valid()&&i < 50; i++, iter->Next()) {
-      //cout << iter->key().ToString() << endl;
+      if(i == 0) cout << iter->key().ToString() << endl;
       bytes += iter->key().size() + iter->value().size();
       thread->stats.FinishedSingleOp();
     }
